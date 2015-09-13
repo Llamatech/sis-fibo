@@ -1,0 +1,25 @@
+<html>
+   <head>
+      <title>{{ title }}</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+      <link data-require="bootstrap-css@*" data-semver="3.3.1" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" />
+      <link data-require="bootstrap@*" data-semver="3.3.5" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+      <link href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" data-semver="0.7.3" data-require="leaflet@0.7.3" />
+      <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js" data-semver="0.7.3" data-require="leaflet@0.7.3"></script>
+      <script src="http://code.jquery.com/jquery-2.1.4.min.js" data-semver="2.1.4" data-require="jquery@*"></script>
+   </head>
+   <body>
+     <div class="container">
+        {%for value in values%}
+          <div class="row">
+           {% for entry in value%}
+              <div class={{"col-xs-"+str(12/len(value))}}>
+                 {{escape(str(entry))}}
+              </div>
+           {% end %}
+          </div>
+        {% end %}
+     </div>
+   </body>
+</html>
