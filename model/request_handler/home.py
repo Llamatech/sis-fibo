@@ -14,9 +14,11 @@ class HomeHandler(tornado.web.RequestHandler):
         if not cookie:
            self.redirect('/login')
         else:
-           info = cookie.value
-           values = info.split(':')
+           # print cookie
+           #info = cookie.value
+           values = cookie.split('-')
            id = int(values[0])
+           tipo = values[1].replace('_', ' ')
            self.write('%d : %s' % (id, values[1]))
 
 

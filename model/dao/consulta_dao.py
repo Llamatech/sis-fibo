@@ -4,6 +4,7 @@ import os
 import sys
 import cx_Oracle
 from model.vos import tipo
+from model.vos import usuario
 
 
 class ConsultaDAO(object):
@@ -93,19 +94,20 @@ class ConsultaDAO(object):
         tabla_consulta = 'USUARIO'
         tabla_consulta1 = 'TIPOUSUARIO'
         stmt = 'SELECT u.id, u.pin, u.email, v.tipo FROM ' + tabla_consulta + \
-            'u AND' + tabla_consulta1 + 'v WHERE u.email = ' + email + ' AND u.tipo = v.id'
+            ' u , ' + tabla_consulta1 + " v WHERE u.email = '" + email + "' AND u.tipo = v.id"
+        print stmt
         self.establecer_conexion()
         cur = self.conn.cursor()
         user = None
-        try:
-            cur.execute(stmt + tabla_consulta)
-            data = cur.fetchall()
-            # UsuarioTipo: id, pwd, email, tipo
-            if len(data) > 0:
-               user_d = data[0]
-               user = usuario.Usuario(user_d[0], user_d[1], user_d[2], user_d[3])
-        except cx_Oracle.Error as e:
-            raise e
+        # try:
+        cur.execute(stmt)
+        data = cur.fetchall()
+        # UsuarioTipo: id, pwd, email, tipo
+        if len(data) > 0:
+           user_d = data[0]
+           user = usuario.Usuario(user_d[0], user_d[1], user_d[2], user_d[3])
+        # except cx_Oracle.Error as e:
+        #     raise e
         cur.close()
         self.conn.close()
         return user
