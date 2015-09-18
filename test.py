@@ -51,12 +51,27 @@ class MainHandler(tornado.web.RequestHandler):
         values = [[col[0] for col in cols]]+values
         self.render('template.html', title=order, values=values)
 
+class TemplateHandler(tornado.web.RequestHandler):
+    def initialize(self, db):
+        self.db = db
+
+    @tornado.gen.coroutine
+    def get(self):
+        self.render('static/index.html')       
+
 if __name__ == "__main__":
 #    setup_database()
     pool = ConnectionPool('cx_Oracle', user = USER, password = PWD, dsn = dsn_tns)
+    settings = {
+        "static_path": os.path.join(os.path.dirname(__file__), "static"),
+        "cookie_secret": "__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+        # "login_url": "/login",
+        # "xsrf_cookies": True,
+    }  
     application = tornado.web.Application([
         (r"/", MainHandler, {'db':pool}),
-    ])
+        (r"/template", TemplateHandler, {'db':pool})
+    ], debug=True, serve_traceback=True, autoreload=True, **settings)
     application.listen(8000)
     #tornado.ioloop.IOLoop.current().start()
     try:
