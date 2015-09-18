@@ -52,9 +52,12 @@
 		fecha_nacimiento DATE NOT NULL,
 		ciudad VARCHAR(20) NOT NULL,
 		departamento VARCHAR(20) NOT NULL,
-		cod_postal INTEGER NOT NULL,
+		cod_postal VARCHAR(6) NOT NULL,
+		oficina INTEGER,
 		FOREIGN KEY (tipo_documento) REFERENCES TIPODOCUMENTO(id),
-		FOREIGN KEY (tipo_empleado) REFERENCES TIPOEMPLEADO(id) 
+		FOREIGN KEY (tipo_empleado) REFERENCES TIPOEMPLEADO(id),
+		FOREIGN KEY (oficina) REFERENCES OFICINA(id),
+		CONSTRAINT empleado_documento_uq UNIQUE (num_documento),
 
 	);
 
@@ -72,9 +75,9 @@
 		fecha_nacimiento DATE, /*Falta CK*/
 		ciudad VARCHAR(20) NOT NULL,
 		departamento VARCHAR(20) NOT NULL,
-		cod_postal INTEGER NOT NULL,
+		cod_postal VARCHAR(6) NOT NULL,
 		FOREIGN KEY (tipo_cliente) REFERENCES TIPOCLIENTE (id)
-
+        CONSTRAINT cliente_documento_uq UNIQUE (num_documento)
 	);
 
 	CREATE TABLE TIPOCLIENTE
@@ -93,7 +96,11 @@
 		num_cuotas INTEGER NOT NULL CHECK(num_cuotas > 0),
 		valor_cuota DOUBLE PRECISION NOT NULL CHECK(valor_cuota >= 0),
 		tipo INTEGER NOT NULL,
-		FOREIGN KEY (tipo) REFERENCES TIPOPRESTAMO(id)
+		cliente INTEGER NOT NULL,
+		oficina INTEGER NOT NULL,
+		FOREIGN KEY (tipo) REFERENCES TIPOPRESTAMO(id),
+		FOREIGN KEY (cliente) REFERENCES CLIENTE(id),
+		FOREIGN KEY (oficina) REFERENCES OFICINA(id)
 	);
 
 	CREATE TABLE TIPOPRESTAMO
@@ -140,8 +147,13 @@
 	(
 		numero INTEGER CONSTRAINT cuenta_pk PRIMARY KEY,
 		saldo DOUBLE PRECISION saldo NOT NULL,
-		tipo_cuenta INTEGER, 
-		FOREIGN KEY (tipo_cuenta) REFERENCES TIPOCUENTA (id)	
+		tipo_cuenta INTEGER,
+		cliente INTEGER NOT NULL,
+        oficina INTEGER NOT NULL,
+        cerrada VARCHAR(2) DEFAULT 'N' NOT NULL, 
+		FOREIGN KEY (tipo_cuenta) REFERENCES TIPOCUENTA (id)
+		FOREIGN KEY (cliente) REFERENCES CLIENTE(id),
+        FOREIGN KEY (oficina) REFERENCES OFICINA(id)	
 	);
 
 	CREATE TABLE PUNTOSATENCION
