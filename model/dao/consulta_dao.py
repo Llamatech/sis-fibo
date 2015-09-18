@@ -29,7 +29,6 @@ class ConsultaDAO(object):
         self.conn = None
 
     def obtener_usuarios(self):
-
         tabla_consulta = 'USUARIO'
         columna = 'email'
         stmt = 'SELECT * FROM ' + tabla_consulta + ' WHERE ' + columna + "= "
@@ -94,7 +93,8 @@ class ConsultaDAO(object):
         tabla_consulta = 'USUARIO'
         tabla_consulta1 = 'TIPOUSUARIO'
         stmt = 'SELECT u.id, u.pin, u.email, v.tipo FROM ' + tabla_consulta + \
-            ' u , ' + tabla_consulta1 + " v WHERE u.email = '" + email + "' AND u.tipo = v.id"
+            ' u , ' + tabla_consulta1 + " v WHERE u.email = '" + \
+            email + "' AND u.tipo = v.id"
         print stmt
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -104,8 +104,8 @@ class ConsultaDAO(object):
         data = cur.fetchall()
         # UsuarioTipo: id, pwd, email, tipo
         if len(data) > 0:
-           user_d = data[0]
-           user = usuario.Usuario(user_d[0], user_d[1], user_d[2], user_d[3])
+            user_d = data[0]
+            user = usuario.Usuario(user_d[0], user_d[1], user_d[2], user_d[3])
         # except cx_Oracle.Error as e:
         #     raise e
         cur.close()
