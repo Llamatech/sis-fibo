@@ -9,7 +9,9 @@ import model.request_handler as handlers
 
 def main():
     settings = {"static_path": os.path.join(os.path.dirname(__file__), "static")}
-    application = tornado.web.Application([(r"/", handlers.example.MainHandler)], debug=True, serve_traceback=True, autoreload=True, **settings)
+    application = tornado.web.Application([(r"/", handlers.home.HomeHandler),
+        (r"/registrarUsuario", handlers.registro_usuario.RegistroHandler),
+        (r"/login", handlers.login_handler.LoginHandler)], debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)
     try:

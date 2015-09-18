@@ -69,3 +69,17 @@ class BancAndes(object):
     def buscar_usuarios(self):
         return self.dao.obtener_usuarios()
 
+    def obtener_tipo_documento(self):
+        return self.dao.obtener_tipo_documento()
+
+    def obtener_tipo_usuario(self):
+        return self.dao.obtener_tipo_usuario()
+
+    def verificar_usuario(self, email, pwd):
+        auth_data = self.dao.obtener_usuario(email)
+        if auth_data is not None:
+           if auth_data.pwd == pwd:
+              return [True, auth_data.id, auth_data.tipo] 
+        else:
+            return [False, None, None]
+
