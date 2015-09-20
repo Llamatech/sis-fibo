@@ -1,6 +1,9 @@
 import os
 import base64
+<<<<<<< HEAD
 import random
+=======
+>>>>>>> b4e177f042cedd453db0cb43b9f446efda15151d
 import datetime
 import cx_Oracle
 
@@ -22,6 +25,7 @@ s2 = 'INSERT INTO EMPLEADO (ID, TIPO_DOCUMENTO, NUM_DOCUMENTO,' \
 s3 = 'INSERT INTO CLIENTE (ID, TIPO_DOCUMENTO, NUM_DOCUMENTO,' \
      +'NOMBRE, APELLIDO, DIRECCION, TELEFONO, FECHA_INSCRIPCION, '+\
      'FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL) VALUES %s'
+
 
 cursor.execute('SELECT * FROM TIPOUSUARIO')
 u_type = cursor.fetchall()
