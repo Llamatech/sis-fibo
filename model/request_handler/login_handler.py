@@ -28,3 +28,19 @@ class LoginHandler(tornado.web.RequestHandler):
 
     def write_error(self, status_code, **kwargs):
         self.write("An error has ocurred")
+
+class LogoutHandler(tornado.web.RequestHandler):
+    def initialize(self, some_attribute=None):
+        self.some_attribute = some_attribute
+
+    @tornado.gen.coroutine
+    def get(self):
+        self.set_cookie("authcookie", '')
+        self.redirect('/')
+
+    @tornado.gen.coroutine
+    def post(self):
+        data = self.get_argument('data', 'No data recieved')
+
+    def write_error(self, status_code, **kwargs):
+        self.write("An error has ocurred")

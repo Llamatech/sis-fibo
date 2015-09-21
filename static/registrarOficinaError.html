@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Registrar Cuenta | BancAndes</title>
+    <title>Error | BancAndes</title>
 
     <!-- core CSS -->
+       <!-- core CSS -->
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/font-awesome.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/prettyPhoto.css")}}" rel="stylesheet">
@@ -24,7 +25,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ static_url("images/ico/apple-touch-icon-144-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url("images/ico/apple-touch-icon-114-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url("images/ico/apple-touch-icon-72-precomposed.png")}}">
-    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">>
+    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">
 </head>
 <!--/head-->
 
@@ -61,7 +62,9 @@
             <!--/.container-->
         </div>
         <!--/.top-bar-->
-
+        <script>
+            alert("No se encontró ningun gerente que coincidiera con el email dado.")
+        </script>
         <nav class="navbar navbar-inverse" role="banner">
             <div class="container">
                 <div class="navbar-header">
@@ -102,77 +105,67 @@
 
     <section id="contact-info">
         <div class="center">
-
-
+            <h2>Registrar una oficina</h2>
         </div>
+        <div class="gmap-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        <div class="gmap">
+                            <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com.co/maps/@4.6384941,-74.1734414,12.16z"></iframe>
+                        </div>
+                    </div>
 
+                    <div class="col-sm-7 map-content">
+                        <form id="main-contact-form" class="contact-form" name="contact-form" method="post" action="sendemail.php">
+                            <ul class="row">
+
+                                <li class="col-sm-6">
+                                    <address>
+                                    <div class="form-group">
+                                            <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" required="required">
+                                    </div>
+                                </address>
+
+                                    <address>
+                                    <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" name="direccion" class="form-control" required="required">
+                        </div>
+                                </address>
+                                </li>
+
+
+                                <li class="col-sm-6">
+                                    <address>
+                                    <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" name="telefono" class="form-control" required="required">
+                        </div>
+                                </address>
+
+                                    <address>
+                                    <div class="form-group">
+                            <label>ID gerente</label>
+                            <input type="text" name="gerente" class="form-control" required="required">
+                        </div>
+                                </address>
+                                </li>
+                                
+                                <div class="form-group">
+                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
+                        </div>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <!--/gmap_area -->
 
-    <section id="contact-page">
-        <div class="container">
-            <div class="center">
-                <h2>Registrar una cuenta</h2>
-                <p class="lead">Registre la cuenta de su cliente</p>
-            </div>
-            <div class="row contact-wrap">
-                <div class="status alert alert-success" style="display: none"></div>
-                <form id="main-contact-form" class="contact-form" name="contact-form" method="post" action="sendemail.php">
-                    <div class="col-sm-5 col-sm-offset-1">
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label for="sel1">Tipo</label>
-                                <select class="form-control" id="sel1" required>
-                                    <option></option>
-                                    {% for tipo in tipos%}
-                                    <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
-                                    {% end %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Id Cliente</label>
-                            <input type="text" name="idCliente" class="form-control" required>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Consginar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                     <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Retirar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                    
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <!--/.row-->
-        </div>
-        <!--/.container-->
-    </section>
-    <!--/#contact-page-->
 
     <section id="bottom">
         <div class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">

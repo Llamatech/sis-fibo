@@ -19,7 +19,10 @@ class HomeHandler(tornado.web.RequestHandler):
            values = cookie.split('-')
            id = int(values[0])
            tipo = values[1].replace('_', ' ')
-           self.write('%d : %s' % (id, values[1]))
+           if tipo == 'Administrador':
+              self.render('../../static/admin-menu.html')
+           else:
+              self.write('%d : %s' % (id, values[1]))
 
 
 

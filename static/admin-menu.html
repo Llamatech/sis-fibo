@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Registrar Cuenta | BancAndes</title>
-
+    <title>Services | Corlate</title>
+    
     <!-- core CSS -->
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
-    <link href="{{ static_url("css/font-awesome.min.css")}}" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="{{ static_url("css/prettyPhoto.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
-
+    
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
-    <![endif]-->
+    <![endif]-->       
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ static_url("images/ico/apple-touch-icon-144-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url("images/ico/apple-touch-icon-114-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url("images/ico/apple-touch-icon-72-precomposed.png")}}">
-    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">>
-</head>
-<!--/head-->
+    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">
+</head><!--/head-->
 
 <body>
 
@@ -35,16 +33,14 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6 col-xs-4">
-                        <div class="top-number">
-                            <p><i class="fa fa-phone-square"></i> +0123 456 70 90</p>
-                        </div>
+                        <div class="top-number"><p><i class="fa fa-phone-square"></i>  +0123 456 70 90</p></div>
                     </div>
                     <div class="col-sm-6 col-xs-8">
-                        <div class="social">
+                       <div class="social">
                             <ul class="social-share">
                                 <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                                 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li> 
                                 <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
                                 <li><a href="#"><i class="fa fa-skype"></i></a></li>
                             </ul>
@@ -53,14 +49,12 @@
                                     <input type="text" class="search-form" autocomplete="off" placeholder="Search">
                                     <i class="fa fa-search"></i>
                                 </form>
-                            </div>
-                        </div>
+                           </div>
+                       </div>
                     </div>
                 </div>
-            </div>
-            <!--/.container-->
-        </div>
-        <!--/.top-bar-->
+            </div><!--/.container-->
+        </div><!--/.top-bar-->
 
         <nav class="navbar navbar-inverse" role="banner">
             <div class="container">
@@ -71,12 +65,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"></a>
+                    <a class="navbar-brand" href="index.html"><img src="{{ static_url("images/logo.png")}}" alt="logo"></a>
                 </div>
-
+                
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
-                        <li><a href="index.html">Home</a></li>
+                        <li class="active"><a href="/">Home</a></li>
                         <li><a href="about-us.html">About Us</a></li>
                         <li><a href="services.html">Services</a></li>
                         <li><a href="portfolio.html">Portfolio</a></li>
@@ -89,90 +83,92 @@
                                 <li><a href="shortcodes.html">Shortcodes</a></li>
                             </ul>
                         </li>
-                        <li><a href="blog.html">Blog</a></li>
-                        <li class="active"><a href="contact-us.html">Contact</a></li>
+                        <li><a href="blog.html">Blog</a></li> 
+                        <li><a href="/logout">Cerrar Sesión</a></li>                        
                     </ul>
                 </div>
-            </div>
-            <!--/.container-->
-        </nav>
-        <!--/nav-->
-    </header>
-    <!--/header-->
+            </div><!--/.container-->
+        </nav><!--/nav-->
+        
+    </header><!--/header-->
 
-    <section id="contact-info">
-        <div class="center">
-
-
-        </div>
-
-    </section>
-    <!--/gmap_area -->
-
-    <section id="contact-page">
+    <section id="feature" class="transparent-bg">
         <div class="container">
-            <div class="center">
-                <h2>Registrar una cuenta</h2>
-                <p class="lead">Registre la cuenta de su cliente</p>
+           <div class="center wow fadeInDown">
+                <h2>Servicios de Administración</h2>
+                <p class="lead">En este menú podrá encontrar las principales opciones de modificación de información y ajustes del sistema BancAndes</p>
             </div>
-            <div class="row contact-wrap">
-                <div class="status alert alert-success" style="display: none"></div>
-                <form id="main-contact-form" class="contact-form" name="contact-form" method="post" action="sendemail.php">
-                    <div class="col-sm-5 col-sm-offset-1">
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label for="sel1">Tipo</label>
-                                <select class="form-control" id="sel1" required>
-                                    <option></option>
-                                    {% for tipo in tipos%}
-                                    <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
-                                    {% end %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Id Cliente</label>
-                            <input type="text" name="idCliente" class="form-control" required>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Consginar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                     <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Retirar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                    
-
-                                </div>
-                            </div>
+            <div class="row">
+                <div class="features">
+                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                        <div class="feature-wrap">
+                            <i class="fa fa-users"></i>
+                            <h2>Gestión de Empleados</h2>
+                            <h3>Añadir, modificar y eliminar Cajeros, Gerentes Generales y Gerentes de oficina</h3>
                         </div>
+                    </div><!--/.col-md-4-->
 
-                        <div class="form-group">
-                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
+                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                        <div class="feature-wrap">
+                            <i class="fa fa-credit-card"></i>
+                            <h2>Puntos de atención</h2>
+                            <h3>Crear, eliminar o modificar Cajeros automáticos y otros puntos de atención de BancAndes</h3>
                         </div>
+                    </div><!--/.col-md-4-->
+
+                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                        <div class="feature-wrap">
+                            <i class="fa fa-bank"></i>
+                            <h2>Oficinas</h2>
+                            <h3>Crear, eliminar o modificar Oficinas y centros de atención dedicados BancAndes</h3>
+                        </div>
+                    </div><!--/.col-md-4-->
+                    <!--/.col-md-4-->
+                </div><!--/.services-->
+            </div><!--/.row--> 
+
+
+            <div class="get-started center wow fadeInDown">
+                <h2>Ready to get started</h2>
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore  magna aliqua. <br>  Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
+                <div class="request">
+                    <h4><a href="#">Request a free Quote</a></h4>
+                </div>
+            </div><!--/.get-started-->
+
+            <div class="clients-area center wow fadeInDown">
+                <h2>What our client says</h2>
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 wow fadeInDown">
+                    <div class="clients-comments text-center">
+                        <img src="images/client1.png" class="img-circle" alt="">
+                        <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</h3>
+                        <h4><span>-John Doe /</span>  Director of corlate.com</h4>
                     </div>
-                </form>
-            </div>
-            <!--/.row-->
-        </div>
-        <!--/.container-->
-    </section>
-    <!--/#contact-page-->
+                </div>
+                <div class="col-md-4 wow fadeInDown">
+                    <div class="clients-comments text-center">
+                        <img src="images/client2.png" class="img-circle" alt="">
+                        <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</h3>
+                        <h4><span>-John Doe /</span>  Director of corlate.com</h4>
+                    </div>
+                </div>
+                <div class="col-md-4 wow fadeInDown">
+                    <div class="clients-comments text-center">
+                        <img src="images/client3.png" class="img-circle" alt="">
+                        <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt</h3>
+                        <h4><span>-John Doe /</span>  Director of corlate.com</h4>
+                    </div>
+                </div>
+           </div>
+
+        </div><!--/.container-->
+    </section><!--/#feature-->
+
 
     <section id="bottom">
         <div class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
@@ -189,9 +185,8 @@
                             <li><a href="#">Privacy policy</a></li>
                             <li><a href="#">Contact us</a></li>
                         </ul>
-                    </div>
-                </div>
-                <!--/.col-md-3-->
+                    </div>    
+                </div><!--/.col-md-3-->
 
                 <div class="col-md-3 col-sm-6">
                     <div class="widget">
@@ -205,9 +200,8 @@
                             <li><a href="#">Ticket system</a></li>
                             <li><a href="#">Billing system</a></li>
                         </ul>
-                    </div>
-                </div>
-                <!--/.col-md-3-->
+                    </div>    
+                </div><!--/.col-md-3-->
 
                 <div class="col-md-3 col-sm-6">
                     <div class="widget">
@@ -221,9 +215,8 @@
                             <li><a href="#">Plugin Development</a></li>
                             <li><a href="#">Article Writing</a></li>
                         </ul>
-                    </div>
-                </div>
-                <!--/.col-md-3-->
+                    </div>    
+                </div><!--/.col-md-3-->
 
                 <div class="col-md-3 col-sm-6">
                     <div class="widget">
@@ -237,13 +230,11 @@
                             <li><a href="#">Ullamco</a></li>
                             <li><a href="#">Laboris</a></li>
                         </ul>
-                    </div>
-                </div>
-                <!--/.col-md-3-->
+                    </div>    
+                </div><!--/.col-md-3-->
             </div>
         </div>
-    </section>
-    <!--/#bottom-->
+    </section><!--/#bottom-->
 
     <footer id="footer" class="midnight-blue">
         <div class="container">
@@ -261,15 +252,13 @@
                 </div>
             </div>
         </div>
-    </footer>
-    <!--/#footer-->
+    </footer><!--/#footer-->
 
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/jquery.isotope.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/wow.min.js"></script>
+    <script src="{{ static_url("js/jquery.js")}}"></script>
+    <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
+    <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
+    <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
+    <script src="{{ static_url("js/main.js")}}"></script>
+    <script src="{{ static_url("js/wow.min.js")}}"></script>
 </body>
-
 </html>

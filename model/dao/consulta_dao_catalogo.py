@@ -7,7 +7,7 @@ from model.vos import tipo
 from model.vos import usuario
 
 
-class ConsultaDAO(object):
+class ConsultaDAOcatalogo(object):
 
     def inicializar(self, path):
         with open(path, 'rb') as fp:
@@ -110,24 +110,26 @@ class ConsultaDAO(object):
         #     raise e
         cur.close()
         self.conn.close()
-        print user
         return user
 
-    def obtener_tipo_cuenta(self):
-        tabla_consulta = 'TIPOCUENTA'
-        stmt = 'SELECT * FROM ' + tabla_consulta
+        
+
+    def registrar_oficina(self, name, address, phone, idGerente):
+        tabla_consulta= 'USUARIO'
+        tabla_consulta1= 'TIPOUSUARIO'
+        stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.id="+idGerente+"AND u.tipo=v.id AND v.tipo='Gerente Oficina"
         self.establecer_conexion()
         cur = self.conn.cursor()
-        tipo_cuenta_l = []
-        try:
-            cur.execute(stmt)
-            data = cur.fetchall()
-            # TipoIdentificacion: id, tipo
-            for t in data:
-                tipoU = tipo.TipoCuenta(t[0], t[1])
-                tipo_cuenta_l.append(tipoU)
-        except cx_Oracle.Error as e:
-            raise e
-        cur.close()
-        self.conn.close()
-        return tipo_cuenta_l
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        gerente=None
+
+        if len(data)<=0:
+            return false
+
+        numero = 'SELECT count(*) FROM OFICINA'
+        stmt = 'INSERT INTO OFICINA VALUES ('+numero+','+name+','+address+','+phone+','+idGerente+')'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)

@@ -183,4 +183,3 @@
 		FOREIGN KEY (id_tipoCuenta) REFERENCES TIPOCUENTA (id),
 		FOREIGN KEY (id_tipoOperacion) REFERENCES TIPOOPERACION (id)
 	);
-

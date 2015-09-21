@@ -2,18 +2,19 @@
 
 import os
 import sys
-from model.dao import consulta_dao
+from model.dao import consulta_dao_catalogo
 
-class BancAndes(object):
+class BancAndesAdmin(object):
     """
     ======================================
-    Gestor principal del sistema bancario
+    Gestor principal del sistema bancario - Versión administrador
     ======================================
-    BancAndes()
+    BancAndesAdmin()
 
     Clase que representa el sistema de gestión bancaria de la entidad bancaria
     BancAndes. Esta clase establece un enlace directo entre el gestor de consulta
-    de bases de datos, y la interfaz principal.
+    de bases de datos, y la interfaz principal. Ofrece todas las funcionalidades que
+    son utilizadas por un usuario administrador de BancAndes.
 
     Atributos
     ---------
@@ -33,7 +34,7 @@ class BancAndes(object):
         ----------
         Ninguno
         """
-        self.dao = consulta_dao.ConsultaDAO()
+        self.dao = consulta_dao_catalogo.ConsultaDAOcatalogo()
 
     @classmethod
     def dar_instancia(cls):
@@ -79,12 +80,10 @@ class BancAndes(object):
         auth_data = self.dao.obtener_usuario(email)
         if auth_data is not None:
            if auth_data.pwd == pwd:
-              print True
               return [True, auth_data.id, auth_data.tipo] 
         else:
-            print False
             return [False, None, None]
 
-    def obtener_tipo_cuenta(self):
-        return self.dao.obetener_tipo_cuenta()
 
+    def registrar_oficina(self, name, phone, address, idGerente):
+        return self.dao.registrar_oficina(name,phone,address,idGerente)
