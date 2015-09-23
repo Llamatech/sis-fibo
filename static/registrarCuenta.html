@@ -16,7 +16,7 @@
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
 
-    <!--[if lt IE 9]>
+    <!--[if lt IE 9]>’’’
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
@@ -117,12 +117,12 @@
             </div>
             <div class="row contact-wrap">
                 <div class="status alert alert-success" style="display: none"></div>
-                <form id="main-contact-form" class="contact-form" name="contact-form" method="post" action="sendemail.php">
+                <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
                     <div class="col-sm-5 col-sm-offset-1">
                         <div class="form-group">
                             <div class="form-group">
                                 <label for="sel1">Tipo</label>
-                                <select class="form-control" id="sel1" required>
+                                <select class="form-control" id="sel1" required name="tipo">
                                     <option></option>
                                     {% for tipo in tipos%}
                                     <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
@@ -135,32 +135,7 @@
                             <input type="text" name="idCliente" class="form-control" required>
                         </div>
 
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Consginar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                     <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="">Retirar</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Límite</label>
-                                        <input type="text" name="idCliente" class="form-control" required>
-                                    </div>
-                                    
 
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>

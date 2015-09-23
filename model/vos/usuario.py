@@ -14,7 +14,7 @@ class Usuario(object):
         self.tipo = tipo
 
     def __repr__(self):
-        return 'id: %d ; password: %s ; email: %s ; tipo: %s' % (self.id, self.pwd, self.email, str(self.tipo))
+        return str((self.id, self.pwd, self.email, self.tipo))
 
     def __str__(self):
         return self.__repr__()

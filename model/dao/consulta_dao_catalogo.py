@@ -5,6 +5,7 @@ import sys
 import cx_Oracle
 from model.vos import tipo
 from model.vos import usuario
+from model.vos import oficina
 
 
 class ConsultaDAOcatalogo(object):
@@ -53,7 +54,7 @@ class ConsultaDAOcatalogo(object):
 
     def obtener_tipo_documento(self):
         tabla_consulta = 'TIPOIDENTIFICACION'
-        stmt = 'SELECT * FROM ' + tabla_consulta
+        stmt = "SELECT * FROM %s WHERE TIPO <> 'NIT' AND TIPO <> 'Tarjeta de Identidad'" % (tabla_consulta)
         self.establecer_conexion()
         cur = self.conn.cursor()
         tipo_documento_l = []
@@ -72,12 +73,12 @@ class ConsultaDAOcatalogo(object):
 
     def obtener_tipo_usuario(self):
         tabla_consulta = 'TIPOUSUARIO'
-        stmt = 'SELECT * FROM '
+        stmt = 'SELECT * FROM %s WHERE ID > 2 AND ID < 6' % (tabla_consulta)
         self.establecer_conexion()
         cur = self.conn.cursor()
         tipo_usuario_l = []
         try:
-            cur.execute(stmt + tabla_consulta)
+            cur.execute(stmt)
             data = cur.fetchall()
             # TipoIdentificacion: id, tipo
             for t in data:
@@ -112,12 +113,26 @@ class ConsultaDAOcatalogo(object):
         self.conn.close()
         return user
 
-        
+    def obtener_oficinas(self):
+        tabla_consulta = 'OFICINA'
+        stmt = 'SELECT * FROM %s ORDER BY ID' % (tabla_consulta)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        offices = []
+        for t in data:
+            offices.append(oficina.Oficina(t[0], t[1], t[2], t[3], t[4]))
+        # print offices
+        return offices
 
     def registrar_oficina(self, name, address, phone, idGerente):
         tabla_consulta= 'USUARIO'
         tabla_consulta1= 'TIPOUSUARIO'
-        stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.id="+idGerente+"AND u.tipo=v.id AND v.tipo='Gerente Oficina"
+        print(idGerente)
+        stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.id="+idGerente+" AND u.tipo=t.id AND t.tipo='Gerente Oficina'"
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -126,10 +141,39 @@ class ConsultaDAOcatalogo(object):
         gerente=None
 
         if len(data)<=0:
-            return false
+            return False
 
-        numero = 'SELECT count(*) FROM OFICINA'
-        stmt = 'INSERT INTO OFICINA VALUES ('+numero+','+name+','+address+','+phone+','+idGerente+')'
+        stmt = 'SELECT max(id) FROM OFICINA'
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
+        numero = cur.fetchall()[0][0]
+        stmt = 'INSERT INTO OFICINA VALUES ('+"'"+str(numero+1)+"','"+name+"','"+address+"','"+phone+"','"+idGerente+"')"
+        print(stmt)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        cur.commit()
+        cur.close()
+        self.conn.close()
+        return True
+
+    def registrar_empleado(self, usuario, empleado):
+        stmt = 'INSERT INTO USUARIO (ID, PIN, EMAIL, TIPO) VALUES %s'
+        stmt_2 = 'INSERT INTO EMPLEADO (ID, TIPO_DOCUMENTO, NUM_DOCUMENTO,' \
+                 + 'NOMBRE, APELLIDO, DIRECCION, TELEFONO, FECHA_INSCRIPCION, ' +\
+                 'FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL, OFICINA) VALUES %s'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SELECT max(ID) FROM USUARIO')
+        user_id = cur.fetchall()[0][0]+1
+        empleado.id = user_id
+        usuario.id = user_id
+        print str(empleado)
+        cur.execute(stmt % (str(usuario)))
+        cur.execute(stmt_2 % (str(empleado)))
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+

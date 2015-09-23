@@ -20,7 +20,8 @@ class RegistroHandler(tornado.web.RequestHandler):
         idGerente = self.get_body_argument("gerente")
         inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
         inst.inicializar_ruta('data/connection')
-        esGerente = inst.registrar_oficina(name, phone, address, idGerente)
+        exists = inst.registrar_oficina(name, phone, address, idGerente)
+        print("existe??"+exists)
         if not exists:
             self.render('../../static/registrarOficinaError.html')
         else:

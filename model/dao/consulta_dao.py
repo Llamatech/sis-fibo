@@ -131,3 +131,40 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return tipo_cuenta_l
+
+    def registrar_cuenta(self, tipo, idCliente, idOficina):
+        stmt = "SELECT * FROM USUARIO u WHERE u.id="+idCliente
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            return False
+
+        stmt = 'SELECT max(numero) FROM CUENTA'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        numero = cur.fetchall()[0][0]
+        stmt = 'INSERT INTO CUENTA VALUES ('+"'"+str(numero+1)+"','0','"+tipo+"','N','"+idCliente+"','"+str(idOficina)+ "')"
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit() #Holi Llami! Jajaja
+        cur.close()
+        self.conn.close()
+        return True
+
+    def get_id_oficina(self, idGerente):
+        stmt = " SELECT id FROM OFICINA WHERE " + "gerente = '" + \
+        idGerente + "'"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        return data[0][0]
+

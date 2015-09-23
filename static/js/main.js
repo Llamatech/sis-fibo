@@ -67,4 +67,54 @@ jQuery(function($) {'use strict',
 	$("a[rel^='prettyPhoto']").prettyPhoto({
 		social_tools: false
 	});	
+
+	$("#admin_employee").click(
+		function(event) {
+			$("#admin_info1").show();
+			$("#admin_info1").collapse("show");
+			$("#admin_info2").hide();
+			$("#admin_info3").hide();
+			$.smoothScroll({
+      			// scrollElement: $('div.scrollme'),
+      			scrollTarget: '#admin_info1',
+      			offset: -100
+    		});
+		/* Act on the event */
+	});
+
+	$("#admin_pa").click(
+		function(event) {
+			$("#admin_info1").hide();
+			$("#admin_info2").show();
+			$("#admin_info2").collapse("show");
+			$("#admin_info3").hide();
+			$.smoothScroll({
+      			// scrollElement: $('div.scrollme'),
+      			scrollTarget: '#admin_info2',
+      			offset: -100
+    		});
+		/* Act on the event */
+	});
+
+	$("#admin_offices").click(
+		function(event) {
+			$("#admin_info1").hide();
+			$("#admin_info2").hide();
+			$("#admin_info3").show();
+			$("#admin_info3").collapse("show");
+			$.smoothScroll({
+      			// scrollElement: $('div.scrollme'),
+      			scrollTarget: '#admin_info3',
+      			offset: -100
+    		});
+		/* Act on the event */
+	});
+
+	$('#b_date .input-group.date').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "01/01/1950",
+        endDate: "31/12/1996",
+        startView: 2,
+        language: "es"
+    });
 });

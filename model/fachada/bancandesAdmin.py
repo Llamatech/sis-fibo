@@ -84,6 +84,11 @@ class BancAndesAdmin(object):
         else:
             return [False, None, None]
 
+    def obtener_oficinas(self):
+        return self.dao.obtener_oficinas()
 
     def registrar_oficina(self, name, phone, address, idGerente):
         return self.dao.registrar_oficina(name,phone,address,idGerente)
+
+    def registrar_empleado(self, usuario, empleado):
+        self.dao.registrar_empleado(usuario, empleado)

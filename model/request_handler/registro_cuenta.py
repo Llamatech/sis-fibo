@@ -21,13 +21,15 @@ class RegistroHandler(tornado.web.RequestHandler):
 
     @tornado.gen.coroutine
     def post(self):
-        name = self.get_body_argument("nombre")
-        address = self.get_body_argument("direccion")
-        phone = self.get_body_argument("telefono")
-        idGerente = self.get_body_argument("gerente")
-        inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
+        tipo = self.get_body_argument("tipo")
+        idCliente = self.get_body_argument("idCliente")
+
+        print tipo
+
+        inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
-        esGerente = inst.registrarOficina(name, phone, address, email)
+        idOficina = inst.get_id_oficina(self.get_cookie("authcookie").split('-')[0])
+        exists = inst.registrar_cuenta(tipo, idCliente, idOficina)
         if not exists:
             self.render('../../static/registrarOficinaError.html')
         else:
