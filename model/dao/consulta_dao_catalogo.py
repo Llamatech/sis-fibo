@@ -295,6 +295,20 @@ class ConsultaDAOcatalogo(object):
         self.conn.close()
         # stmt3 = 'UPDATE OFICINA SET GERENTE = null WHERE ID = %d' % (oficina)
 
+    def obtener_oficinasL(self, col='ID', orden='ASC', a=0, b=100):
+        view = 'OFICINA_SIMP'
+        #22, 'Cedula de Ciudadania', 'cedula22', 'empleado22', 'apellido22', 'ciudad21', None, None, 'gerente_general2@bancandes.com.co', 3, 'Gerente General'
+        #TIPO_DOC,NUM_DOCUMENTO,NOMBRE,APELLIDO,CIUDAD,ID_OFICINA,NOMBRE_OFICINA,EMAIL,TIPO_U,ID,TIPO_UN
+        info = self.obtener_elementos_ordenados(view, col, orden, a, b)
+
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SELECT count(*) FROM OFICINA_SIMP')
+        count = cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: oficina.OficinaR(x[0], x[1], x[2], x[3], x[4], x[5], x[6]), info)
+        return count, data
 
 
 # SELECT * FROM

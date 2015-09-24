@@ -108,3 +108,7 @@ class BancAndesAdmin(object):
 
     def actualizar_empleado(self, _usuario, _empleado):
         self.dao.actualizar_empleado(_usuario, _empleado)
+
+    def obtener_oficinasL(self, col, orden, a, b):
+        count, data = self.dao.obtener_oficinasL(col, orden, a, b)
+        return count, data

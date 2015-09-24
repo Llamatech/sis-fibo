@@ -21,3 +21,26 @@ class Oficina(object):
 
     def __str__(self):
         return self.__repr__()
+
+class OficinaR(object):
+    def __init__(self, _id, localizacion, nombre, direccion, telefono, id_gerente, gerente):
+        self.id = _id
+        self.localizacion = localizacion
+        self.nombre = nombre
+        self.direccion = direccion
+        self.telefono = telefono
+        self.id_gerente = id_gerente
+        self.gerente = gerente
+
+    def dict_repr(self):
+        d = {
+            'id':self.id,
+            'localizacion':self.localizacion,
+            'nombre':self.nombre,
+            'direccion':self.direccion,
+            'telefono':self.telefono,
+            'id_gerente':self.id_gerente,
+            'gerente':self.gerente,
+            'delete':'/oficina?id='+str(self.id)+"&gerente ="+str(self.id_gerente)+'|/oficina?id='+str(self.id)
+        }
+        return d
