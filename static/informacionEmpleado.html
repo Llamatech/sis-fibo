@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Inicio | BancAndes</title>
+    <title>{{empl.nombre}} | BancAndes</title>
     
     <!-- core CSS -->
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.css">
     <link href="{{ static_url("css/prettyPhoto.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
@@ -94,175 +95,142 @@
 
     <section id="feature" class="transparent-bg">
         <div class="container">
-           <div class="center wow fadeInDown">
-                <h2>Servicios de Administración</h2>
-                <p class="lead">En este menú podrá encontrar las principales opciones de modificación de información y ajustes del sistema BancAndes</p>
+           <div class="center">
+                <h2>Crear nuevo Empleado</h2>
             </div>
-
-            <div class="row">
-                <div class="features">
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div id="admin_employee" class="feature-wrap">
-                            <i class="fa fa-users"></i>
-                            <h2>Gestión de Empleados</h2>
-                            <h3>Añadir, modificar y eliminar Cajeros, Gerentes Generales y Gerentes de oficina</h3>
+<!-- ID, TIPO_DOCUMENTO, NUM_DOCUMENTO, -->
+<!-- #          NOMBRE, APELLIDO, DIRECCION, TELEFONO, FECHA_INSCRIPCION, -->
+<!-- #          FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL -->
+            <div class="row center">
+                <div class="form-group">
+                    <form id="emp_form" action="empleado?id={{usuario.id}}" method="post" accept-charset="utf-8">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+                                <label for="tipoEmpleado">Tipo Empleado</label>
+                                <select class="form-control" id="tipoEmpleado" name="emp_type">
+                                {% for tipo in tipos %}
+                                    <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
+                                {% end %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+                                <label for="offices">Oficina</label>
+                                <select class="form-control" id="offices" name="office">
+                                {% for office in offices %}
+                                    <option value="{{office.id}}">{{escape(str(office.nombre))}}</option>
+                                {% end %}
+                                </select>
+                            </div>
                         </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div id="admin_pa" class="feature-wrap">
-                           <i class="fa fa-credit-card"></i>
-                            <h2>Puntos de atención</h2>
-                            <h3>Crear, eliminar o modificar Cajeros automáticos y otros puntos de atención de BancAndes</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-
-                    <div class="col-md-4 col-sm-6 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
-                        <div id="admin_offices" class="feature-wrap">
-                            <i class="fa fa-bank"></i>
-                            <h2>Oficinas</h2>
-                            <h3>Crear, eliminar o modificar Oficinas y centros de atención dedicados BancAndes</h3>
-                        </div>
-                    </div><!--/.col-md-4-->
-                    <!--/.col-md-4-->
-                </div><!--/.services-->
-            </div><!--/.row--> 
-
-            <div id="admin_info1" class="get-started center collapse">
-                <p class="lead"></p>
-                <!-- <div class="container"> -->
-                    <div class="row">
-                    <div class="col-md-12">
-                    <h2>Gestión de Empleados</h2>
-                    </div>
-                    </div>
-                    <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <!-- <div class="features"> -->
-                                    <div class="feature-wrap-in">
-                                        <a href="/registrar/empleado"><i class="fa fa-user-plus"></i></a>
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12" style="padding-top:10px;">
+                                <div class="row"> 
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="email_input">Correo Electrónico</label>
+                                            <input class="form-control" id="email_input" type="email" name="email" value="{{usuario.email}}" placeholder="" style="width:100%" disabled>
+                                        </div>
                                     </div>
-                                <!-- </div> -->
-                                <h3>Crear Empleados</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Crear Cajeros, Gerentes Generales y Gerentes de oficina</p>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="pwd_input">Contraseña</label>
+                                                <input class="form-control" id="pwd_input" type="password" name="pwd" value="" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="name_input">Nombre</label>
+                                            <input class="form-control" id="name_input" type="text" name="name" value="{{empl.nombre}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="lastname_input">Apellido</label>
+                                                <input class="form-control" id="lastname_input" type="text" name="lastname" value="{{empl.apellido}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="id_sel">Tipo de Documento</label>
+                                            <select class="form-control" id="id_sel" name="doc_type">
+                                            {% for doc in docs %}
+                                                <option value="{{doc.id}}">{{escape(str(doc.tipo))}}</option>
+                                            {% end %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="doc_input">Número Documento</label>
+                                                <input class="form-control" id="doc_input" type="text" name="doc_num" value="{{empl.num_documento}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="dir_input">Dirección Física</label>
+                                                <input class="form-control" id="dir_input" type="text" name="dir" value="{{empl.direccion}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="tel_input">Teléfono</label>
+                                                <input class="form-control" id="tel_input" type="text" name="tel" value="{{empl.telefono}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="b_date" class="col-md-6 col-xs-12">
+                                            <label for="bdate_input">Fecha Nacimiento</label>
+                                            <div class="form-group">
+                                                <input id="bdate_input" type="text" class="form-control" name="b_date" value="{{empl.fecha_nac.strftime('%d/%m/%Y')}}" disabled>
+                                            </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                                <label for="city_input">Ciudad de Residencia</label>
+                                                <input class="form-control" id="city_input" type="text" name="city" value="{{empl.ciudad}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="dep_input">Departamento</label>
+                                            <input class="form-control" id="dep_input" type="text" name="dep" value="{{empl.departamento}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="zip_input">Código Postal</label>
+                                            <input class="form-control" id="zip_input" type="text" name="zip" value="{{empl.cod_postal}}" placeholder="" style="width:100%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-12">
+                                        <button type="submit" class="btn btn-primary">Modificar</button>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                    <a href="/empleados"><i class="fa fa-user"></i></a>
-                                </div>
-                                <h3>Editar Empleados</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Modificar Cajeros, Gerentes Generales y Gerentes de oficina</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                   <a href="/empleados"> <i class="fa fa-user-times"></i></a>
-                                </div>
-                                <h3>Eliminar Empleados</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Eliminar Cajeros, Gerentes Generales y Gerentes de oficina</p>
-                                </div>
-                            </div>
-                    </div>
-                <!-- </div> -->
-                <div class="request">
-                    <h4><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></h4>
+                            <!-- <div class="col-md-6 col-xs-6">
+                                <label for="sel1">Contraseña</label>
+                                <input type="password" name="email" value="" placeholder="">
+                            </div> -->
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div id="admin_info2" class="get-started center collapse">
-                <p class="lead"></p>
-                <!-- <div class="container"> -->
-                    <div class="row">
-                    <div class="col-md-12">
-                    <h2>Puntos de Atención</h2>
-                    </div>
-                    </div>
-                    <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <!-- <div class="features"> -->
-                                    <div class="feature-wrap-in">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                <!-- </div> -->
-                                <h3>Crear Punto de Atención</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Crear nuevo Cajero Automático o Módulo presencial</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                    <i class="fa fa-minus"></i>
-                                </div>
-                                <h3>Editar Puntos de atención</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Modificar Cajeros Automáticos o Módulos presenciales existentes</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                                <h3>Eliminar Punto de Atención</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Eliminar Cajeros Automáticos o módulos presenciales existentes.</p>
-                                </div>
-                            </div>
-                    </div>
-                <!-- </div> -->
-                <div class="request">
-                    <h4><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></h4>
-                </div>
-            </div><!--/.get-started-->
-            <div id="admin_info3" class="get-started center collapse">
-                <p class="lead"></p>
-                <!-- <div class="container"> -->
-                    <div class="row">
-                    <div class="col-md-12">
-                    <h2>Oficinas</h2>
-                    </div>
-                    </div>
-                    <div class="row">
-                            <div class="col-md-4 col-sm-6">
-                                <!-- <div class="features"> -->
-                                    <div class="feature-wrap-in">
-                                        <a href="/registrar/oficina"><i class="fa fa-building-o"></i></a>
-                                    </div>
-                                <!-- </div> -->
-                                <h3>Crear Oficina</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Crear nueva Oficina</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                    <i class="fa fa-pencil"></i>
-                                </div>
-                                <h3>Editar Oficina</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Modificar una oficina existente</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="feature-wrap-in">
-                                    <i class="fa fa-building"></i>
-                                </div>
-                                <h3>Eliminar Oficina</h3>
-                                <div class="col-md-6 col-md-offset-3">
-                                    <p>Eliminar una oficina existente</p>
-                                </div>
-                            </div>
-                    </div>
-                <!-- </div> -->
-                <div class="request">
-                    <h4><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></h4>
-                </div>
-            </div>
-        </div><!--/.container-->
-    </section><!--/#feature-->
-
+    </div>
+    </section>
 
     <section id="bottom">
         <div class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
@@ -353,7 +321,10 @@
     <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
     <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
     <script src="{{ static_url("js/main.js")}}"></script>
+    <script src="{{ static_url("js/forms.js")}}"></script>
     <script src="{{ static_url("js/wow.min.js")}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

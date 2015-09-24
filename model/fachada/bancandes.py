@@ -88,9 +88,22 @@ class BancAndes(object):
     def obtener_tipo_cuenta(self):
         return self.dao.obtener_tipo_cuenta()
 
-    def registrar_cuenta(self,tipo,idCliente,idOficina):
-        return self.dao.registrar_cuenta(tipo, idCliente, idOficina)
+    def registrar_cuenta(self,tipo,idCliente,idOficina, saldo):
+        return self.dao.registrar_cuenta(tipo, idCliente, idOficina, saldo)
 
     def get_id_oficina(self, idGerente):
         return self.dao.get_id_oficina(idGerente)
+
+    def obtener_cuentas(self, idUsuario):
+        return self.dao.obtener_cuentas(idUsua)
+
+    def es_cajero(self, idUsuario):
+        return self.dao.es_cajero(idUsuario)
+
+
+    def generar_numero_operacion(self):
+        return self.dao.generar_numero_operacion()
+
+    def get_id_pa(self, idGerente):
+        return self.dao.get_id_pa(idGerente)
 

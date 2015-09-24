@@ -2,6 +2,8 @@ import os
 import sys
 import home
 import example
+import empleado
+import empleados
 import login_handler
 import registro_usuario
 import registro_oficina

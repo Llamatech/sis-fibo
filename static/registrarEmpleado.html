@@ -103,7 +103,7 @@
 <!-- #          FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL -->
             <div class="row center">
                 <div class="form-group">
-                    <form action="/registrar/empleado" method="post" accept-charset="utf-8">
+                    <form id="emp_form" action="/registrar/empleado" method="post" accept-charset="utf-8">
                         <div class="row">
                             <div class="col-md-6 col-xs-12">
                                 <label for="tipoEmpleado">Tipo Empleado</label>
@@ -216,6 +216,9 @@
                                 <div class="row">
                                     <div class="col-md-6 col-xs-12">
                                         <button type="submit" class="btn btn-primary">Crear</button>
+                                    </div>
+                                    <div class="col-md-6 col-xs-12">
+                                        <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
                                     </div>
                                 </div>
                             </div>

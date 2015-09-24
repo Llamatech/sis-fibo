@@ -132,7 +132,7 @@ class ConsultaDAO(object):
         self.conn.close()
         return tipo_cuenta_l
 
-    def registrar_cuenta(self, tipo, idCliente, idOficina):
+    def registrar_cuenta(self, tipo, idCliente, idOficina, saldo):
         stmt = "SELECT * FROM USUARIO u WHERE u.id="+idCliente
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -148,10 +148,10 @@ class ConsultaDAO(object):
         cur = self.conn.cursor()
         cur.execute(stmt)
         numero = cur.fetchall()[0][0]
-        stmt = 'INSERT INTO CUENTA VALUES ('+"'"+str(numero+1)+"','0','"+tipo+"','N','"+idCliente+"','"+str(idOficina)+ "')"
+        stmt = 'INSERT INTO CUENTA VALUES ('+"'"+str(numero+1)+"','"+saldo+"','"+tipo+"','N','"+idCliente+"','"+str(idOficina)+ "')"
         cur = self.conn.cursor()
         cur.execute(stmt)
-        self.conn.commit() #Holi Llami! Jajaja
+        self.conn.commit()
         cur.close()
         self.conn.close()
         return True
@@ -164,7 +164,53 @@ class ConsultaDAO(object):
         print(stmt)
         cur.execute(stmt)
         data = cur.fetchall()
+        if len(data)<=0:
+            return -1
         cur.close()
         self.conn.close()
         return data[0][0]
 
+    def obtener_cuentas(self, idUsuario):
+        stmt = "SELECT * FROM CUENTAS where id = " + "'"+idUsuario+ "'"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cuentas = []
+        for t in data:
+            cuenta = cuenta.Cuenta(t[0], t[1], t[2], t[3], t[4], t[5])
+            cuentas.append(cuenta)
+        return cuentas
+
+    def es_cajero(self, idUsuario):
+        stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.tipo = t.id AND t.tipo='Cajero' AND u.id="+"'"+idUsuario+"'"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        if len(data) > 0:
+            return True
+        else:
+            return False
+
+    def generar_numero_operacion(self):
+        stmt = "SELECT max(numero) FROM OPERACION"
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        return data[0][0]
+
+    def get_id_pa(self, idGerente):
+        stmt = " SELECT p.id FROM OFICINA o, PUNTOSATENCION p WHERE p.oficina=o.id AND o.gerente="+"'"+idGerente+"'" 
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        if len(data)<=0:
+            return -1
+        cur.close()
+        self.conn.close()
+        return data[0][0]

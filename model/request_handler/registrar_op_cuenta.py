@@ -14,22 +14,45 @@ class RegistroHandler(tornado.web.RequestHandler):
         # b = {2:4, 5:7}
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
-        tipos_cuenta = inst.obtener_tipo_cuenta()
+        cuentas = inst.obtener_cuentas(self.getCookie("authcookie").slpit('-')[0])
         print len(tipos_cuenta)
         #self.render('template.html', a=a, b=b)
-        self.render('../../static/registrarCuenta.html', tipos=tipos_cuenta)
+        self.es_cajero = inst.es_cajero(self.getCookie("authcookie").slpit('-')[0])
+        if self.es_cajero:
+            self.render('../../static/registrarOperacionCuentaCajero.html', cuentas=cuentas)
+        else:
+            self.render('../../static/registrarOperacionCuenta2.html')
 
     @tornado.gen.coroutine
     def post(self):
-        tipo = self.get_body_argument("tipo")
-        idCliente = self.get_body_argument("idCliente")
+        numeroCuenta = self.get_body_argument("cuenta")
+        tipoOperacion = self.get_body_argument("cambiar")
+        id='0'
+        monto = '0'
+        if tipoOperacion == 'consignar':
+            id='3'
+            monto = self.get_body_argument("montoCons")
+        elif tipoOperacion == 'retirar':
+            id='4'
+            monto = self.get_body_argument("montoRet")
 
-        print tipo
 
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
-        idOficina = inst.get_id_oficina(self.getCookie("authcookie").split('-')[0])
+        numero = inst.generar_numero_operacion()
+        idPuntoAtencion = inst.get_id_pa(self.getCookie("authcookie").split('-')[0])
+        if idPuntoAtencion == -1:
+            idPuntoAtencion = '4'
+        cliente='0'
+        cajero = 'NULL'
+        if self.es_cajero:
+            cliente = inst.duenio_cuenta(numeroCuenta)
+            cajero = self.getCookie("authcookie").split('-')[0]
+        else:
+            cliente = self.getCookie("authcookie").split('-')[0]
         exists = inst.registrarCuenta(tipo, idCliente,idOficina)
+
+        operacion = operacion.Operacion(numero,id,cliente,monto,)
         if not exists:
             self.render('../../static/registrarOficinaError.html')
         else:

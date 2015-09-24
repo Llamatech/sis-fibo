@@ -15,7 +15,11 @@ def main():
         (r"/login", handlers.login_handler.LoginHandler),
         (r"/registrar/cuenta", handlers.registro_cuenta.RegistroHandler),
         (r"/logout", handlers.login_handler.LogoutHandler), 
-        (r"/registrar/oficina", handlers.registro_oficina.RegistroHandler)], debug=True, serve_traceback=True, autoreload=True, **settings)
+        (r"/registrar/oficina", handlers.registro_oficina.RegistroHandler),
+        (r"/empleados", handlers.empleados.ListHandler),
+        (r"/empleado", handlers.empleado.EditionHandler),
+        (r"/registrar/operacion/cuenta", handlers.registrar_op_cuenta.RegistroHandler)], 
+        debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)
     try:

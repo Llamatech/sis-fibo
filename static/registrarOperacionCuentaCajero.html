@@ -112,8 +112,8 @@
     <section id="contact-page">
         <div class="container">
             <div class="center">
-                <h2>Operación sobre cuenta</h2>
-                <p class="lead">En esta sección, puede realizar cualquier operación valida sobre cualquier cuenta que le pertenezca.</p>
+                <h2>Operación sobre cuenta de un cliente</h2>
+                <p class="lead">En esta sección, puede realizar cualquier operación valida sobre las cuentas de cualquiera de sus clientes.</p>
             </div>
             <div class="row contact-wrap">
                 <div class="status alert alert-success" style="display: none"></div>
@@ -144,14 +144,9 @@
                     </script>
                     <div class="col-sm-10 col-sm-offset-1">
                         <div>
-                            <h2>Escoja una de sus cuentas:</h2>
                             <div class="form-group">
-                                <select class="form-control" id="sel1" required name="cuenta">
-                                    <option></option>
-                                    {% for cuenta in cuentas%}
-                                    <option value="{{cuenta.numero}}">{{escape(str(cuenta.numero))}}</option>
-                                    {% end %}
-                                </select>
+                                <label>Número de la cuenta del cliente:</label>
+                                <input type="text" name="cuenta" id="cuenta" class="form-control" required="required">
                             </div>
                             <!---<button class="btn btn-default">Abrir Cuenta</button>
                             <button class="btn btn-default">Cerrar Cuenta</button>--->

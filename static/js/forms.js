@@ -1,7 +1,8 @@
 $(document).ready(function() {
 
+	
     // process the form
-    $('#form').submit(function(event) {
+    $('#emp_form').submit(function(event) {
 
     });
 });

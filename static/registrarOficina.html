@@ -15,6 +15,7 @@
     <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" />
 
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
@@ -107,10 +108,14 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-5 text-center">
-                        <div class="gmap">
-                            <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com.co/maps/@4.6384941,-74.1734414,12.16z"></iframe>
+                        
+                            <div id="map-vis">
+                    <div id="map"></div>
+                    <script>
+                       
+                    </script>
+                  </div>
                         </div>
-                    </div>
 
                     <div class="col-sm-7 map-content">
                         <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
@@ -140,17 +145,12 @@
                             <input type="text" name="telefono" class="form-control" required="required">
                         </div>
                                 </address>
-
-                                    <address>
-                                    <div class="form-group">
-                            <label>ID gerente</label>
-                            <input type="text" name="gerente" class="form-control" required="required">
-                        </div>
-                                </address>
                                 </li>
                                 
                                 <div class="form-group">
+                                <div class="row">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
+                        </div>
                         </div>
                             </ul>
                         </form>
@@ -253,6 +253,7 @@
     </footer>
     <!--/#footer-->
 
+    <script src="{{ static_url("js/maps.js")}}"></script>
     <script src="{{ static_url("js/jquery.js")}}"></script>
     <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
     <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
@@ -260,6 +261,7 @@
     <script src="{{ static_url("js/main.js")}}"></script>
     <script src="{{ static_url("js/wow.min.js")}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 </body>
 
 </html>

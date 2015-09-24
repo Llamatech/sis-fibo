@@ -117,4 +117,9 @@ jQuery(function($) {'use strict',
         startView: 2,
         language: "es"
     });
+
+    $('#back_btn').click(function(){
+		parent.history.back();
+		return false;
+	});
 });

@@ -44,6 +44,7 @@ class RegistroHandler(tornado.web.RequestHandler):
         cod_postal = self.get_body_argument('zip', None)
 
         valores_fecha = map(int, fecha_nacimiento.split('/'))
+        print valores_fecha
         fecha = datetime.date(valores_fecha[2], valores_fecha[1], valores_fecha[0])
         fecha_ins = datetime.date.today()
         _empleado = empleado.Empleado(None, tipo_doc, num_doc, nombre, apellido,
@@ -57,6 +58,7 @@ class RegistroHandler(tornado.web.RequestHandler):
         inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
         inst.inicializar_ruta('data/connection')
         inst.registrar_empleado(_usuario, _empleado)
+        self.redirect('/registrar/empleado')
 
 
     # def write_error(self, status_code, **kwargs):

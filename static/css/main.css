@@ -2554,6 +2554,21 @@ shortcodes page css
   margin-left: 15px;
 }
 
+#map { border: 1px solid rgb(240, 240, 240);
+    /*margin:5px;*/
+    background-color: rgb(255, 255, 255);
+    height: 200px;
+    width : 200px;
+    float:center;}
+    #map-vis
+    {
+    box-shadow: 1px 1px 2px #888888;
+    border: 1px solid rgb(240, 240, 240);
+    height: 220px;
+    width : 220px;
+    padding:10px;
+    float:right;
+    }
 
 
 

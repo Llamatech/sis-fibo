@@ -6,6 +6,7 @@ import cx_Oracle
 from model.vos import tipo
 from model.vos import usuario
 from model.vos import oficina
+from model.vos import empleado
 
 
 class ConsultaDAOcatalogo(object):
@@ -73,7 +74,7 @@ class ConsultaDAOcatalogo(object):
 
     def obtener_tipo_usuario(self):
         tabla_consulta = 'TIPOUSUARIO'
-        stmt = 'SELECT * FROM %s WHERE ID > 2 AND ID < 6' % (tabla_consulta)
+        stmt = 'SELECT * FROM %s WHERE ID > 2' % (tabla_consulta)
         self.establecer_conexion()
         cur = self.conn.cursor()
         tipo_usuario_l = []
@@ -128,32 +129,18 @@ class ConsultaDAOcatalogo(object):
         # print offices
         return offices
 
-    def registrar_oficina(self, name, address, phone, idGerente):
-        tabla_consulta= 'USUARIO'
-        tabla_consulta1= 'TIPOUSUARIO'
-        print(idGerente)
-        stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.id="+idGerente+" AND u.tipo=t.id AND t.tipo='Gerente Oficina'"
-        self.establecer_conexion()
-        cur = self.conn.cursor()
-        print(stmt)
-        cur.execute(stmt)
-        data = cur.fetchall()
-        gerente=None
-
-        if len(data)<=0:
-            return False
-
+    def registrar_oficina(self, name, address, phone):
         stmt = 'SELECT max(id) FROM OFICINA'
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
         numero = cur.fetchall()[0][0]
-        stmt = 'INSERT INTO OFICINA VALUES ('+"'"+str(numero+1)+"','"+name+"','"+address+"','"+phone+"','"+idGerente+"')"
+        stmt = 'INSERT INTO OFICINA VALUES ('+"'"+str(numero+1)+"','"+name+"','"+address+"','"+phone+"',null)"
         print(stmt)
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
-        cur.commit()
+        self.conn.commit()
         cur.close()
         self.conn.close()
         return True
@@ -163,6 +150,7 @@ class ConsultaDAOcatalogo(object):
         stmt_2 = 'INSERT INTO EMPLEADO (ID, TIPO_DOCUMENTO, NUM_DOCUMENTO,' \
                  + 'NOMBRE, APELLIDO, DIRECCION, TELEFONO, FECHA_INSCRIPCION, ' +\
                  'FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL, OFICINA) VALUES %s'
+        g_oficina = self.es_gerente_oficina(usuario.tipo)
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute('SELECT max(ID) FROM USUARIO')
@@ -172,8 +160,147 @@ class ConsultaDAOcatalogo(object):
         print str(empleado)
         cur.execute(stmt % (str(usuario)))
         cur.execute(stmt_2 % (str(empleado)))
+        if g_oficina:
+            cur.execute('UPDATE OFICINA SET GERENTE = %d WHERE ID = %d' % (empleado.id, empleado.oficina))
         self.conn.commit()
         cur.close()
         self.conn.close()
 
+    def obtener_elementos_ordenados(self, tab, col, order, a, b):
+        stmt = """SELECT * FROM
+                    (SELECT u.*, ROWNUM r
+                      FROM
+                      (SELECT * 
+                       FROM %s
+                       ORDER BY LPAD(%s, 30) %s) u)
+                  WHERE r >= %d AND r <= %d
+               """
+        stmt = stmt % (tab, col, order, a, b)
+        print stmt
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        data = map(lambda x: x[0:-1], data)
+        cur.close()
+        self.conn.close()
+        return data
 
+    def obtener_empleados(self, col='ID', orden='ASC', a=0, b=100):
+        view = 'EMP_SIMP'
+        #22, 'Cedula de Ciudadania', 'cedula22', 'empleado22', 'apellido22', 'ciudad21', None, None, 'gerente_general2@bancandes.com.co', 3, 'Gerente General'
+        #TIPO_DOC,NUM_DOCUMENTO,NOMBRE,APELLIDO,CIUDAD,ID_OFICINA,NOMBRE_OFICINA,EMAIL,TIPO_U,ID,TIPO_UN
+        info = self.obtener_elementos_ordenados(view, col, orden, a, b)
+
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SELECT count(*) FROM EMP_SIMP')
+        count = cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+
+        data = map(lambda x: empleado.EmpleadoR(x[0], x[1], x[2], x[3], x[4], 
+                                                x[5], x[6], x[7], x[8], x[9], x[10]), info)
+        return count, data
+
+    def es_gerente_oficina(self, tipo_usuario):
+        stmt = 'SELECT TIPO FROM TIPOUSUARIO WHERE ID = %d' % (tipo_usuario)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        result = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        if result[0][0] == 'Gerente general':
+            return True
+        return False
+
+    def eliminar_empleado(self, _id, tipo_usuario, oficina):
+        stmt = 'DELETE FROM EMPLEADO WHERE ID = %d' % (_id)
+        stmt2 = 'DELETE FROM USUARIO WHERE ID = %d' % (_id)
+        g_oficina = self.es_gerente_oficina(tipo_usuario)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        try:
+            cur.execute(stmt)
+            cur.execute(stmt2)
+            if g_oficina:
+                cur.execute('UPDATE OFICINA SET GERENTE = null WHERE ID = %d' % (oficina))
+        except cx_Oracle.Error, e:
+            self.conn.rollback()
+            raise e
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+    def buscar_usuario(self, _id):
+        stmt = 'SELECT * FROM USUARIO WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        t = data[0]
+        _usuario = usuario.Usuario(t[0], t[1], t[2], t[3])
+        return _usuario
+
+    def buscar_empleado(self, _id):
+        stmt = 'SELECT * FROM EMPLEADO WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        t = data[0]
+        empl = empleado.Empleado(t[0], t[1], t[2], t[3], t[4],
+                                 t[5], t[6], t[7], t[8], t[9],
+                                 t[10], t[11], t[12])
+        return empl
+
+    def actualizar_empleado(self, _usuario, _empleado):
+        stmt = "UPDATE USUARIO SET PIN = '%s', TIPO = %d WHERE ID = %d"
+        stmt_alt = "UPDATE USUARIO SET TIPO = %d WHERE ID = %d"
+        stmt2 = """UPDATE EMPLEADO 
+                   SET TIPO_DOCUMENTO = %d,
+                       NUM_DOCUMENTO = '%s',
+                       NOMBRE = '%s',
+                       APELLIDO = '%s',
+                       DIRECCION = '%s',
+                       TELEFONO = '%s',
+                       CIUDAD = '%s',
+                       DEPARTAMENTO = '%s',
+                       COD_POSTAL = '%s',
+                       OFICINA = %d
+                    WHERE ID = %d
+                """
+        if _usuario.pwd != '': 
+            stmt = stmt % (_usuario.pwd, _usuario.tipo, _usuario.id)
+        else:
+            stmt = stmt_alt % (_usuario.tipo, _usuario.id)
+        stmt2 = stmt2 % (_empleado.tipo_doc, _empleado.num_documento,
+                         _empleado.nombre, _empleado.apellido,
+                         _empleado.direccion, _empleado.telefono,
+                         _empleado.ciudad, _empleado.departamento,
+                         _empleado.cod_postal, _empleado.oficina,
+                         _empleado.id)
+
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        cur.execute(stmt2)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        # stmt3 = 'UPDATE OFICINA SET GERENTE = null WHERE ID = %d' % (oficina)
+
+
+
+# SELECT * FROM
+# (SELECT u.*, ROWNUM r
+# FROM
+# (SELECT * 
+# FROM EMPLEADO
+# ORDER BY LPAD(NUM_DOCUMENTO, 30) ASC) u)
+# WHERE r >= 1 AND r <= 100;
