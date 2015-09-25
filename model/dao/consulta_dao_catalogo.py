@@ -129,17 +129,19 @@ class ConsultaDAOcatalogo(object):
         # print offices
         return offices
 
-    def registrar_oficina(self, name, address, phone):
+    def registrar_oficina(self, name, address, phone, id_manager):
         stmt = 'SELECT max(id) FROM OFICINA'
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
         numero = cur.fetchall()[0][0]
-        stmt = 'INSERT INTO OFICINA VALUES ('+"'"+str(numero+1)+"','"+name+"','"+address+"','"+phone+"',null)"
+        stmt = 'INSERT INTO OFICINA VALUES ('+"'"+str(numero+1)+"','"+name+"','"+address+"','"+phone+"',"+str(id_manager)+")"
         print(stmt)
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
+        stmt2 = 'UPDATE EMPLEADO SET OFICINA = %d WHERE ID = %d' % (numero+1, id_manager)
+        cur.execute(stmt2)
         self.conn.commit()
         cur.close()
         self.conn.close()
@@ -310,6 +312,40 @@ class ConsultaDAOcatalogo(object):
         data = map(lambda x: oficina.OficinaR(x[0], x[1], x[2], x[3], x[4], x[5], x[6]), info)
         return count, data
 
+    def obtener_gerentes_oficinaC(self, search_term):
+        search_term = "'"+search_term+"%'"
+        stmt = """SELECT * FROM EMP_SIMP WHERE
+                  (TO_CHAR(ID) LIKE %s OR
+                  EMAIL LIKE %s OR
+                  NUM_DOCUMENTO LIKE %s)
+                  AND TIPO_U = 4
+                  ORDER BY ID"""
+        stmt = stmt % (search_term, search_term, search_term)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: empleado.EmpleadoR(x[0], x[1], x[2], x[3], x[4], 
+                                                x[5], x[6], x[7], x[8], x[9], x[10]), data)
+        return data
+
+    def eliminar_oficina(self, _id, gerente):
+        stmt_0 = 'UPDATE EMPLEADO SET OFICINA = null WHERE OFICINA = %d' % (_id)
+        stmt = 'DELETE FROM PUNTOSATENCION WHERE OFICINA = %d' % (_id)
+        stmt_3 = 'DELETE FROM OFICINA WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt_0)
+        cur.execute(stmt)
+        print "First statement executed!"
+        print stmt_3
+        cur.execute(stmt_3)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        print "Third statement executed!"
 
 # SELECT * FROM
 # (SELECT u.*, ROWNUM r

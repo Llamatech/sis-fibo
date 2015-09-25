@@ -90,8 +90,8 @@ class BancAndesAdmin(object):
     def obtener_oficinas(self):
         return self.dao.obtener_oficinas()
 
-    def registrar_oficina(self, name, phone, address):
-        return self.dao.registrar_oficina(name,phone,address)
+    def registrar_oficina(self, name, phone, address, id_manager):
+        return self.dao.registrar_oficina(name,phone,address, id_manager)
 
     def registrar_empleado(self, usuario, empleado):
         self.dao.registrar_empleado(usuario, empleado)
@@ -112,3 +112,10 @@ class BancAndesAdmin(object):
     def obtener_oficinasL(self, col, orden, a, b):
         count, data = self.dao.obtener_oficinasL(col, orden, a, b)
         return count, data
+
+    def obtener_gerentes_oficinaC(self, search_term):
+        data = self.dao.obtener_gerentes_oficinaC(search_term)
+        return data
+
+    def eliminar_oficina(self, _id, gerente):
+        self.dao.eliminar_oficina(_id, gerente)

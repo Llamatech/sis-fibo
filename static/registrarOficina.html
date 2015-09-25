@@ -17,6 +17,7 @@
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
     <link href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" />
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 
 
     <!--[if lt IE 9]>
@@ -149,16 +150,22 @@
                                 </address>
                                 </li>
                                 
-                                <div class="form-group">
-                                <div class="row">
-                                <div class="col-md-6 col-xs-12">
+                                <li class="col-sm-6">
+                                    <address>
+                                    <div class="form-group">
+                            <label>Gerente</label>
+                                <select name="gerente" class="itemSearch" style="width:100%">
+                                    <option value="-1" selected="selected">Buscar un gerente</option>
+                                 </select>
+                        </div>
+                                </address>
+                                </li>
+                        <div class="col-md-6 col-xs-12">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
                             </div>
                              <div class="col-md-6 col-xs-12">
                                         <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
                                     </div>
-                        </div>
-                        </div>
                             </ul>
                         </form>
                     </div>
@@ -267,9 +274,11 @@
     <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
     <script src="{{ static_url("js/main.js")}}"></script>
     <script src="{{ static_url("js/wow.min.js")}}"></script>
+    <script src="{{ static_url("js/selector.js")}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </body>
 
 </html>

@@ -95,7 +95,7 @@ class BancAndes(object):
         return self.dao.get_id_oficina(idGerente)
 
     def obtener_cuentas(self, idUsuario):
-        return self.dao.obtener_cuentas(idUsua)
+        return self.dao.obtener_cuentas(idUsuario)
 
     def es_cajero(self, idUsuario):
         return self.dao.es_cajero(idUsuario)
@@ -106,4 +106,13 @@ class BancAndes(object):
 
     def get_id_pa(self, idGerente):
         return self.dao.get_id_pa(idGerente)
+
+    def duenio_cuenta(self, numeroCuenta):
+        return self.dao.duenio_cuenta(numeroCuenta)
+
+    def registrar_operacion_cuenta(self, operacion):
+        return self.dao.registrar_operacion_cuenta(operacion)
+
+    def duenio_prestamo(self, numeroPrestamo):
+        return self.dao.duenio_prestamo(numeroPrestamo)
 

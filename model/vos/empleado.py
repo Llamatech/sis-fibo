@@ -1,6 +1,5 @@
 #-*- coding:iso-8859-1 -*-
 
-
 """
 Clase que modela la información de un empleado en el sistema    
 """
@@ -15,7 +14,7 @@ class Empleado(object):
                  direccion, telefono, fecha_ins, fecha_nac,
                  ciudad, departamento, cod_postal, oficina):
         self.id = id
-        self.tipo_doc = int(tipo_doc)
+        self.tipo_doc = tipo_doc
         self.num_documento = num_documento
         self.nombre = nombre
         self.apellido = apellido
@@ -29,10 +28,10 @@ class Empleado(object):
         self.oficina = oficina
 
     def __repr__(self):
-    	args = (self.id, int(self.tipo_doc), self.num_documento, self.nombre,
+        args = (self.id, self.tipo_doc, self.num_documento, self.nombre,
                 self.apellido, self.direccion, self.telefono,
                 "TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_ins.strftime('%d/%m/%Y')),"TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_nac.strftime('%d/%m/%Y')), self.ciudad,
-                self.departamento, self.cod_postal, int(self.oficina))
+                self.departamento, self.cod_postal, self.oficina)
         return str(args).replace("\"", '')
 
     def __str__(self):
