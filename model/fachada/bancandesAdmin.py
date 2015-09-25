@@ -113,9 +113,16 @@ class BancAndesAdmin(object):
         count, data = self.dao.obtener_oficinasL(col, orden, a, b)
         return count, data
 
+    def obtener_oficina(self, _id):
+        oficina, gerente = self.dao.obtener_oficina(_id)
+        return oficina, gerente
+
     def obtener_gerentes_oficinaC(self, search_term):
         data = self.dao.obtener_gerentes_oficinaC(search_term)
         return data
 
     def eliminar_oficina(self, _id, gerente):
         self.dao.eliminar_oficina(_id, gerente)
+
+    def actualizar_oficina(self, _id, name, phone, address, idGerente):
+        self.dao.actualizar_oficina(_id, name, phone, address, idGerente)

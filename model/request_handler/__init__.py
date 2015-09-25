@@ -2,6 +2,7 @@ import os
 import sys
 import home
 import example
+import oficina
 import oficinas
 import empleado
 import empleados

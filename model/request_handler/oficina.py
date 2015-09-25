@@ -15,9 +15,11 @@ class EditionHandler(tornado.web.RequestHandler):
 
     @tornado.gen.coroutine
     def get(self):
-        _id = int(self.get_argument('id', None))
-        # inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
-        # inst.inicializar_ruta('data/connection')
+        _id = int(self.get_argument('id', None)) 
+        inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
+        inst.inicializar_ruta('data/connection')
+        oficina, empleado = inst.obtener_oficina(_id)
+        self.render('../../static/informacionOficina.html', oficina=oficina, empleado=empleado)
         # tipos = inst.obtener_tipo_documento()
         # tipo_usuario = inst.obtener_tipo_usuario()
         # oficinas = inst.obtener_oficinas()
@@ -66,6 +68,14 @@ class EditionHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def post(self):
         _id = int(self.get_argument('id', None))
+        name = self.get_body_argument("nombre")
+        address = self.get_body_argument("direccion")
+        phone = self.get_body_argument("telefono")
+        idGerente = int(self.get_body_argument("gerente"))
+        inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
+        inst.inicializar_ruta('data/connection')
+        inst.actualizar_oficina(_id, name, phone, address, idGerente)
+        self.redirect('/oficinas')
         # tipo_empleado = self.get_body_argument('emp_type', None)
         # oficina = self.get_body_argument('office', None)
         # email = self.get_body_argument('email', None)

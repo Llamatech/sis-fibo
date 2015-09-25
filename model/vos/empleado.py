@@ -25,14 +25,17 @@ class Empleado(object):
         self.ciudad = ciudad
         self.departamento = departamento
         self.cod_postal = cod_postal
-        self.oficina = oficina
+        if (oficina is not None) and len(oficina) > 0:
+            self.oficina = str(oficina)
+        else:
+            self.oficina = 'null'
 
     def __repr__(self):
         args = (self.id, self.tipo_doc, self.num_documento, self.nombre,
                 self.apellido, self.direccion, self.telefono,
                 "TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_ins.strftime('%d/%m/%Y')),"TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_nac.strftime('%d/%m/%Y')), self.ciudad,
-                self.departamento, self.cod_postal, self.oficina)
-        return str(args).replace("\"", '')
+                self.departamento, self.cod_postal)
+        return str(args).replace("\"", '')[0:-1] + ','+self.oficina+')'
 
     def __str__(self):
         return self.__repr__()

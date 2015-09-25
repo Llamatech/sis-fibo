@@ -347,6 +347,51 @@ class ConsultaDAOcatalogo(object):
         self.conn.close()
         print "Third statement executed!"
 
+    def obtener_oficina(self, _id):
+        stmt = 'SELECT * FROM OFICINA WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        data = data[0]
+        office = oficina.Oficina(data[0], data[1], data[2], data[3], data[4])
+        stmt2 = 'SELECT * FROM EMP_SIMP WHERE ID = %d' % (office.gerente)
+        cur.execute(stmt2)
+        x = cur.fetchall()[0]
+        cur.close()
+        self.conn.close()
+        gerente = empleado.EmpleadoR(x[0], x[1], x[2], x[3], x[4], 
+                                     x[5], x[6], x[7], x[8], x[9], x[10])
+        return office, gerente
+
+    def actualizar_oficina(self, _id, name, phone, address, idGerente):
+        stmt = 'SELECT * FROM OFICINA WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        data = data[0]
+        office = oficina.Oficina(data[0], data[1], data[2], data[3], data[4])
+        values = ''
+        if office.nombre != name:
+            values += "NOMBRE = '%s'\n" % (name)
+        if office.telefono != phone:
+            values += "TELEFONO = '%s'\n" % (phone)
+        if office.direccion != address:
+            values += "DIRECCION = '%s'\n" % (address)
+        if office.gerente != idGerente:
+            stmt2 = 'UPDATE EMPLEADO SET OFICINA = null WHERE ID = %d' % (office.gerente)
+            stmt3 = 'UPDATE EMPLEADO SET OFICINA = %d WHERE ID = %d' % (_id, idGerente)
+            cur.execute(stmt2)
+            cur.execute(stmt3)
+            values += 'GERENTE = %d\n' % (idGerente)
+        upd_stmt = 'UPDATE OFICINA SET %s WHERE ID = %d' % (values, _id)
+        cur.execute(upd_stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close() 
+
+
 # SELECT * FROM
 # (SELECT u.*, ROWNUM r
 # FROM

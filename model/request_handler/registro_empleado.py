@@ -48,10 +48,11 @@ class RegistroHandler(tornado.web.RequestHandler):
         fecha_ins = datetime.date.today()
         _empleado = empleado.Empleado(None, tipo_doc, num_doc, nombre, apellido,
                     direccion, telefono, fecha_ins, fecha, ciudad, departamento,
-                    cod_postal, int(oficina))
+                    cod_postal, oficina)
 
         _usuario = usuario.Usuario(48, pwd, email, int(tipo_empleado))
 
+        print len(oficina)
         print _empleado
         print _usuario
         inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
