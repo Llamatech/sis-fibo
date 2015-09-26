@@ -1,0 +1,68 @@
+#-*- coding:iso-8859-1 -*-
+
+import os
+import sys
+import datetime
+import tornado.web
+import tornado.escape
+from tornado import gen
+from model.vos import oficina
+from model.fachada import bancandes
+
+class ListHandler(tornado.web.RequestHandler):
+    def initialize(self, some_attribute=None):
+        self.some_attribute = some_attribute
+        inst = bancandes.BancAndes.dar_instancia()
+        inst.inicializar_ruta('data/connection')
+        self.tipo = inst.obtener_tipo_de_usuario(self.get_cookie("authcookie").split('-')[0])
+
+    @tornado.gen.coroutine
+    def get(self):
+        if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
+            idUsuario = None
+            cuentas = None
+            if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
+                idUsuario = int(self.get_body_argument("idCliente"))
+            else:
+                idUsuario=self.get_cookie("authcookie").split('-')[0]
+
+
+            if self.tipo == 'Gerente Oficina':
+                cuentas=inst.obtener_cuentas_oficina(idUsuario, inst.get_id_oficina(self.get_cookie("authcookie").split('-')[0]))
+            else:
+                cuentas=inst.obtener_cuentas(idUsuario)
+
+            prestamos=inst.obtener_prestamos(idUsuario)
+            oficinas=inst.obtener_oficinas(idUsuario)
+            operaciones=inst.obtener_operaciones(idUsuario)
+            self.render('../../static/resultadosInfoClienteGGeneral.html', cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
+        else:
+            self.render('../../static/infoClienteEmpleado.html')
+
+
+    @tornado.gen.coroutine
+    def post(self):
+        inst = bancandes.BancAndes.dar_instancia()
+        inst.inicializar_ruta('data/connection')
+        idUsuario = None
+        cuentas = None
+        print ("tipo: "+self.tipo)
+        if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
+            idUsuario=self.get_cookie("authcookie").split('-')[0]
+            
+        else:
+            idUsuario = int(self.get_body_argument("idCliente"))
+            
+
+
+        if self.tipo == 'Gerente Oficina':
+            cuentas=inst.obtener_cuentas_oficina(idUsuario, inst.get_id_oficina(self.get_cookie("authcookie").split('-')[0]))
+        else:
+            cuentas=inst.obtener_cuentas(idUsuario)
+
+        prestamos=inst.obtener_prestamos(idUsuario)
+        oficinas=inst.obtener_oficinas(idUsuario)
+        operaciones=inst.obtener_operaciones(idUsuario)
+        print(cuentas)
+        self.render('../../static/resultadosInfoClienteGGeneral.html', cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
+

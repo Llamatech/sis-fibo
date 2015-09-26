@@ -19,8 +19,16 @@ def main():
         (r"/empleados", handlers.empleados.ListHandler),
         (r"/empleado", handlers.empleado.EditionHandler),
         (r"/registrar/operacion/cuenta", handlers.registrar_op_cuenta.RegistroHandler),
+        (r"/registrar/operacion/prestamo", handlers.registrar_op_prestamo.RegistroHandler),
         (r"/oficinas", handlers.oficinas.ListHandler),
-        (r"/oficina", handlers.oficina.EditionHandler)], 
+        (r"/oficina", handlers.oficina.EditionHandler),
+        (r"/registrar/puntoAtencion", handlers.registro_pa.RegistroHandler),
+        (r"/puntosAtencion", handlers.puntos_atencion.ListHandler),
+        (r"/puntoAtencion", handlers.punto_atencion.EditionHandler),
+        (r"/cuentas", handlers.cuentas.ListHandler),
+        (r"/informacion/cliente", handlers.consultar_info_cliente.ListHandler),
+        (r"/usuarios", handlers.usuarios.ListHandler),
+        (r"/registrar/prestamo", handlers.registro_prestamo.RegistroHandler)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)

@@ -114,10 +114,62 @@ jQuery(function($) {
             /* Act on the event */
         });
 
+    $("#ggeneral_misc").click(
+        function(event) {
+            // $("#admin_info1").hide();
+            // $("#admin_info2").hide();
+            // $("#admin_info3").show();
+            $("#ggeneral_info3").collapse("show");
+            $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#ggeneral_info3',
+                offset: -100
+            });
+            /* Act on the event */
+        });
+
     $('#b_date .input-group.date').datepicker({
         format: "dd/mm/yyyy",
         startDate: "01/01/1950",
         endDate: "31/12/1996",
+        startView: 2,
+        language: "es"
+    });
+
+    $('#fromD').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "01/01/2015",
+        endDate: "today",
+        startView: 2,
+        language: "es"
+    });
+
+    $('#cuota_input').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "today",
+        startView: 2,
+        language: "es"
+    });
+
+    $('#toD').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "01/01/2015",
+        endDate: "today",
+        startView: 2,
+        language: "es"
+    });
+
+    $('#toMD').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "01/01/2015",
+        endDate: "today",
+        startView: 2,
+        language: "es"
+    });
+    $('#fromMD').datepicker({
+        format: "dd/mm/yyyy",
+        startDate: "01/01/2015",
+        endDate: "today",
         startView: 2,
         language: "es"
     });

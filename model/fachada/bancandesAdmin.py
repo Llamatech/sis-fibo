@@ -76,8 +76,14 @@ class BancAndesAdmin(object):
     def obtener_tipo_documento(self):
         return self.dao.obtener_tipo_documento()
 
+    def obtener_tipo_documentoR(self):
+        return self.dao.obtener_tipo_documentoR()
+
     def obtener_tipo_usuario(self):
         return self.dao.obtener_tipo_usuario()
+
+    def obtener_tipo_usuarioR(self):
+        return self.dao.obtener_tipo_usuarioR()
 
     def verificar_usuario(self, email, pwd):
         auth_data = self.dao.obtener_usuario(email)
@@ -126,3 +132,26 @@ class BancAndesAdmin(object):
 
     def actualizar_oficina(self, _id, name, phone, address, idGerente):
         self.dao.actualizar_oficina(_id, name, phone, address, idGerente)
+
+    def obtener_oficinasC(self, search_term):
+        data = self.dao.obtener_oficinasC(search_term)
+        return data
+
+    def obtener_puntos_atL(self, col, orden, a, b):
+        count, data = self.dao.obtener_puntos_atL(col, orden, a, b)
+        return count, data
+
+    def registrar_pa(self, localizacion, tipo, oficina):
+        self.dao.registrar_pa(localizacion, tipo, oficina)
+
+    def obtener_tipo_pa(self):
+        return self.dao.obtener_tipo_pa()
+
+    def eliminar_pa(self, _id):
+        self.dao.eliminar_pa(_id)
+
+    def actualizar_pa(self, _id, localizacion, tipo, oficina):
+        self.dao.actualizar_pa(_id, localizacion, tipo, oficina)
+
+    def obtener_pa(self, _id):
+        return self.dao.obtener_pa(_id)

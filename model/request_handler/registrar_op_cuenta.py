@@ -16,7 +16,7 @@ class RegistroHandler(tornado.web.RequestHandler):
 
     @tornado.gen.coroutine
     def get(self):
-    	# a = range(0, 5)
+        # a = range(0, 5)
         # b = {2:4, 5:7}
         
         #self.render('template.html', a=a, b=b)
@@ -42,6 +42,11 @@ class RegistroHandler(tornado.web.RequestHandler):
 
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
+        existe = inst.existe_cuenta(numeroCuenta)
+        if not existe:
+            self.render('../../static/cuentaNoExiste.html')
+            return
+
         numero = inst.generar_numero_operacion()
         idPuntoAtencion = inst.get_id_pa(self.get_cookie("authcookie").split('-')[0])
         if idPuntoAtencion == -1:
@@ -56,7 +61,10 @@ class RegistroHandler(tornado.web.RequestHandler):
             cliente = self.get_cookie("authcookie").split('-')[0]
             print("no es cajero")
             #(self, numero, tipo_operacion, cliente, valor, punto_atencion, cajero, cuenta, fecha)
-        oper = operacion.Operacion(numero,id,cliente,monto,idPuntoAtencion, cajero, numeroCuenta, datetime.datetime.today())
+        hoy = datetime.date.today()
+        fecha = datetime.datetime.strptime(str(hoy), '%Y-%m-%d')
+        print datetime.date.strftime(fecha, "%Y%m%d")
+        oper = operacion.Operacion(numero,id,cliente,monto,idPuntoAtencion, cajero, numeroCuenta, str(datetime.date.today()))
         print(oper)
         exists = inst.registrar_operacion_cuenta(oper)
         if not exists:
@@ -65,4 +73,4 @@ class RegistroHandler(tornado.web.RequestHandler):
             else:
                 self.render('../../static/registrarOperacionCuentaError.html', cuentas=self.cuentas)
         else:
-        	self.render('../../static/transaccionExitosa.html')
+            self.render('../../static/transaccionExitosa.html')

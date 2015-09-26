@@ -50,6 +50,16 @@ class ListHandler(tornado.web.RequestHandler):
         self.write(tornado.escape.json_encode(data))
         # print "Not working..."
 
+    @tornado.gen.coroutine
+    def put(self):
+        search_term = self.get_body_argument("term")
+        inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
+        inst.inicializar_ruta('data/connection')
+        offices = inst.obtener_oficinasC(search_term)
+        offices = map(lambda x: x.dict_repr(), offices)
+        self.set_header('Content-Type', 'text/javascript')
+        self.write(tornado.escape.json_encode(offices))
+
 
     # def write_error(self, status_code, **kwargs):
     #     self.write("An error has ocurred")

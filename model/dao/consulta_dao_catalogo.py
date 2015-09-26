@@ -7,6 +7,7 @@ from model.vos import tipo
 from model.vos import usuario
 from model.vos import oficina
 from model.vos import empleado
+from model.vos import puntos_atencion
 
 
 class ConsultaDAOcatalogo(object):
@@ -72,9 +73,47 @@ class ConsultaDAOcatalogo(object):
         self.conn.close()
         return tipo_documento_l
 
+    def obtener_tipo_documento_R(self):
+        tabla_consulta = 'TIPOIDENTIFICACION'
+        stmt = "SELECT * FROM %s WHERE TIPO" % (tabla_consulta)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        tipo_documento_l = []
+        try:
+            cur.execute(stmt)
+            data = cur.fetchall()
+            # TipoIdentificacion: id, tipo
+            for t in data:
+                tipoU = tipo.TipoDocumento(t[0], t[1])
+                tipo_documento_l.append(tipoU)
+        except cx_Oracle.Error as e:
+            raise e
+        cur.close()
+        self.conn.close()
+        return tipo_documento_l
+
     def obtener_tipo_usuario(self):
         tabla_consulta = 'TIPOUSUARIO'
         stmt = 'SELECT * FROM %s WHERE ID > 2' % (tabla_consulta)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        tipo_usuario_l = []
+        try:
+            cur.execute(stmt)
+            data = cur.fetchall()
+            # TipoIdentificacion: id, tipo
+            for t in data:
+                tipoU = tipo.TipoUsuario(t[0], t[1])
+                tipo_usuario_l.append(tipoU)
+        except cx_Oracle.Error as e:
+            raise e
+        cur.close()
+        self.conn.close()
+        return tipo_usuario_l
+
+    def obtener_tipo_usuarioR(self):
+        tabla_consulta = 'TIPOUSUARIO'
+        stmt = 'SELECT * FROM %s WHERE ID <= 2' % (tabla_consulta)
         self.establecer_conexion()
         cur = self.conn.cursor()
         tipo_usuario_l = []
@@ -385,11 +424,113 @@ class ConsultaDAOcatalogo(object):
             cur.execute(stmt2)
             cur.execute(stmt3)
             values += 'GERENTE = %d\n' % (idGerente)
-        upd_stmt = 'UPDATE OFICINA SET %s WHERE ID = %d' % (values, _id)
-        cur.execute(upd_stmt)
+        if values != '':
+            upd_stmt = 'UPDATE OFICINA SET %s WHERE ID = %d' % (values, _id)
+            cur.execute(upd_stmt)
+            self.conn.commit()
+            cur.close()
+            self.conn.close() 
+
+    def obtener_oficinasC(self, search_term):
+        search_term = "'"+search_term+"%'"
+        stmt = """SELECT * FROM OFICINA WHERE
+                  TO_CHAR(ID) LIKE %s OR
+                  NOMBRE LIKE %s
+                  ORDER BY ID"""
+        stmt = stmt % (search_term, search_term)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: oficina.OficinaR(x[0], None, x[1], x[2], x[3], x[4], None), data)
+        return data
+
+    def obtener_puntos_atL(self, col='ID', orden='ASC', a=0, b=100):
+        view = 'PA_SIMP'
+        #22, 'Cedula de Ciudadania', 'cedula22', 'empleado22', 'apellido22', 'ciudad21', None, None, 'gerente_general2@bancandes.com.co', 3, 'Gerente General'
+        #TIPO_DOC,NUM_DOCUMENTO,NOMBRE,APELLIDO,CIUDAD,ID_OFICINA,NOMBRE_OFICINA,EMAIL,TIPO_U,ID,TIPO_UN
+        info = self.obtener_elementos_ordenados(view, col, orden, a, b)
+
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SELECT count(*) FROM PA_SIMP')
+        count = cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+        print info
+        data = map(lambda x: puntos_atencion.PuntoAtencionR(x[0], x[1], x[2], x[3], x[4]), info)
+        print data
+        return count, data
+
+    def obtener_tipo_pa(self):
+        stmt = 'SELECT * FROM TIPOPUNTOSATENCION'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: tipo.TipoPuntoAtencion(x[0], x[1]), data)
+        return data
+
+    def registrar_pa(self, localizacion, tipo, oficina):
+        id_stmt = 'SELECT max(ID) FROM PUNTOSATENCION'
+        stmt = 'INSERT INTO PUNTOSATENCION(ID, LOCALIZACION, TIPO, OFICINA) VALUES %s'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(id_stmt)
+        _id = cur.fetchall()[0][0]+1
+        values = "(%d, '%s', %d" % (_id, localizacion, tipo)
+        if oficina < 0:
+            values += ', null)'
+        else:
+            values += ', %d)' % (oficina)
+        stmt = stmt % (values)
+        cur.execute(stmt)
         self.conn.commit()
         cur.close()
-        self.conn.close() 
+        self.conn.close()
+
+    def eliminar_pa(self, _id):
+        stmt = 'DELETE FROM PUNTOSATENCION WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+    def actualizar_pa(self, _id, localizacion, tipo, oficina):
+        stmt = """UPDATE PUNTOSATENCION 
+                  SET localizacion = '%s',
+                      tipo = %d,
+                  """ % (localizacion, tipo)
+        if oficina < 0:
+            stmt += 'oficina = null\n'
+        else:
+            stmt += 'oficina = %d\n' % (oficina)
+        stmt += "WHERE ID = %d" % (_id)
+        print stmt
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+    def obtener_pa(self, _id):
+        stmt = 'SELECT * FROM PA_SIMP WHERE ID = %d' % (_id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = data[0]
+        return puntos_atencion.PuntoAtencionR(data[0], data[1], data[2], data[3], data[4])
+
 
 
 # SELECT * FROM

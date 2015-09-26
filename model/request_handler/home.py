@@ -20,9 +20,11 @@ class HomeHandler(tornado.web.RequestHandler):
            id = int(values[0])
            tipo = values[1].replace('_', ' ')
            if tipo == 'Administrador':
-              self.render('../../static/admin-menu.html')
+               self.render('../../static/admin-menu.html')
+           elif tipo == 'Gerente General':
+               self.render('../../static/ggeneral-menu.html')
            else:
-              self.write('%d : %s' % (id, values[1]))
+                self.write('%d : %s' % (id, values[1]))
 
 
 

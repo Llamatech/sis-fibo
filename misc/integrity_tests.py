@@ -159,6 +159,74 @@ def manual_test():
         raise Exception("Error! La tupla debería no debería ser insertada")
     except cx_Oracle.IntegrityError:
         pass
+    cnx.rollback()
+    print "Probando: EMPLEADO\n"
+    print "Prueba 1: Unicidad de Llaves Primarias"
+    print "Insertando un empleado duplicado"
+    _id = 7774
+    cursor.execute('SELECT * FROM EMPLEADO WHERE ID = 7774')
+    data = cursor.fetchall()[0][0]
+    max_type = get_max_num('EMPLEADO', 'ID')
+    data[0] =  max_type+1
+    data[7] = "TO_DATE('%s' ,'dd/mm/yyyy')" % (data[7].strftime('%d/%m/%Y'))
+    data[8] = "TO_DATE('%s' ,'dd/mm/yyyy')" % (data[8].strftime('%d/%m/%Y'))
+    try:
+        cursor.execute('INSERT INTO EMPLEADO VALUES %s') % (str(data).replace("\"", ''))
+        print "La tupla no debería ser insertada"
+    except cx_Oracle.IntegrityError:
+        pass
+    print "Prueba 2: Restrcciones de LLave Foránea"
+    print "Insertando un Empleado que no se encuentra registrado como USUARIO"
+    max_type = get_max_num('USUARIO', 'ID')
+    data[0] = max_type+1
+    try:
+        cursor.execute('INSERT INTO EMPLEADO VALUES %s') % (str(data).replace("\"", ''))
+        print "La tupla no debería ser insertada"
+    except cx_Oracle.IntegrityError:
+        pass
+    cnx.rollback()
+    print "Probando: CLIENTE\n"
+    print "Prueba 1: Unicidad de Llaves Primarias"
+    print "Insertando un cliente duplicado"
+    cursor.execute('SELECT * FROM CLIENTE WHERE ID = 1669')
+    data = cursor.fetchall()[0][0]
+    max_type = get_max_num('CLIENTE', 'ID')
+    data[0] =  max_type+1
+    data[7] = "TO_DATE('%s' ,'dd/mm/yyyy')" % (data[7].strftime('%d/%m/%Y'))
+    data[8] = "TO_DATE('%s' ,'dd/mm/yyyy')" % (data[8].strftime('%d/%m/%Y'))
+    try:
+        cursor.execute('INSERT INTO CLIENTE VALUES %s') % (str(data).replace("\"", ''))
+        print "La tupla no debería ser insertada"
+    except cx_Oracle.IntegrityError:
+        pass
+    print "Prueba 2: Restrcciones de LLave Foránea"
+    print "Insertando un Cliente que no se encuentra registrado como USUARIO"
+    max_type = get_max_num('USUARIO', 'ID')
+    data[0] = max_type+1
+    try:
+        cursor.execute('INSERT INTO CLIENTE VALUES %s') % (str(data).replace("\"", ''))
+        print "La tupla no debería ser insertada"
+    except cx_Oracle.IntegrityError:
+        pass
+    cnx.rollback()
+    print "Probando: CUENTA\n"
+    print "Prueba 1: Unicidad de Llaves Primarias"
+    print "Insertando una CUENTA duplicada"
+    _id = 144
+    cursor.execute('SELECT * FROM CUENTA WHERE NUMERO = '+_id)
+    data = cursor.fetchall()[0][0]
+    try:
+        cursor.execute('INSERT INTO CUENTA VALUES %s' % (str(data)))
+        print "La tupla no debería ser insertada"
+    except cx_Oracle.IntegrityError:
+        pass
+    print "Prueba 2: Restricción de Llave Foránea"
+    print "Insertando una Tupla que contiene un Cliente inexistente"
+    max_num = get_max_num('CUENTA', 'NUMERO')
+
+
+
+
     
 
 if __name__ == '__main__':

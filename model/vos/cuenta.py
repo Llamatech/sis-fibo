@@ -22,3 +22,37 @@ class Cuenta(object):
 
     def __str__(self):
         return self.__repr__()
+
+class CuentaR(object):
+    def __init__(self, numero, fecha_creacion, saldo, tipo, cerrada, id_cliente, nom_cliente, ap_cliente, id_of, of_nombre, fecha_umov):
+        self.numero = numero
+        self.fecha_creacion = fecha_creacion.strftime('%d/%m/%Y')
+        self.saldo = saldo
+        self.tipo = tipo
+        self.cerrada = cerrada
+        self.id_cliente = id_cliente
+        self.nom_cliente = nom_cliente
+        self.ap_cliente = ap_cliente
+        self.id_of = id_of
+        self.of_nombre = of_nombre
+        if fecha_umov is not None:
+            self.fecha_umov = fecha_umov.strftime('%d/%m/%Y')
+        else:
+            self.fecha_umov = fecha_umov
+
+    def dict_repr(self):
+        d = {
+             'numero':self.numero,
+             'fecha_creacion':self.fecha_creacion,
+             'saldo':self.saldo,
+             'tipo':self.tipo,
+             'cerrada':self.cerrada,
+             'id_cliente':self.id_cliente,
+             'nom_cliente':self.nom_cliente,
+             'ap_cliente':self.ap_cliente,
+             'id_of':self.id_of,
+             'of_nombre':self.of_nombre,
+             'fecha_umov':self.fecha_umov,
+             'delete':'/cuentas?numero='+str(numero)
+        }
+        return d

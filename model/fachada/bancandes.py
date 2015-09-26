@@ -69,11 +69,20 @@ class BancAndes(object):
     def buscar_usuarios(self):
         return self.dao.obtener_usuarios()
 
+    def obtener_clientes(self):
+        return self.dao.obtener_clientes()
+
+    def registrar_cliente(self, _usuario, _cliente):
+        self.dao.registrar_cliente(_usuario, _cliente)
+
     def obtener_tipo_documento(self):
         return self.dao.obtener_tipo_documento()
 
     def obtener_tipo_usuario(self):
         return self.dao.obtener_tipo_usuario()
+
+    def obtener_tipo_prestamo(self):
+        return self.dao.obtener_tipo_prestamo()
 
     def verificar_usuario(self, email, pwd):
         auth_data = self.dao.obtener_usuario(email)
@@ -100,7 +109,6 @@ class BancAndes(object):
     def es_cajero(self, idUsuario):
         return self.dao.es_cajero(idUsuario)
 
-
     def generar_numero_operacion(self):
         return self.dao.generar_numero_operacion()
 
@@ -115,4 +123,41 @@ class BancAndes(object):
 
     def duenio_prestamo(self, numeroPrestamo):
         return self.dao.duenio_prestamo(numeroPrestamo)
+
+    def existe_cuenta(self, numeroCuenta):
+        return self.dao.existe_cuenta(numeroCuenta)
+
+    def existe_prestamo(self, numeroPrestamo):
+        return self.dao.existe_prestamo(numeroPrestamo)
+
+    def get_monto_prestamo(self, numeroPrestamo):
+        return self.dao.get_monto_prestamo(numeroPrestamo)
+
+    def registrar_operacion_prestamo(self, operacion):
+        return self.dao.registrar_operacion_prestamo(operacion)
+
+    def obtener_cuentasL(self, col, orden, a, b, perm, params, _id):
+        search_count, count, data = self.dao.obtener_cuentasL(col, orden, a, b, perm, params, _id)
+        return search_count, count, data
+
+    def obtener_tipo_de_usuario(self, idUsuario):
+        return self.dao.obtener_tipo_de_usuario(idUsuario)
+
+    def cerrar_cuenta(self, numero):
+        return self.dao.cerrar_cuenta(numero)
+
+    def obtener_prestamos(self, idUsuario):
+        return self.dao.obtener_prestamos(idUsuario)
+
+    def obtener_operaciones(self, idUsuario):
+        return self.dao.obtener_operaciones(idUsuario)
+
+    def obtener_oficinas(self, idUsuario):
+        return self.dao.obtener_oficinas(idUsuario)
+
+    def obtener_cuentas_oficina(self, idUsuario, idOficina):
+        return self.dao.obtener_cuentas_oficina(idUsuario, idOficina)
+
+    def registrar_prestamo(self, _prestamo):
+        self.dao.registrar_prestamo(_prestamo)
 
