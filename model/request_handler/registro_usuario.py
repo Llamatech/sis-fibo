@@ -50,7 +50,7 @@ class RegistroHandler(tornado.web.RequestHandler):
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
         inst.registrar_cliente(_usuario, _cliente)
-        self.redirect('/registrar/usuario')
+        self.redirect('/registrar/us')
 
     def write_error(self, status_code, **kwargs):
         self.write("An error has ocurred")

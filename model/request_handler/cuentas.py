@@ -30,11 +30,12 @@ class ListHandler(tornado.web.RequestHandler):
             tipo = values[1].replace('_', ' ')
             if tipo != 'Administrador':
                 if tipo != 'Gerente Oficina':
-                    self.render('../../static/listaCuentas.html', role='ggeneral')
+                    self.render('../../static/listaCuentas.html', role='ggeneral', g_oficina = False)
                 else:
-                    self.render('../../static/listaCuentas.html', role='goficina')
+                    self.render('../../static/listaCuentas.html', role='goficina', g_oficina = True)
             else:
                 self.set_status(403)
+                self.write("No dispone con permisos suficientes para acceder a esta funcionalidad")
 
     @tornado.gen.coroutine
     def post(self):
@@ -109,6 +110,7 @@ class ListHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def delete(self):
         cookie = self.get_cookie("authcookie")
+        values = cookie.split('-')
         if not cookie:
             self.set_status(403)
         else:

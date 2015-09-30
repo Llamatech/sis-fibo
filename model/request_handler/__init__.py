@@ -6,8 +6,9 @@ import example
 import oficina
 import oficinas
 import empleado
-import empleados
 import usuarios
+import empleados
+import prestamos
 import registro_pa
 import login_handler
 import punto_atencion

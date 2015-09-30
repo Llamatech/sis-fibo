@@ -103,7 +103,7 @@ function deleteFuncP(elem) {
 }
 
 
-function deleteFuncO(elem) {
+function deleteFuncC(elem) {
     BootstrapDialog.confirm({
         title: 'Advertencia',
         message: '¿Desea cerrar esta cuenta?',
@@ -127,7 +127,7 @@ function deleteFuncO(elem) {
                     type: 'DELETE',
                     success: function(response) {
                         //...
-                        table.rows('.selected').remove().draw();
+                        table.search("").draw();
                     }
                 });
             } else {
@@ -242,7 +242,7 @@ $(document).ready(function() {
     });
 
     var state = '1'
-    $('#acc_tablegoficina').DataTable({
+    $('#acc_tableggeneral').DataTable({
         dom: 'Bfrtip',
         stateSave: true,
         buttons: [
@@ -313,7 +313,7 @@ $(document).ready(function() {
     });
 
     var state_o = '1'
-    $('#acc_tableggeneral').DataTable({
+    $('#acc_tablegoficina').DataTable({
         dom: 'Bfrtip',
         stateSave: true,
         buttons: [
@@ -384,15 +384,21 @@ $(document).ready(function() {
         {"data": "delete"}],
         "columnDefs": [{
             "render": function(data, type, row) {
-                var style = '<div class="row"><div class="col-xs-2"><a onClick="' + 'return deleteFuncC(this)' + '" deleteP="' + data + '"><i class="fa fa-times"></i></a></div>';
-                return style;
+            	console.log(data);
+            	if(data !== null)
+                {
+                   var style = '<div class="row"><div class="col-xs-2"><a onClick="' + 'return deleteFuncC(this)' + '" deleteP="' + data + '"><i class="fa fa-times"></i>Cerrar</a></div>';
+                   return style;
+                }
+                return '';
             },
-            "targets": 5
-    });
+            "targets": 11
+    }]
+});
 
 	$('#acc_search_btn').click(function() {
         var table = $('#acc_tableggeneral').DataTable();
-        table.search("").draw();;
+        table.search("").draw();
     });
     // $('#example tbody').on( 'click', 'tr', function () {
     //         if ( $(this).hasClass('selected') ) {

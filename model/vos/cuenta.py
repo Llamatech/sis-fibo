@@ -41,6 +41,10 @@ class CuentaR(object):
             self.fecha_umov = fecha_umov
 
     def dict_repr(self):
+        if self.cerrada == 'N':
+           url = '/cuentas?numero='+str(self.numero)
+        else:
+           url = None
         d = {
              'numero':self.numero,
              'fecha_creacion':self.fecha_creacion,
@@ -53,6 +57,6 @@ class CuentaR(object):
              'id_of':self.id_of,
              'of_nombre':self.of_nombre,
              'fecha_umov':self.fecha_umov,
-             'delete':'/cuentas?numero='+str(numero)
+             'delete':url
         }
         return d

@@ -26,3 +26,21 @@ class Prestamo(object):
     def __str__(self):
         return self.__repr__()
 
+class PrestamoR(object):
+    def __init__(self, _id, tipo_p, nombre_cliente, apellido_cliente, saldo):
+        self.id = _id
+        self.tipo_p = tipo_p
+        self.nombre_cliente = nombre_cliente
+        self.apellido_cliente = apellido_cliente
+        self.saldo = saldo
+
+    def dict_repr(self):
+        d = {
+             'id':self.id,
+             'tipo_p':self.tipo_p,
+             'nombre':self.nombre_cliente,
+             'apellido':self.apellido_cliente,
+             'saldo':self.saldo
+            }
+        return d
+

@@ -7,6 +7,7 @@ from model.vos import tipo
 from model.vos import cuenta
 from model.vos import usuario
 from model.vos import cliente
+from model.vos import prestamo
 
 
 class ConsultaDAO(object):
@@ -200,7 +201,7 @@ class ConsultaDAO(object):
 
     def get_id_oficina(self, idGerente):
         stmt = " SELECT id FROM OFICINA WHERE " + "gerente = '" + \
-        idGerente + "'"
+        str(idGerente) + "'"
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -276,7 +277,7 @@ class ConsultaDAO(object):
         data = cur.fetchall()
         cerrada = data[0][0]
 
-        if cerrada == 'Y':
+        if cerrada == 'S':
             print("no permite por cuenta cerrada")
             cur.close()
             self.conn.close()
@@ -410,7 +411,7 @@ class ConsultaDAO(object):
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
         cur.execute(stmt)
-        print("PAPI") #Llami, regreso en un par de horas!
+        print("PAPI") 
         stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"',NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
         print(stmt)
         cur.execute(stmt)
@@ -420,7 +421,7 @@ class ConsultaDAO(object):
         return True
 
     def get_monto_prestamo(self, numeroPrestamo):
-        stmt = "SELECT VALOR_CUOTA FROM PRESTAMO WHERE id="+"'"+numeroPrestamo+"'"
+        stmt = "SELECT VALOR_CUOTA FROM PRESTAMO WHERE id="+"'"+str(numeroPrestamo)+"'"
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
@@ -511,9 +512,8 @@ class ConsultaDAO(object):
         if perm['goficina']:
             if len(cond) > 0:
                cond += 'AND '
-            of = get_id_oficina(_id)
+            of = self.get_id_oficina(_id)
             cond += 'ID_OF = %d' % (of)
-            print "TODO"
         elif perm['cliente']:
             if len(cond) > 0:
                cond += 'AND '
@@ -626,3 +626,33 @@ class ConsultaDAO(object):
         self.conn.commit()
         cur.close()
         self.conn.close()
+
+    def cerrar_prestamo(self, _numero):
+        stmt = "UPDATE PRESTAMO SET CERRADO = 'S' WHERE ID = %d"
+        stmt = stmt % (_numero)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+    def obtener_prestamos(self, id_oficina, search_term):
+        search_term = "'"+search_term+"%'"
+        stmt = """SELECT ID, TIPO_P, NOMBRE, APELLIDO, MONTO 
+                  FROM PRESTAMO_INF 
+                  WHERE OFICINA = %d AND MONTO = 0 AND CERRADO = 'N' 
+                  AND (TO_CHAR(ID) LIKE %s OR
+                  NOMBRE LIKE %s OR
+                  APELLIDO LIKE %s OR NUM_DOCUMENTO LIKE %s)
+                  ORDER BY ID"""
+        stmt = stmt % (id_oficina, search_term, search_term, search_term, search_term)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: prestamo.PrestamoR(x[0], x[1], x[2], x[3], x[4]), data)
+        return data
+

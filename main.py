@@ -6,6 +6,9 @@ import tornado.web
 import tornado.ioloop
 import model.request_handler as handlers
 
+clr = 'clear'
+if os.name == 'nt':
+   clr = 'cls'
 
 def main():
     settings = {"static_path": os.path.join(os.path.dirname(__file__), "static")}
@@ -28,7 +31,8 @@ def main():
         (r"/cuentas", handlers.cuentas.ListHandler),
         (r"/informacion/cliente", handlers.consultar_info_cliente.ListHandler),
         (r"/usuarios", handlers.usuarios.ListHandler),
-        (r"/registrar/prestamo", handlers.registro_prestamo.RegistroHandler)], 
+        (r"/registrar/prestamo", handlers.registro_prestamo.RegistroHandler),
+        (r"/cerrar/prestamo", handlers.prestamos.ListHandler)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)
@@ -37,8 +41,9 @@ def main():
     except KeyboardInterrupt:
       pass
     finally:
-      print "Closing server..."
+      print "Closing server...\n"
       tornado.ioloop.IOLoop.instance().stop()
 
 if __name__ == '__main__':
+    os.system(clr)
     main()

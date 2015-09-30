@@ -161,3 +161,9 @@ class BancAndes(object):
     def registrar_prestamo(self, _prestamo):
         self.dao.registrar_prestamo(_prestamo)
 
+    def cerrar_prestamo(self, _id):
+        self.dao.cerrar_prestamo(_id)
+
+    def obtener_prestamos(self, id_oficina, search_term):
+        return self.dao.obtener_prestamos(id_oficina, search_term)
+
