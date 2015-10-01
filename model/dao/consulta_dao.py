@@ -66,14 +66,20 @@ class ConsultaDAO(object):
         return data
 
     def registrar_cliente(self, _usuario, _cliente):
+        stmt_0 = 'SELECT MAX(ID) FROM USUARIO'
         stmt = 'INSERT INTO USUARIO(ID, PIN, EMAIL, TIPO) VALUES %s'
         stmt_2 = 'INSERT INTO CLIENTE (ID, TIPO_DOCUMENTO, NUM_DOCUMENTO,' \
                  + 'NOMBRE, APELLIDO, DIRECCION, TELEFONO, FECHA_INSCRIPCION, ' +\
                  'FECHA_NACIMIENTO, CIUDAD, DEPARTAMENTO, COD_POSTAL) VALUES %s'
-        stmt = stmt % (str(_usuario))
-        stmt_2 = stmt_2 % (str(_cliente))
         self.establecer_conexion()
         cur = self.conn.cursor()
+        cur.execute(stmt_0)
+        _id = cur.fetchall()[0][0]+1
+        _usuario.id = _id
+        _cliente.id = _id
+        stmt = stmt % (str(_usuario))
+        stmt_2 = stmt_2 % (str(_cliente))
+        print stmt_2
         cur.execute(stmt)
         cur.execute(stmt_2)
         self.conn.commit()
@@ -100,6 +106,7 @@ class ConsultaDAO(object):
         self.conn.close()
         return tipo_documento_l
 
+
     def obtener_tipo_usuario(self):
         tabla_consulta = 'TIPOUSUARIO'
         stmt = 'SELECT * FROM '
@@ -108,6 +115,25 @@ class ConsultaDAO(object):
         tipo_usuario_l = []
         try:
             cur.execute(stmt + tabla_consulta)
+            data = cur.fetchall()
+            # TipoIdentificacion: id, tipo
+            for t in data:
+                tipoU = tipo.TipoUsuario(t[0], t[1])
+                tipo_usuario_l.append(tipoU)
+        except cx_Oracle.Error as e:
+            raise e
+        cur.close()
+        self.conn.close()
+        return tipo_usuario_l
+
+    def obtener_tipo_usuarioR(self):
+        tabla_consulta = 'TIPOUSUARIO'
+        stmt = 'SELECT * FROM %s WHERE ID <= 2'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        tipo_usuario_l = []
+        try:
+            cur.execute(stmt % (tabla_consulta))
             data = cur.fetchall()
             # TipoIdentificacion: id, tipo
             for t in data:
@@ -174,7 +200,7 @@ class ConsultaDAO(object):
         return tipo_cuenta_l
 
     def registrar_cuenta(self, tipo, idCliente, idOficina, saldo):
-        stmt = "SELECT * FROM USUARIO u WHERE u.id="+idCliente
+        stmt = "SELECT * FROM USUARIO u WHERE u.id= %d" % (idCliente)
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -191,7 +217,10 @@ class ConsultaDAO(object):
         numero = cur.fetchall()[0][0]
         if numero == 'None':
             numero='1'
-        stmt = 'INSERT INTO CUENTA VALUES ('+"'"+str(numero+1)+"','"+saldo+"','"+tipo+"','N','"+idCliente+"','"+str(idOficina)+ "')"
+        print "Oficina: "+str(idOficina) 
+        stmt = """INSERT INTO CUENTA(NUMERO, SALDO, TIPO_CUENTA, CLIENTE, OFICINA) 
+                  VALUES (%d, %f, %d, %d, %d)"""
+        stmt = stmt % (numero+1, saldo, tipo, idCliente, idOficina)
         cur = self.conn.cursor()
         cur.execute(stmt)
         self.conn.commit()
@@ -200,8 +229,8 @@ class ConsultaDAO(object):
         return True
 
     def get_id_oficina(self, idGerente):
-        stmt = " SELECT id FROM OFICINA WHERE " + "gerente = '" + \
-        str(idGerente) + "'"
+        stmt = " SELECT id FROM OFICINA WHERE " + "gerente = " + \
+        str(idGerente)
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)

@@ -20,6 +20,8 @@ class ListHandler(tornado.web.RequestHandler):
             if self.tipo == 'Gerente Oficina':
                 self.auth = True
                 self.oficina = self.inst.get_id_oficina(self.id)
+            else:
+                self.auth = False
         else:
             self.auth = False
 

@@ -76,7 +76,7 @@
 
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="/">Home</a></li>
                         <li><a href="about-us.html">About Us</a></li>
                         <li><a href="services.html">Services</a></li>
                         <li><a href="portfolio.html">Portfolio</a></li>
@@ -90,7 +90,7 @@
                             </ul>
                         </li>
                         <li><a href="blog.html">Blog</a></li>
-                        <li class="active"><a href="contact-us.html">Contact</a></li>
+                        <li><a href="/logout">Cerrar Sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -109,7 +109,7 @@
     </section>
     <!--/gmap_area -->
     <script>
-        alert("La cuenta no existe o la operación no se permite dado el tipo de cuenta, el monto de la operación o el punto de atención")
+        alert("La cuenta no existe o la operación no se permite dado el tipo de cuenta, el monto de la operación o el punto de atención");
     </script>
     <section id="contact-page">
         <div class="container">
@@ -273,12 +273,18 @@
     </footer>
     <!--/#footer-->
 
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/jquery.isotope.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/wow.min.js"></script>
+    <script src="{{ static_url("js/jquery.js")}}"></script>
+    <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
+    <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
+    <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
+    <script src="{{ static_url("js/main.js")}}"></script>
+    <script src="{{ static_url("js/wow.min.js")}}"></script>
+    <!--  
+    <script src="{{ static_url("js/selector.js")}}"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </body>
 
 </html>

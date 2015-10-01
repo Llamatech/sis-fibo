@@ -35,7 +35,11 @@ class Cliente(object):
         self.codigo_postal=codigo_postal
 
     def __repr__(self):
-        return str((self.id, self.tipo_documento,self.num_documento,self.nombre,self.apellido,self.direccion,self.telefono,self.fecha_inscripcion,self.fecha_nacimiento,self.ciudad,self.departamento,self.codigo_postal))
+        args = (self.id, self.tipo_documento, self.num_documento, self.nombre,
+                self.apellido, self.direccion, self.telefono,
+                "TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_inscripcion.strftime('%d/%m/%Y')),"TO_DATE('%s', 'dd/mm/yyyy')" % (self.fecha_nacimiento.strftime('%d/%m/%Y')), self.ciudad,
+                self.departamento, self.codigo_postal)
+        return str(args).replace("\"", '')
 
     def __str__(self):
         return self.__repr__()

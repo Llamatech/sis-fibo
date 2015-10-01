@@ -167,3 +167,6 @@ class BancAndes(object):
     def obtener_prestamos(self, id_oficina, search_term):
         return self.dao.obtener_prestamos(id_oficina, search_term)
 
+    def obtener_tipo_usuarioR(self):
+        return self.dao.obtener_tipo_usuarioR()
+
