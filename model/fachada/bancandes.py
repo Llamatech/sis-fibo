@@ -146,8 +146,8 @@ class BancAndes(object):
     def cerrar_cuenta(self, numero):
         return self.dao.cerrar_cuenta(numero)
 
-    def obtener_prestamos(self, idUsuario):
-        return self.dao.obtener_prestamos(idUsuario)
+    def obtener_prestamos_cliente(self, idUsuario):
+        return self.dao.obtener_prestamos_cliente(idUsuario)
 
     def obtener_operaciones(self, idUsuario):
         return self.dao.obtener_operaciones(idUsuario)

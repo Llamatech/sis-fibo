@@ -21,18 +21,10 @@ class ListHandler(tornado.web.RequestHandler):
         if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
             idUsuario = None
             cuentas = None
-            if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
-                idUsuario = int(self.get_body_argument("idCliente"))
-            else:
-                idUsuario=self.get_cookie("authcookie").split('-')[0]
+            idUsuario=self.get_cookie("authcookie").split('-')[0]
+            cuentas=inst.obtener_cuentas(idUsuario)
 
-
-            if self.tipo == 'Gerente Oficina':
-                cuentas=inst.obtener_cuentas_oficina(idUsuario, inst.get_id_oficina(self.get_cookie("authcookie").split('-')[0]))
-            else:
-                cuentas=inst.obtener_cuentas(idUsuario)
-
-            prestamos=inst.obtener_prestamos(idUsuario)
+            prestamos=inst.obtener_prestamos_cliente(idUsuario)
             oficinas=inst.obtener_oficinas(idUsuario)
             operaciones=inst.obtener_operaciones(idUsuario)
             self.render('../../static/resultadosInfoClienteGGeneral.html', cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
@@ -60,7 +52,7 @@ class ListHandler(tornado.web.RequestHandler):
         else:
             cuentas=inst.obtener_cuentas(idUsuario)
 
-        prestamos=inst.obtener_prestamos(idUsuario)
+        prestamos=inst.obtener_prestamos_cliente(idUsuario)
         oficinas=inst.obtener_oficinas(idUsuario)
         operaciones=inst.obtener_operaciones(idUsuario)
         print(cuentas)

@@ -1,0 +1,193 @@
+Probando: USUARIO
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando tupla con llave primaria única
+INSERT INTO USUARIO (ID, PIN, EMAIL, TIPO) VALUES (7776, 'testValue', 'testValue1', 1)
+
+Prueba: Aprobada
+
+1.2 Insertando una tupla con llave primaria duplicada
+INSERT INTO USUARIO (ID, PIN, EMAIL, TIPO) VALUES (7776, 'testValue', 'testValue1', 1)
+
+Prueba: Aprobada
+
+Prueba 2: Restricciones de Llave Foránea
+2.1 Insertando una tupla con Tipo de Usuario inexistente
+
+INSERT INTO USUARIO (ID, PIN, EMAIL, TIPO) VALUES (7777, 'testValue', 'testValue2', 7)
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Insertando una tupla con Email nulo
+
+INSERT INTO USUARIO (ID, PIN, EMAIL, TIPO) VALUES (7776, 'testValue', null, 7)
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: EMPLEADO
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando un empleado duplicado
+INSERT INTO EMPLEADO VALUES (7775, 4, 'AP67980', 'Nombre', 'Generico', 'Direccion', 'Telefono', TO_DATE('25/09/2015' ,'dd/mm/yyyy'), TO_DATE('08/06/1979' ,'dd/mm/yyyy'), 'Bogota', 'Bogota', '455621', null)
+
+Prueba: Aprobada
+
+Prueba 2: Restrcciones de LLave Foránea
+2.1 Insertando un Empleado que no se encuentra registrado como USUARIO
+INSERT INTO EMPLEADO VALUES (7776, 4, 'AP67980', 'Nombre', 'Generico', 'Direccion', 'Telefono', TO_DATE('25/09/2015' ,'dd/mm/yyyy'), TO_DATE('08/06/1979' ,'dd/mm/yyyy'), 'Bogota', 'Bogota', '455621', null)
+
+Prueba: Aprobada
+
+2.2 Actualizando una tupla, cuyo identificador de tipo de documento no existe
+UPDATE EMPLEADO SET TIPO_DOCUMENTO = 6 WHERE ID = 7774
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Actualizando el número de documento de un empleado, cuyo valor es nulo
+UPDATE EMPLEADO SET NUM_DOCUMENTO = null WHERE ID = 7774
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: CLIENTE
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando un cliente duplicado
+INSERT INTO CLIENTE VALUES (7775, 3, 'cedulae7', 'cliente17', 'apellido14', 'direccion1669', 'telefono1669', TO_DATE('21/09/2015' ,'dd/mm/yyyy'), TO_DATE('10/06/1929' ,'dd/mm/yyyy'), 'ciudad1', 'departamento1', '001669')
+
+Prueba: Aprobada
+
+Prueba 2: Restrcciones de LLave Foránea
+2.1 Insertando un Cliente que no se encuentra registrado como USUARIO
+INSERT INTO CLIENTE VALUES (7776, 3, 'cedulae7', 'cliente17', 'apellido14', 'direccion1669', 'telefono1669', TO_DATE('21/09/2015' ,'dd/mm/yyyy'), TO_DATE('10/06/1929' ,'dd/mm/yyyy'), 'ciudad1', 'departamento1', '001669')
+
+Prueba: Aprobada
+
+2.2 Actualizando una tupla, cuyo identificador de tipo de documento no existe
+UPDATE CLIENTE SET TIPO_DOCUMENTO = 6 WHERE ID = 7775
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Actualizando el número de documento de un cliente, cuyo valor es nulo
+UPDATE CLIENTE SET NUM_DOCUMENTO = null WHERE ID = 7775
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: CUENTA
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando una cuenta duplicada
+INSERT INTO CUENTA VALUES (12193, 500000.0, 1, 'N', 7775, 1, TO_DATE('30/09/2015' ,'dd/mm/yyyy'))
+
+Prueba: Aprobada
+
+Prueba 2: Restricción de Llave Foránea
+2.1 Insertando una Tupla que contiene un Cliente inexistente
+INSERT INTO CUENTA VALUES (12194, 500000.0, 1, 'N', 7776, 1, TO_DATE('30/09/2015' ,'dd/mm/yyyy'))
+
+Prueba: Aprobada
+
+2.2 Insertando una Tupla que contiene una Oficina inexistente
+INSERT INTO CUENTA VALUES (12194, 500000.0, 1, 'N', 7775, 308, TO_DATE('30/09/2015' ,'dd/mm/yyyy'))
+
+Prueba: Aprobada
+
+2.3 Reemplazando el tipo de Cuenta de una cuenta existente, por un valor inexistente
+UPDATE CUENTA SET TIPO_CUENTA = 5 WHERE NUMERO = 12193
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Modificar el estado de la columna cerrada con un valor incorrecto
+UPDATE CUENTA SET CERRADA = 'K' WHERE NUMERO = 12193
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: PRESTAMO
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando un préstamo duplicado
+INSERT INTO PRESTAMO VALUES (9117, 0.013311504959678101, 1810358.07946645, TO_DATE('21/10/2015' ,'dd/mm/yyyy'), 3, 603452.6931554817, 3, 7772, 306, TO_DATE('25/09/2015' ,'dd/mm/yyyy'), 'N')
+
+Prueba: Aprobada
+
+Prueba 2: Restricción de Llave Foránea
+2.1 Insertando una Tupla que contiene un Cliente inexistente
+INSERT INTO PRESTAMO VALUES (9118, 0.013311504959678101, 1810358.07946645, TO_DATE('21/10/2015' ,'dd/mm/yyyy'), 3, 603452.6931554817, 3, 7776, 306, TO_DATE('25/09/2015' ,'dd/mm/yyyy'), 'N')
+
+Prueba: Aprobada
+
+2.2 Insertando una Tupla que contiene una Oficina inexistente
+INSERT INTO PRESTAMO VALUES (9118, 0.013311504959678101, 1810358.07946645, TO_DATE('21/10/2015' ,'dd/mm/yyyy'), 3, 603452.6931554817, 3, 7775, 308, TO_DATE('25/09/2015' ,'dd/mm/yyyy'), 'N')
+
+Prueba: Aprobada
+
+2.3 Reemplazando el tipo de préstamo de un préstamo existente, por un valor inexistente
+UPDATE PRESTAMO SET TIPO = 6 WHERE ID = 9117
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Modificar el estado de la columna cerrado con un valor incorrecto
+UPDATE PRESTAMO SET CERRADO = 'K' WHERE ID = 9117
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: PUNTOSATENCION
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando un punto de atención duplicado
+INSERT INTO PUNTOSATENCION VALUES (1226, 'Bogota', 307, 3)
+
+Prueba: Aprobada
+
+Prueba 2: Restricción de Llave Foránea
+2.1 Insertando una tupla cuyo tipo de oficina es inexistente
+INSERT INTO PUNTOSATENCION VALUES (1227, 'Bogota', 307, 4)
+
+Prueba: Aprobada
+
+2.2 Insertando una tupla cuya oficina designada, no existe
+INSERT INTO PUNTOSATENCION VALUES (1227, 'Bogota', 308, 2)
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Reemplazar la localización de un punto de atención por un valor nulo
+UPDATE PUNTOSATENCION SET LOCALIZACION = null WHERE ID = 1226
+
+Prueba: Aprobada
+
+-------------------------------------------------------------------------------
+
+Probando: OFICINA
+
+Prueba 1: Unicidad de Llaves Primarias
+1.1 Insertando una oficina duplicada
+INSERT INTO OFICINA VALUES (307, 'OficinaZ', 'Telefono', 'Direccion', 7773)
+
+Prueba: Aprobada
+
+Prueba 2: Restricción de Llave Foránea
+2.1 Insertar una tupla cuyo identificador de gerente sea inexistente
+INSERT INTO OFICINA VALUES (308, 'OficinaZ', 'Telefono', 'Direccion', 7775)
+
+Prueba: Aprobada
+
+Prueba 3: Restricciones y verificación
+3.1 Reemplazar el nombre de una oficina por un valor nulo
+UPDATE OFICINA SET NOMBRE = null WHERE ID = 307
+
+Prueba: Aprobada

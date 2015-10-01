@@ -8,6 +8,8 @@ from model.vos import cuenta
 from model.vos import usuario
 from model.vos import cliente
 from model.vos import prestamo
+from model.vos import oficina
+from model.vos import operacion
 
 
 class ConsultaDAO(object):
@@ -582,7 +584,7 @@ class ConsultaDAO(object):
         if len(data)>0:
             return data[0][0]
 
-    def obtener_prestamos(self, idUsuario):
+    def obtener_prestamos_cliente(self, idUsuario):
         stmt = "SELECT * FROM PRESTAMO WHERE cliente="+"'"+str(idUsuario)+"'"
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -593,7 +595,7 @@ class ConsultaDAO(object):
         self.conn.close()
         prestamos = []
         for t in data:
-            prestamoo = prestamo.Prestamo(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9])
+            prestamoo = prestamo.Prestamo(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8])
             prestamos.append(prestamoo)
         return prestamos
 
