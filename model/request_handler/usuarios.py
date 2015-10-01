@@ -13,7 +13,7 @@ class ListHandler(tornado.web.RequestHandler):
         self.some_attribute = some_attribute
 
     @tornado.gen.coroutine
-    def get(self):
+    def put(self):
         cookie = self.get_cookie("authcookie")
         if not cookie:
             self.set_status(403)

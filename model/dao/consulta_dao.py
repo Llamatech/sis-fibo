@@ -56,8 +56,15 @@ class ConsultaDAO(object):
         self.conn.close()
         return usuarios
 
-    def obtener_clientes(self):
-        stmt = 'SELECT * FROM CLIENTE_INF'
+    def obtener_clientes(self, search_term):
+        search_term = "'"+search_term+"%'"
+        stmt = """SELECT * FROM CLIENTE_INF 
+                  WHERE (TO_CHAR(ID) LIKE %s OR
+                  EMAIL LIKE %s OR
+                  NUM_DOCUMENTO LIKE %s OR
+                  NOMBRE LIKE %s OR APELLIDO LIKE %s)
+                  ORDER BY ID"""
+        stmt = stmt % (search_term, search_term, search_term, search_term, search_term)
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
@@ -651,7 +658,7 @@ class ConsultaDAO(object):
         cur = self.conn.cursor()
         cur.execute(stmt_2)
         _id = cur.fetchall()[0][0]
-        _prestamo.id = _id
+        _prestamo.id = _id+1
         stmt = stmt % (str(_prestamo))
         cur.execute(stmt)
         self.conn.commit()
@@ -678,6 +685,7 @@ class ConsultaDAO(object):
                   APELLIDO LIKE %s OR NUM_DOCUMENTO LIKE %s)
                   ORDER BY ID"""
         stmt = stmt % (id_oficina, search_term, search_term, search_term, search_term)
+        print stmt
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)

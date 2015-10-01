@@ -19,7 +19,7 @@ class Prestamo(object):
         self.oficina = oficina
 
     def __repr__(self):
-        args = (self.id, self.interes, self.monto, "TO_DATE('%s', 'dd/mm/yyyy')" % (self.vencimiento_cuota),
+        args = (self.id, self.interes, self.monto, "TO_DATE('%s', 'dd/mm/yyyy')" % (str(self.vencimiento_cuota)),
                 self.num_cuotas, self.valor_cuota, self.tipo, self.cliente, self.oficina)
         return str(args).replace("\"", '')
 

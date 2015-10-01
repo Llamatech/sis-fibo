@@ -69,8 +69,8 @@ class BancAndes(object):
     def buscar_usuarios(self):
         return self.dao.obtener_usuarios()
 
-    def obtener_clientes(self):
-        return self.dao.obtener_clientes()
+    def obtener_clientes(self, search_term):
+        return self.dao.obtener_clientes(search_term)
 
     def registrar_cliente(self, _usuario, _cliente):
         self.dao.registrar_cliente(_usuario, _cliente)

@@ -75,7 +75,7 @@ $(".itemSearch").select2({
         minimumInputLength: 2,
         minimumResultsForSearch: 20,
         ajax: {
-            url: '/clientes',
+            url: '/usuarios',
             dataType: "json",
             type: "PUT",
             delay:250,

@@ -18,7 +18,6 @@ class RegistroHandler(tornado.web.RequestHandler):
         tipos_pa = inst.obtener_tipo_prestamo()
         #self.render('template.html', a=a, b=b)
         self.render('../../static/registrarPrestamo.html', tipos=tipos_pa)
-        self.redirect('/')
 
     @tornado.gen.coroutine
     def post(self):
@@ -26,17 +25,10 @@ class RegistroHandler(tornado.web.RequestHandler):
         id_cliente = int(self.get_body_argument("cliente"))
         interes = float(self.get_body_argument("rate"))
         monto = float(self.get_body_argument("value"))
-        due = self.get_body_argument("due")
-        num_cuotas = self.get_body_argument("num_pay")
+        due = str(self.get_body_argument("due"))
+        num_cuotas = int(self.get_body_argument("num_pay"))
         valor_cuota = float(self.get_body_argument("valor_cuota"))
-        tipo_doc = int(self.get_body_argument("doc_type"))
-        doc_num = self.get_body_argument("doc_num")
-        _dir = self.get_body_argument("dir")
-        tel = self.get_body_argument("tel")
-        b_date = self.get_body_argument("b_date")
-        city = self.get_body_argument("city")
-        cod_postal = self.get_body_argument("cod_postal")
-
+        
 
         cookie = self.get_cookie("authcookie")
         values = cookie.split("-")
@@ -46,9 +38,10 @@ class RegistroHandler(tornado.web.RequestHandler):
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
 
-        id_oficina = get_id_oficina(_id)
+        id_oficina = inst.get_id_oficina(_id)
 
-        _prestamo = prestamo.Prestamo(None, interes, monto, due, num_cuotas, valor_cuota, tipo, id_cliente, _id)
+        _prestamo = prestamo.Prestamo(None, interes, monto, due, num_cuotas, valor_cuota, tipo, id_cliente, id_oficina)
+        print _prestamo
         inst.registrar_prestamo(_prestamo)
         self.redirect('/registrar/prestamo')
 

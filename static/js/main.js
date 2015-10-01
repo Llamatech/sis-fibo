@@ -128,6 +128,48 @@ jQuery(function($) {
             /* Act on the event */
         });
 
+    $("#goficina_client").click(
+        function(event) {
+            $("#goficina_info1").show();
+            $("#goficina_info2").hide();
+            $("#goficina_info3").hide();
+            $("#goficina_info1").collapse("show");
+            $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#goficina_info1',
+                offset: -100
+            });
+            /* Act on the event */
+        });
+
+    $("#goficina_acc").click(
+        function(event) {
+            $("#goficina_info1").hide();
+            $("#goficina_info2").show();
+            $("#goficina_info3").hide();
+            $("#goficina_info2").collapse("show");
+            $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#goficina_info2',
+                offset: -100
+            });
+            /* Act on the event */
+        });
+
+    $("#goficina_loans").click(
+        function(event) {
+            $("#goficina_info1").hide();
+            $("#goficina_info2").hide();
+            $("#goficina_info3").show();
+            $("#goficina_info3").collapse("show");
+            $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#goficina_info3',
+                offset: -100
+            });
+            /* Act on the event */
+        });
+
     $('#b_date .input-group.date').datepicker({
         format: "dd/mm/yyyy",
         startDate: "01/01/1950",
