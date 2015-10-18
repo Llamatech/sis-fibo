@@ -123,3 +123,60 @@ class ListHandler(tornado.web.RequestHandler):
                 inst = bancandes.BancAndes.dar_instancia()
                 inst.inicializar_ruta('data/connection')
                 inst.cerrar_cuenta(numero)
+
+
+class NatHandler(tornado.web.RequestHandler):
+    def initialize(self, some_attribute=None):
+        self.some_attribute = some_attribute
+        self.inst = bancandes.BancAndes.dar_instancia()
+        self.inst.inicializar_ruta('data/connection')
+        cookie = self.get_cookie("authcookie")
+        if cookie:
+            values = cookie.split("-")
+            self.id = int(values[0])
+            self.tipo = values[1].replace('_', ' ')
+            if self.tipo != r'Administrador':
+                self.auth = True
+            else:
+                self.auth = False
+        else:
+            self.auth = False
+
+    def post(self):
+        if self.auth:
+            search_term = self.get_body_argument("term")
+            acc = self.inst.obtener_cuentasN(search_term)
+            acc = map(lambda x: x.dict_repr(), acc)
+            self.set_header('Content-Type', 'text/javascript')
+            self.write(tornado.escape.json_encode(acc))
+        else:
+            self.set_status(403)
+
+
+class NotClosedHandler(tornado.web.RequestHandler):
+    def initialize(self, some_attribute=None):
+        self.some_attribute = some_attribute
+        self.inst = bancandes.BancAndes.dar_instancia()
+        self.inst.inicializar_ruta('data/connection')
+        cookie = self.get_cookie("authcookie")
+        if cookie:
+            values = cookie.split("-")
+            self.id = int(values[0])
+            self.tipo = values[1].replace('_', ' ')
+            if self.tipo != r'Administrador':
+                self.auth = True
+            else:
+                self.auth = False
+        else:
+            self.auth = False
+
+    def post(self):
+        if self.auth:
+            search_term = self.get_body_argument("term")
+            acc = self.inst.obtener_cuentasNC(search_term)
+            acc = map(lambda x: x.dict_repr(), acc)
+            self.set_header('Content-Type', 'text/javascript')
+            self.write(tornado.escape.json_encode(acc))
+        else:
+            self.set_status(403)
+

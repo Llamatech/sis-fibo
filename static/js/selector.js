@@ -140,4 +140,39 @@ $(".itemSearch").select2({
             }
         }
     });
+    
+    $("#comp_acc").select2();
+    $("#frec_sel").select2();
+
+    $(".itemSearchE").select2({
+        // tags: true,
+        // multiple: true,
+        // tokenSeparators: [',', ' '],
+        minimumInputLength: 1,
+        minimumResultsForSearch: 20,
+        ajax: {
+            url: '/cuentas/naturales',
+            dataType: "json",
+            type: "POST",
+            delay:250,
+            data: function(params) {
+
+                var queryParameters = {
+                    term: params.term
+                }
+                return queryParameters;
+            },
+            processResults: function(data) {
+                return {
+                    results: $.map(data, function(item) {
+                        var obj = {
+                            id: item.numero,
+                            text: 'Número Cuenta: '+item.numero
+                        };
+                        return obj;
+                    })
+                };
+            }
+        }
+    });
 });

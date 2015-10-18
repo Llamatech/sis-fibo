@@ -26,7 +26,10 @@ class Cuenta(object):
 class CuentaR(object):
     def __init__(self, numero, fecha_creacion, saldo, tipo, cerrada, id_cliente, nom_cliente, ap_cliente, id_of, of_nombre, fecha_umov):
         self.numero = numero
-        self.fecha_creacion = fecha_creacion.strftime('%d/%m/%Y')
+        if fecha_creacion is not None:
+            self.fecha_creacion = fecha_creacion.strftime('%d/%m/%Y')
+        else:
+            self.fecha_creacion = None
         self.saldo = saldo
         self.tipo = tipo
         self.cerrada = cerrada

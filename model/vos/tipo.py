@@ -60,4 +60,14 @@ class TipoPrestamo(object):
     def __str__(self):
         return self.__repr__()
 
+class FrecuenciaNomina(object):
+ 
+    def __init__(self, id, tipo):
+        self.id = id
+        self.frecuencia = tipo
 
+    def __repr__(self):
+        return 'id: %d ; Frecuencia: %s' % (self.id, self.frecuencia)
+
+    def __str__(self):
+        return self.__repr__()

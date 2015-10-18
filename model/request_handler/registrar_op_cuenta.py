@@ -38,14 +38,13 @@ class RegistroHandler(tornado.web.RequestHandler):
         elif tipoOperacion == 'retirar':
             id='4'
             monto = self.get_body_argument("montoRet")
+        elif tipoOperacion == 'origen':
+            id='3'
+            monto = self.get_body_argument("montoConsig")
 
 
         inst = bancandes.BancAndes.dar_instancia()
         inst.inicializar_ruta('data/connection')
-        existe = inst.existe_cuenta(numeroCuenta)
-        if not existe:
-            self.render('../../static/cuentaNoExiste.html')
-            return
 
         numero = inst.generar_numero_operacion()
         idPuntoAtencion = inst.get_id_pa(self.get_cookie("authcookie").split('-')[0])
@@ -66,11 +65,16 @@ class RegistroHandler(tornado.web.RequestHandler):
         print datetime.date.strftime(fecha, "%Y%m%d")
         oper = operacion.Operacion(numero,id,cliente,monto,idPuntoAtencion, cajero, numeroCuenta, str(datetime.date.today()))
         print(oper)
-        exists = inst.registrar_operacion_cuenta(oper)
-        if not exists:
-            if self.es_cajero:
-                self.render('../../static/registrarOperacionCuentaCajeroError.html')
-            else:
-                self.render('../../static/registrarOperacionCuentaError.html', cuentas=self.cuentas)
+        if tipoOperacion != 'origen':
+            exists = inst.registrar_operacion_cuenta(oper)
         else:
+            origen = self.get_body_argument('origen')
+            exists = inst.registrar_op_cuenta_origen(oper, origen)
+        if exists:
             self.render('../../static/transaccionExitosa.html')
+        else:
+            if self.es_cajero:
+                self.render('../../static/registrarOperacionCuentaCajeroError.html', error=exists)
+            else:
+                self.render('../../static/registrarOperacionCuentaError.html', cuentas=self.cuentas, error=exists)
+        

@@ -165,6 +165,17 @@ class ConsultaDAO(object):
         data = map(lambda x: tipo.TipoPrestamo(x[0], x[1]), data)
         return data
 
+    def obtener_frecuencia_nomina(self):
+        stmt = 'SELECT * FROM FRECUENCIANOMINA'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: tipo.FrecuenciaNomina(x[0], x[1]), data)
+        return data        
+
     def obtener_usuario(self, email):
         tabla_consulta = 'USUARIO'
         tabla_consulta1 = 'TIPOUSUARIO'
@@ -251,8 +262,10 @@ class ConsultaDAO(object):
         self.conn.close()
         return data[0][0]
 
-    def obtener_cuentas(self, idUsuario):
+    def obtener_cuentas(self, idUsuario, cond = None):
         stmt = "SELECT * FROM CUENTA where cliente = " + "'"+str(idUsuario)+ "'"
+        if cond:
+            stmt += ' AND TIPO_CUENTA <= 2'
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -265,6 +278,63 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return cuentas
+
+    def obtener_cuentasN(self, search_term):
+        stmt = """SELECT * FROM 
+                  (SELECT NUMERO FROM CUENTA c, USUARIO u 
+                  WHERE TO_CHAR(c.NUMERO) LIKE '%s' 
+                  AND c.CLIENTE = u.ID AND u.TIPO = 1
+                  AND c.CERRADA = 'N' 
+                  ORDER BY c.NUMERO)
+                  WHERE ROWNUM <= 20""" % (search_term+'%')
+        #print stmt
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: cuenta.CuentaR(x[0], None, None, None, 
+                                            None, None, None, None, 
+                                            None, None, None), data)
+        return data
+
+    def obtener_cuentas_NC(self, search_term):
+        stmt = """SELECT * FROM 
+                  (SELECT NUMERO FROM CUENTA c 
+                  WHERE TO_CHAR(c.NUMERO) LIKE '%s' 
+                  AND c.CERRADA = 'N' 
+                  ORDER BY c.NUMERO)
+                  WHERE ROWNUM <= 20""" % (search_term+'%')
+        #print stmt
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: cuenta.CuentaR(x[0], None, None, None, 
+                                            None, None, None, None, 
+                                            None, None, None), data)
+        return data
+
+    def obtener_prestamos_NC(self, search_term):
+        stmt = """SELECT * FROM 
+                  (SELECT ID FROM PRESTAMO c 
+                  WHERE TO_CHAR(c.ID) LIKE '%s' 
+                  AND c.CERRADO = 'N' 
+                  ORDER BY c.ID)
+                  WHERE ROWNUM <= 20""" % (search_term+'%')
+        #print stmt
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: prestamo.PrestamoR(x[0], None, None, None, 
+                                            None), data)
+        return data
 
     def es_cajero(self, idUsuario):
         stmt = "SELECT * FROM USUARIO u, TIPOUSUARIO t WHERE u.tipo = t.id AND t.tipo='Cajero' AND u.id="+"'"+idUsuario+"'"
@@ -288,9 +358,12 @@ class ConsultaDAO(object):
         data = cur.fetchall()
         cur.close()
         self.conn.close()
-        if data[0][0]=='None':
+        print "DATA:"
+        print data[0][0]
+        if data[0][0]==None:
             return '1'
-        else: 
+        else:
+            print "el maximo es: "+ str(data[0][0])
             return str(int(data[0][0])+1)
 
     def get_id_pa(self, idGerente):
@@ -307,21 +380,9 @@ class ConsultaDAO(object):
         return data[0][0]
 
     def registrar_operacion_cuenta(self, operacion):
-        stmt = "SELECT cerrada FROM CUENTA c WHERE c.numero="+"'"+str(operacion.cuenta)+"'"
         self.establecer_conexion()
         cur = self.conn.cursor()
-        print(stmt+" 227 dao")
-        cur.execute(stmt)
-        data = cur.fetchall()
-        cerrada = data[0][0]
-
-        if cerrada == 'S':
-            print("no permite por cuenta cerrada")
-            cur.close()
-            self.conn.close()
-            return False
-
-        stmt = "SELECT * FROM CUENTA c, PERMITEOPERACIONCU p WHERE c.tipo_cuenta=p.id_tipocuenta AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.numero="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM CUENTA c, PERMITEOPERACIONCU p WHERE c.tipo_cuenta=p.id_tipocuenta AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.numero="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 232 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -330,10 +391,10 @@ class ConsultaDAO(object):
             print("no permite por cuenta oper")
             cur.close()
             self.conn.close()
-            return False
+            return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND() p.monto<="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto<="+"'"+operacion.valor+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -342,7 +403,7 @@ class ConsultaDAO(object):
             print("no permite por punto")
             cur.close()
             self.conn.close()
-            return False
+            return "Debido a reglas del negocio, el tipo de punto de atención no permite la operacion a realizar."
 
         stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+operacion.cuenta+"'"
         print(stmt+" 255 dao")
@@ -356,6 +417,61 @@ class ConsultaDAO(object):
         print(stmt + " 259 dao")
         cur.execute(stmt)
         print("PAPI") #Llami, regreso en un par de horas!
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"','"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
+        print(stmt)
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True
+
+    def registrar_op_cuenta_origen(self, operacion, origen):
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        stmt = "SELECT * FROM CUENTA c, PERMITEOPERACIONCU p WHERE c.tipo_cuenta=p.id_tipocuenta AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.numero="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        print(stmt+" 398 dao")
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            print("no permite por cuenta oper")
+            cur.close()
+            self.conn.close()
+            return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
+
+
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto<="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        print(stmt+" 242 dao")
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            print("no permite por punto")
+            cur.close()
+            self.conn.close()
+            return "Debido a reglas del negocio, el tipo de punto de atención no permite la operacion a realizar."
+
+        stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+operacion.cuenta+"'"
+        print(stmt+" 421 dao")
+        cur.execute(stmt)
+        saldo = float(cur.fetchall()[0][0])+float(operacion.valor)
+
+        stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+operacion.cuenta+"'"
+        print(stmt + " 259 dao")
+        cur.execute(stmt)
+
+
+        stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+origen+"'"
+        print(stmt+" 426 dao")
+        cur.execute(stmt) 
+        saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+
+        stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+origen+"'"
+        print(stmt + " 259 dao")
+        cur.execute(stmt)
+
+
         stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"','"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
         print(stmt)
         cur.execute(stmt)
@@ -424,7 +540,7 @@ class ConsultaDAO(object):
         data = cur.fetchall()
 
         if len(data)<=0:
-            print("no permite por prestamo oper")
+            return "El tipo de prestamo no permite esta operacion o sobrepasa el monto maximo"
             cur.close()
             self.conn.close()
             return False
@@ -436,7 +552,7 @@ class ConsultaDAO(object):
         data = cur.fetchall()
 
         if len(data)<=0:
-            print("no permite por punto")
+            return "El tipo de punto de atencion no permite esta operacion o sobrepasa el monto maximo"
             cur.close()
             self.conn.close()
             return False
@@ -448,8 +564,7 @@ class ConsultaDAO(object):
 
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
-        cur.execute(stmt)
-        print("PAPI") 
+        cur.execute(stmt) 
         stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"',NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
         print(stmt)
         cur.execute(stmt)
@@ -457,6 +572,86 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return True
+
+    def registrar_operacion_prestamo_origen(self, operacion,origen):
+        stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        print(stmt+" 544 dao")
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            return "El tipo de prestamo no permite esta operacion o sobrepasa el monto maximo"
+            cur.close()
+            self.conn.close()
+            return False
+
+
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        print(stmt+" 558 dao")
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            return "El tipo de punto de atencion no permite esta operacion o sobrepasa el monto maximo"
+            cur.close()
+            self.conn.close()
+            return False
+
+        stmt = "SELECT * FROM CUENTA WHERE  numero="+"'"+str(origen)+"'"
+        print(stmt+" 569 dao")
+        cur.execute(stmt)
+        data = cur.fetchall()
+
+        if len(data)<=0:
+            return "La cuenta de origen no existe"
+            cur.close()
+            self.conn.close()
+            return False
+
+        stmt = "SELECT cerrada FROM CUENTA c WHERE c.numero="+"'"+str(origen)+"'"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt+" 385 dao")
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cerrada = data[0][0]
+
+        if cerrada == 'S':
+            print("no permite por cuenta cerrada")
+            cur.close()
+            self.conn.close()
+            return "La cuenta origen se encuentra cerrada"
+
+        stmt = "SELECT monto FROM PRESTAMO WHERE id ="+"'"+operacion.cuenta+"'"
+        print(stmt+" 255 dao")
+        cur.execute(stmt)
+        saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+        stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
+        print(stmt + " 259 dao")
+        cur.execute(stmt) 
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"',NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
+        print(stmt)
+        cur.execute(stmt)
+
+        stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+str(origen)+"'"
+        print(stmt+" 619 dao")
+        cur.execute(stmt)
+        saldo = float(cur.fetchall()[0][0])-float(operacion.valor) 
+
+        stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+str(origen)+"'"
+        print(stmt + " 624 dao")
+        cur.execute(stmt)
+        # stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"','"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
+        cur.execute(stmt)
+
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True
+
 
     def get_monto_prestamo(self, numeroPrestamo):
         stmt = "SELECT VALOR_CUOTA FROM PRESTAMO WHERE id="+"'"+str(numeroPrestamo)+"'"
@@ -695,3 +890,39 @@ class ConsultaDAO(object):
         data = map(lambda x: prestamo.PrestamoR(x[0], x[1], x[2], x[3], x[4]), data)
         return data
 
+    def obtener_tipo_cliente(self, idUsuario):
+        stmt = 'SELECT t.tipo FROM USUARIO u, TIPOUSUARIO t WHERE u.tipo=t.id AND u.id='+"'"+str(idUsuario)+"'" 
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        return data[0][0]
+
+    def obtener_nombre_cliente(self, idUsuario):
+        stmt = 'SELECT nombre FROM CLIENTE WHERE id='+"'"+str(idUsuario)+"'" 
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        return data[0][0]
+
+    def actualizar_nomina(self, cuenta, cuenta_empl, salario, frecuencia):
+        stmt = """INSERT INTO NOMINA(CUENTA_EMPLEADO, CUENTA_EMPRESA, SALARIO, FRECUENCIA)
+                  VALUES (%d, %d, %s, %d)""" % (cuenta_empl, cuenta, salario, frecuencia)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        try:
+            cur.execute(stmt)
+        except cx_Oracle.IntegrityError:
+            self.conn.rollback()
+            cur.close()
+            self.conn.close()
+            return False, 400, "La cuenta del empleado ya se encuentra asignada a una nómina" 
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True, 200, "Success"

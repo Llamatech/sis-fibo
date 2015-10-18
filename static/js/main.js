@@ -170,6 +170,18 @@ jQuery(function($) {
             /* Act on the event */
         });
 
+    $("#userj_emp").click(
+        function(event) {
+            $("#userj_info1").show();
+            $("#userj_info1").collapse("show");
+            $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#userj_info1',
+                offset: -100
+            });
+            /* Act on the event */
+        });
+
     $('#b_date .input-group.date').datepicker({
         format: "dd/mm/yyyy",
         startDate: "01/01/1950",

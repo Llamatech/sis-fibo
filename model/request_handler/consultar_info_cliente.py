@@ -21,13 +21,16 @@ class ListHandler(tornado.web.RequestHandler):
         if self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Jurídico':
             idUsuario = None
             cuentas = None
+            inst = bancandes.BancAndes.dar_instancia()
+            inst.inicializar_ruta('data/connection')
             idUsuario=self.get_cookie("authcookie").split('-')[0]
             cuentas=inst.obtener_cuentas(idUsuario)
 
             prestamos=inst.obtener_prestamos_cliente(idUsuario)
             oficinas=inst.obtener_oficinas(idUsuario)
             operaciones=inst.obtener_operaciones(idUsuario)
-            self.render('../../static/resultadosInfoClienteGGeneral.html', cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
+            nombre = inst.obtener_nombre_cliente(idUsuario)
+            self.render('../../static/resultadosInfoClienteGGeneral.html', tipo=self.tipo,nombre=nombre,cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
         else:
             self.render('../../static/infoClienteEmpleado.html')
 
@@ -55,6 +58,8 @@ class ListHandler(tornado.web.RequestHandler):
         prestamos=inst.obtener_prestamos_cliente(idUsuario)
         oficinas=inst.obtener_oficinas(idUsuario)
         operaciones=inst.obtener_operaciones(idUsuario)
+        tipo = inst.obtener_tipo_cliente(idUsuario)
+        nombre=inst.obtener_nombre_cliente(idUsuario)
         print(cuentas)
-        self.render('../../static/resultadosInfoClienteGGeneral.html', cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
+        self.render('../../static/resultadosInfoClienteGGeneral.html', tipo=tipo,nombre=nombre,cuentas=cuentas,prestamos=prestamos,oficinas=oficinas,operaciones=operaciones)
 

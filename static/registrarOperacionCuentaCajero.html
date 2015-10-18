@@ -127,22 +127,39 @@
                             debugger;
                             document.getElementById("consignar").style.display = "inherit";
                             document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "none";
                         }
 
                         function retirar() {
                             document.getElementById("consignar").style.display = "none";
                             document.getElementById("retirar").style.display = "inherit";
+                            document.getElementById("consOtra").style.display = "none";
+                        }
+                        function consOtra(){
+                            document.getElementById("consignar").style.display = "none";
+                            document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "inherit";
                         }
 
                         function cons() {
                             debugger;
                             document.getElementById("cambiar").value = "consignar";
                             document.getElementById("montoRet").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
                         }
 
                         function ret() {
                             document.getElementById("cambiar").value = "retirar";
                             document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
+                        }
+                        
+                        function ori() {
+                            document.getElementById("cambiar").value = "origen";
+                            document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoRet").value = "0";
                         }
                     </script>
                     <div class="col-sm-10 col-sm-offset-1">
@@ -153,9 +170,9 @@
                             </div>
                             <!---<button class="btn btn-default">Abrir Cuenta</button>
                             <button class="btn btn-default">Cerrar Cuenta</button>--->
-                            <a class="btn btn-default" onclick="consignar()">Consignar Monto</a>
+                            <a class="btn btn-default" onclick="consignar()">Consignar Monto en efectivo</a>
                             <a class="btn btn-default" onclick="retirar()">Retirar Monto</a>
-
+                            <a class="btn btn-default" onclick="consOtra()">Consignar desde cuenta BancAndes</a>
                         </div>
 
                         <br>
@@ -169,6 +186,13 @@
                             <label>Monto a retirar:</label>
                             <input type="text" name="montoRet" id="montoRet" class="form-control" required="required">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ret()">Retirar</button>
+                        </div>
+                        <div id="consOtra" style="display:none" class="form-group">
+                            <label>Monto a consignar:</label>
+                            <input type="text" name="montoConsig" id="montoConsig" class="form-control" required="required">
+                            <label>Cuenta origen:</label>
+                            <input type="text" name="origen" id="origen" class="form-control" required="required">
+                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ori()">Transferir</button>
                         </div>
 
 

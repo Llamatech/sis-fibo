@@ -31,6 +31,7 @@ class RegistroHandler(tornado.web.RequestHandler):
             monto=self.get_body_argument("monto")
   
         numero = inst.generar_numero_operacion()
+        print numero
         idPuntoAtencion = inst.get_id_pa(self.get_cookie("authcookie").split('-')[0])
         if idPuntoAtencion == -1:
             idPuntoAtencion = '3'
@@ -39,8 +40,12 @@ class RegistroHandler(tornado.web.RequestHandler):
         #(self, numero, tipo_operacion, cliente, valor, punto_atencion, cajero, cuenta, fecha)
         oper = operacion.Operacion(numero,tipoOperacion,cliente,monto,idPuntoAtencion, cajero, numeroPrestamo, datetime.date.today())
         print(oper)
-        exists = inst.registrar_operacion_prestamo(oper)
-        if not exists:
-            self.render('../../static/registrarOperacionPrestamoError.html')
+        if self.get_body_argument("otra")=='1':
+            origen = self.get_body_argument("origen")
+            exists = inst.registrar_operacion_prestamo_origen(oper,origen)
         else:
+            exists = inst.registrar_operacion_prestamo(oper)
+        if exists:
             self.render('../../static/transaccionExitosa.html')
+        else: 
+            self.render('../../static/registrarOperacionPrestamoError.html', error=exists)

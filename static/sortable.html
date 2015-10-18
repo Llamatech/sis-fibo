@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Registrar Operación Cuenta | BancAndes</title>
+
+    
+    <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
+    <link href="{{ static_url("css/font-awesome.min.css")}}" rel="stylesheet">
+    <link href="{{ static_url("css/prettyPhoto.css")}}" rel="stylesheet">
+    <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
+    <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
+    <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
+
+    <!--[if lt IE 9]>’’’
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="shortcut icon" href="images/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ static_url("images/ico/apple-touch-icon-144-precomposed.png")}}">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url("images/ico/apple-touch-icon-114-precomposed.png")}}">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url("images/ico/apple-touch-icon-72-precomposed.png")}}">
+    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">
+
+
+
+</head>
+<!--/head-->
+
+<body>
+
+    <header id="header">
+        <div class="top-bar">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-4">
+                        <div class="top-number">
+                            <p><i class="fa fa-phone-square"></i> +0123 456 70 90</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xs-8">
+                        <div class="social">
+                            <ul class="social-share">
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                <li><a href="#"><i class="fa fa-skype"></i></a></li>
+                            </ul>
+                            <div class="search">
+                                <form role="form">
+                                    <input type="text" class="search-form" autocomplete="off" placeholder="Search">
+                                    <i class="fa fa-search"></i>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/.container-->
+        </div>
+        <!--/.top-bar-->
+
+        <nav class="navbar navbar-inverse" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"></a>
+                </div>
+
+                <div class="collapse navbar-collapse navbar-right">
+                    <ul class="nav navbar-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about-us.html">About Us</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="blog-item.html">Blog Single</a></li>
+                                <li><a href="pricing.html">Pricing</a></li>
+                                <li><a href="404.html">404</a></li>
+                                <li><a href="shortcodes.html">Shortcodes</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li class="active"><a href="contact-us.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--/.container-->
+        </nav>
+        <!--/nav-->
+    </header>
+    <!--/header-->
+
+    <section id="contact-info">
+        <div class="center">
+
+
+        </div>
+
+    </section>
+    <!--/gmap_area -->
+
+    <section id="contact-page">
+        <div class="container">
+            <div class="center">
+                <h2>Consultar información cliente</h2>
+                <p class="lead">En esta sección puede consultar la información de un cliente.</p>
+            </div>
+            <div class="row contact-wrap">
+                <div class="status alert alert-success" style="display: none"></div>
+                <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
+                    <input id="cambiar" type=hidden name="cambiar" value="">
+
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div>
+                            <h2>Ingrese el id del cliente a consultar:</h2>
+                            <div class="form-group">
+                                <input type="text" name="idCliente" id="montoCons" class="form-control" required="required">
+                            </div>
+                            <h2>Filtros:</h2>
+                            <!---<button class="btn btn-default">Abrir Cuenta</button>
+                            <button class="btn btn-default">Cerrar Cuenta</button>--->
+                            <h3>Tipo de cuenta</h3>
+                            <div class="form-group">
+                                <label>Cuenta corriente</label>
+                                <input type="checkbox" name="cuentaCorriente" checked>
+                                <br>
+                                <label>Cuenta de ahorros</label>
+                                <input type="checkbox" name="cuentaAhorros" checked>
+                                <br>
+                                <label>ACT</label>
+                                <input type="checkbox" name="ACT"  checked>
+                                <br>
+                                <label>CDT</label>
+                                <input type="checkbox" name="CDT" checked>
+                                <br>
+                                <label>Prestamo para vivienda</label>
+                                <input type="checkbox" name="vivienda" checked>
+                                <br>
+                                <label>Prestamo para estudio</label>
+                                <input type="checkbox" name="estudio" checked>
+                                <br>
+                                <label>Prestamo para automovil</label>
+                                <input type="checkbox" name="automovil" checked>
+                                <br>
+                                <label>Prestamo para vivienda</label>
+                                <input type="checkbox" name="CDT" checked>
+                            </div>
+
+                            <h3>Número de cuenta</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todas las cuentas que cumplan con los filtros</p>
+                            <div class="form-group">
+                                <label>Número</label>
+                                <input type="text" name="cuentaCorriente">
+                            </div>
+
+                            <h3>Saldo</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todos los saldos</p>
+                            <div class="form-group">
+                                <label>Menor a:</label>
+                                <input type="text" name="saldoMin">
+                            </div>
+                            <div class="form-group">
+                                <label>Mayor a:</label>
+                                <input type="text" name="saldoMax">
+                            </div>
+
+                            <h3>Rango de fechas de operaciones</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todas las fechas</p>
+                            <div class="form-group">
+                                <label>Desde:</label>
+                                <input type="date" name="desde">
+                            </div>
+                            <div class="form-group">
+                                <label>Hasta:</label>
+                                <input type="date" name="hasta">
+                            </div>
+
+                            <h3>Valor operaciones</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todos los saldos</p>
+                            <div class="form-group">
+                                <label>Menor a:</label>
+                                <input type="text" name="opMin">
+                            </div>
+                            <div class="form-group">
+                                <label>Mayor a:</label>
+                                <input type="text" name="opMax">
+                            </div>
+
+                            <h2>Ordenamiento</h2>
+                            <p>Escoja como ordenar los resultados de su consulta. El resultado se ordenará según su preferencia y asimismo se agruparán los resultados según su preferencia de ordenamiento.</p>
+                            <br>
+                            <h3>Ordenar prestamos por:</h3>
+
+                            <div class="form-group">
+                                <label>Id:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pid" checked>
+                                <br>
+                                <label>Interes:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pinteres">
+                                <br>
+                                <label>Monto:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pmonto">
+                                <br>
+                                <label>Vencimiento Cuota:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pvencimiento">
+                                <br>
+                                <label>Número de Cuotas:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pnumeroCuotas">
+                                <br>
+                                <label>Valor de cuotas:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pvalorCuotas">
+                                <br>
+                                <label>Tipo:</label>
+                                <input type="radio" name="agrupaPrestamo" value="ptipo">
+                                <br>
+                                <label>Cliente:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pcliente">
+                                <br>
+                                <label>Oficina:</label>
+                                <input type="radio" name="agrupaPrestamo" value="poficina">
+                                <br>
+                                <label>Fecha creación:</label>
+                                <input type="radio" name="agrupaPrestamo" value="pfecha">
+                                
+                                
+                                <br>
+                                <h3>Ordenar cuentas por:</h3>
+                                <label>Numero:</label>
+                                <input type="radio" name="agrupaCuenta" value="cnumero" checked>
+                                <br>
+                                <label>Saldo:</label>
+                                <input type="radio" name="agrupaCuenta" value="csaldo">
+                                <br>
+                                <label>Tipo cuenta:</label>
+                                <input type="radio" name="agrupaCuenta" value="ctipoCuenta">
+                                <br>
+                                <label>Cliente:</label>
+                                <input type="radio" name="agrupaCuenta" value="ccliente">
+                                <br>
+                                <label>Oficina:</label>
+                                <input type="radio" name="agrupaCuenta" value="coficina">
+                                
+                                
+                                <br>
+                                <h3>Ordenar operaciones por:</h3>
+                                
+                                <label>Numero:</label>
+                                <input type="radio" name="agrupaOperacion" value="onumero" checked>
+                                <br>
+                                <label>Tipo operacion:</label>
+                                <input type="radio" name="agrupaOperacion" value="otipo">
+                                <br>
+                                <label>Valor:</label>
+                                <input type="radio" name="agrupaOperacion" value="ovalor">
+                                <br>
+                                <label>Punto atención:</label>
+                                <input type="radio" name="agrupaOperacion" value="opuntoAtencion">
+                                <br>
+                                <label>Cajero:</label>
+                                <input type="radio" name="agrupaOperacion" value="ocajero">
+                                <br>
+                                <label>Cuenta:</label>
+                                <input type="radio" name="agrupaOperacion" value="ocuenta">
+                                <br>
+                                <label>Fecha:</label>
+                                <input type="radio" name="agrupaOperacion" value="ofecha">
+                                <br>
+                                <label>Prestamo:</label>
+                                <input type="radio" name="agrupaOperacion" value="oprestamo">
+                                <br>
+                                
+                                <h3>Ordenar oficinas por:</h3>
+                               
+                                <label>Id:</label>
+                                <input type="radio" name="agrupaOficina" value="fid" checked>
+                                <br>
+                                <label>Direccion:</label>
+                                <input type="radio" name="agrupaOficina" value="fdireccion">
+                                <br>
+                                <label>Nombre:</label>
+                                <input type="radio" name="agrupaOficina" value="fnombre">
+                                <br>
+                                <label>Telefono:</label>
+                                <input type="radio" name="agrupaOficina" value="ftelefono">
+                                <br>
+                                <label>Gerente:</label>
+                                <input type="radio" name="agrupaOficina" value="fgerente">
+                                <br>
+                                
+                                
+
+
+                            </div>
+
+
+
+
+                        </div>
+
+                        <br>
+                        <br>
+                        
+
+
+                        <br>
+
+                    </div>
+
+                </form>
+            </div>
+            <!--/.row-->
+        </div>
+        <!--/.container-->
+    </section>
+    <!--/#contact-page-->
+
+    <section id="bottom">
+        <div class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="widget">
+                        <h3>Company</h3>
+                        <ul>
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">We are hiring</a></li>
+                            <li><a href="#">Meet the team</a></li>
+                            <li><a href="#">Copyright</a></li>
+                            <li><a href="#">Terms of use</a></li>
+                            <li><a href="#">Privacy policy</a></li>
+                            <li><a href="#">Contact us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--/.col-md-3-->
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="widget">
+                        <h3>Support</h3>
+                        <ul>
+                            <li><a href="#">Faq</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Forum</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Refund policy</a></li>
+                            <li><a href="#">Ticket system</a></li>
+                            <li><a href="#">Billing system</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--/.col-md-3-->
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="widget">
+                        <h3>Developers</h3>
+                        <ul>
+                            <li><a href="#">Web Development</a></li>
+                            <li><a href="#">SEO Marketing</a></li>
+                            <li><a href="#">Theme</a></li>
+                            <li><a href="#">Development</a></li>
+                            <li><a href="#">Email Marketing</a></li>
+                            <li><a href="#">Plugin Development</a></li>
+                            <li><a href="#">Article Writing</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--/.col-md-3-->
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="widget">
+                        <h3>Our Partners</h3>
+                        <ul>
+                            <li><a href="#">Adipisicing Elit</a></li>
+                            <li><a href="#">Eiusmod</a></li>
+                            <li><a href="#">Tempor</a></li>
+                            <li><a href="#">Veniam</a></li>
+                            <li><a href="#">Exercitation</a></li>
+                            <li><a href="#">Ullamco</a></li>
+                            <li><a href="#">Laboris</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--/.col-md-3-->
+            </div>
+        </div>
+    </section>
+    <!--/#bottom-->
+
+    <footer id="footer" class="midnight-blue">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    &copy; 2013 <a target="_blank" href="http://shapebootstrap.net/" title="Free Twitter Bootstrap WordPress Themes and HTML templates">ShapeBootstrap</a>. All Rights Reserved.
+                </div>
+                <div class="col-sm-6">
+                    <ul class="pull-right">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Faq</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--/#footer-->
+
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/jquery.isotope.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wow.min.js"></script>
+</body>
+
+</html>

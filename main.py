@@ -29,10 +29,15 @@ def main():
         (r"/puntosAtencion", handlers.puntos_atencion.ListHandler),
         (r"/puntoAtencion", handlers.punto_atencion.EditionHandler),
         (r"/cuentas", handlers.cuentas.ListHandler),
+        (r"/cuentas/naturales", handlers.cuentas.NatHandler),
+        (r"/cuentas/nocerradas", handlers.cuentas.NotClosedHandler),
+        (r"/prestamos/nocerrados", handlers.prestamos.NotClosedHandler),
         (r"/informacion/cliente", handlers.consultar_info_cliente.ListHandler),
         (r"/usuarios", handlers.usuarios.ListHandler),
         (r"/registrar/prestamo", handlers.registro_prestamo.RegistroHandler),
-        (r"/cerrar/prestamo", handlers.prestamos.ListHandler)], 
+        (r"/cerrar/prestamo", handlers.prestamos.ListHandler),
+        (r"/nomina", handlers.nomina.MainHandler),
+        (r"/registrar/nomina", handlers.registro_nomina.RegistroHandler)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)

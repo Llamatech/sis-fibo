@@ -6,21 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Registrar Punto de Atención | BancAndes</title>
+    <title>Registrar Operación Cuenta | BancAndes</title>
 
-      <!-- core CSS -->
+    
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/font-awesome.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/prettyPhoto.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" />
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 
-
-    <!--[if lt IE 9]>
+    <!--[if lt IE 9]>’’’
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
@@ -29,6 +25,9 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url("images/ico/apple-touch-icon-114-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url("images/ico/apple-touch-icon-72-precomposed.png")}}">
     <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">
+
+
+
 </head>
 <!--/head-->
 
@@ -66,7 +65,7 @@
         </div>
         <!--/.top-bar-->
 
-         <nav class="navbar navbar-inverse" role="banner">
+        <nav class="navbar navbar-inverse" role="banner">
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -75,12 +74,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="index.html"><img src="{{ static_url("images/logo.png")}}" alt="logo"></a>
+                    <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"></a>
                 </div>
-                
+
                 <div class="collapse navbar-collapse navbar-right">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="/">Home</a></li>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="about-us.html">About Us</a></li>
                         <li><a href="services.html">Services</a></li>
                         <li><a href="portfolio.html">Portfolio</a></li>
@@ -93,11 +92,12 @@
                                 <li><a href="shortcodes.html">Shortcodes</a></li>
                             </ul>
                         </li>
-                        <li><a href="blog.html">Blog</a></li> 
-                        <li><a href="/logout">Cerrar Sesión</a></li>                        
+                        <li><a href="blog.html">Blog</a></li>
+                        <li class="active"><a href="contact-us.html">Contact</a></li>
                     </ul>
                 </div>
-            </div><!--/.container-->
+            </div>
+            <!--/.container-->
         </nav>
         <!--/nav-->
     </header>
@@ -105,71 +105,124 @@
 
     <section id="contact-info">
         <div class="center">
-            <h2>Registrar un nuevo punto de atención</h2>
+
+
         </div>
-        <div class="gmap-area">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-5 text-center">
-                        
-                            <div id="map-vis">
-                    <div id="map"></div>
-                    <script>
-                       
-                    </script>
-                  </div>
-                        </div>
 
-                    <div class="col-sm-7 map-content">
-                        <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
-                            <ul class="row">
-
-                                <li class="col-sm-6">
-                                    <address>
-                                    <div class="form-group">
-                                            <label>Localización</label>
-                                        <input type="text" name="localizacion" class="form-control" required="required">
-                                    </div>
-                                </address>
-
-                                    <address>
-                                    <div class="form-group">
-                            <label>Tipo</label>
-                            <select name="tipo" class="form-control" style="width:100%">
-                                {% for tipo in tipos%}
-                                   <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
-                                {% end %}
-                            </select>
-                        </div>
-                                </address>
-                                </li>
-                                
-                                <li class="col-sm-6">
-                                    <address>
-                                    <div class="form-group">
-                            <label>Oficina</label>
-                                <select name="oficina" class="itemSearchO" style="width:100%">
-                                    <option value="-1" selected="selected">Buscar una oficina</option>
-                                 </select>
-                        </div>
-                                </address>
-                                </li>
-                        <div class="col-md-6 col-xs-12">
-                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
-                            </div>
-                             <div class="col-md-6 col-xs-12">
-                                        <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
-                                    </div>
-                            </ul>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
     <!--/gmap_area -->
 
+    <section id="contact-page">
+        <div class="container">
+            <div class="center">
+                <h2>Consultar información</h2>
+                <p class="lead">En esta sección puede consultar la información de sus productos bancandes.</p>
+            </div>
+            <div class="row contact-wrap">
+                <div class="status alert alert-success" style="display: none"></div>
+                <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
+                    <input id="cambiar" type=hidden name="cambiar" value="">
 
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div>
+
+                            <h2>Filtros:</h2>
+                            <!---<button class="btn btn-default">Abrir Cuenta</button>
+                            <button class="btn btn-default">Cerrar Cuenta</button>--->
+                            <h3>Tipo de cuenta</h3>
+                            <div class="form-group">
+                                <label>Cuenta corriente</label>
+                                <input type="checkbox" name="cuentaCorriente" checked>
+                                <br>
+                                <label>Cuenta de ahorros</label>
+                                <input type="checkbox" name="cuentaAhorros" checked>
+                                <br>
+                                <label>ACT</label>
+                                <input type="checkbox" name="ACT"  checked>
+                                <br>
+                                <label>CDT</label>
+                                <input type="checkbox" name="CDT" checked>
+                                <br>
+                                <label>Prestamo para vivienda</label>
+                                <input type="checkbox" name="vivienda" checked>
+                                <br>
+                                <label>Prestamo para estudio</label>
+                                <input type="checkbox" name="estudio" checked>
+                                <br>
+                                <label>Prestamo para automovil</label>
+                                <input type="checkbox" name="automovil" checked>
+                                <br>
+                                <label>Prestamo para vivienda</label>
+                                <input type="checkbox" name="CDT" checked>
+                            </div>
+
+                            <h3>Número de cuenta</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todas las cuentas que cumplan con los filtros</p>
+                            <div class="form-group">
+                                <label>Número</label>
+                                <input type="text" name="cuentaCorriente">
+                            </div>
+
+                            <h3>Saldo</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todos los saldos</p>
+                            <div class="form-group">
+                                <label>Menor a:</label>
+                                <input type="text" name="saldoMin">
+                            </div>
+                            <div class="form-group">
+                                <label>Mayor a:</label>
+                                <input type="text" name="saldoMax">
+                            </div>
+
+                            <h3>Rango de fechas de operaciones</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todas las fechas</p>
+                            <div class="form-group">
+                                <label>Desde:</label>
+                                <input type="date" name="desde">
+                            </div>
+                            <div class="form-group">
+                                <label>Hasta:</label>
+                                <input type="date" name="hasta">
+                            </div>
+
+                            <h3>Valor operaciones</h3>
+                            <p> Puede dejar estos campos vacíos, y se tendrán en cuenta todos los saldos</p>
+                            <div class="form-group">
+                                <label>Menor a:</label>
+                                <input type="text" name="opMin">
+                            </div>
+                            <div class="form-group">
+                                <label>Mayor a:</label>
+                                <input type="text" name="opMax">
+                            </div>
+
+                            
+                                
+
+
+                            </div>
+
+
+
+
+                        </div>
+
+                        <br>
+                        <br>
+                        
+
+
+                        <br>
+
+                    </div>
+
+                </form>
+            </div>
+            <!--/.row-->
+        </div>
+        <!--/.container-->
+    </section>
+    <!--/#contact-page-->
 
     <section id="bottom">
         <div class="container wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
@@ -261,18 +314,12 @@
     </footer>
     <!--/#footer-->
 
-    <script src="{{ static_url("js/maps.js")}}"></script>
-    <script src="{{ static_url("js/jquery.js")}}"></script>
-    <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
-    <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
-    <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
-    <script src="{{ static_url("js/main.js")}}"></script>
-    <script src="{{ static_url("js/wow.min.js")}}"></script>
-    <script src="{{ static_url("js/selector.js")}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/jquery.isotope.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wow.min.js"></script>
 </body>
 
 </html>

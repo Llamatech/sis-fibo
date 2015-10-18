@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Registrar Punto de Atención | BancAndes</title>
+    <title>Registrar Nuevo Empleado Nómina | BancAndes</title>
 
       <!-- core CSS -->
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
@@ -18,6 +18,7 @@
     <link href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" />
     <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css"/>
 
 
     <!--[if lt IE 9]>
@@ -105,15 +106,13 @@
 
     <section id="contact-info">
         <div class="center">
-            <h2>Registrar un nuevo punto de atención</h2>
+            <h2>Registrar un empleado a la nómina empresarial</h2>
         </div>
         <div class="gmap-area">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-5 text-center">
                         
-                            <div id="map-vis">
-                    <div id="map"></div>
                     <script>
                        
                     </script>
@@ -121,25 +120,37 @@
                         </div>
 
                     <div class="col-sm-7 map-content">
-                        <form id="main-contact-form" class="contact-form" name="contact-form" method="post">
+                        <form id="nomina-form" class="contact-form" name="contact-form" method="post">
                             <ul class="row">
 
                                 <li class="col-sm-6">
                                     <address>
                                     <div class="form-group">
-                                            <label>Localización</label>
-                                        <input type="text" name="localizacion" class="form-control" required="required">
+                                            <label>Cuenta</label>
+                                            <select id="comp_acc" name="cuenta" style="width:100%">
+                                            {% for acc in accounts%}
+                                                <option value="{{acc.numero}}" selected="selected">{{escape(str(acc.numero))}}</option>        
+                                            {% end %}
+                                            </select>
                                     </div>
                                 </address>
 
                                     <address>
                                     <div class="form-group">
-                            <label>Tipo</label>
-                            <select name="tipo" class="form-control" style="width:100%">
-                                {% for tipo in tipos%}
-                                   <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>
-                                {% end %}
-                            </select>
+                            <label>Cuenta BancAndes Empleado</label>
+                            <select id="cuenta_empl" name="cuenta_empl" class="itemSearchE" style="width:100%">
+                                    <option value="-1" selected="selected">Buscar una cuenta</option>
+                                 </select>
+                        </div>
+                                </address>
+                                </li>
+
+
+                                <li class="col-sm-6">
+                                    <address>
+                                    <div class="form-group">
+                            <label>Salario</label>
+                            <input id="salario" type="number" name="salario" step="0.01" min="0" class="form-control" required="required">
                         </div>
                                 </address>
                                 </li>
@@ -147,9 +158,11 @@
                                 <li class="col-sm-6">
                                     <address>
                                     <div class="form-group">
-                            <label>Oficina</label>
-                                <select name="oficina" class="itemSearchO" style="width:100%">
-                                    <option value="-1" selected="selected">Buscar una oficina</option>
+                            <label>Frecuencia</label>
+                                <select id="frec_sel" name="frec" style="width:100%">
+                                        {% for frec in frecuencia%}
+                                            <option value="{{frec.id}}" selected="selected">{{escape(str(frec.frecuencia))}}</option>        
+                                        {% end %}
                                  </select>
                         </div>
                                 </address>
@@ -273,6 +286,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="{{ static_url("js/forms.js")}}"></script>
 </body>
 
 </html>

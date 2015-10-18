@@ -1,6 +1,9 @@
+# -*- coding: iso-8859-15 -*-
+
 import os
 import sys
 import tornado.web
+import tornado.escape
 from tornado import gen
 from model.fachada import bancandes 
 
@@ -27,6 +30,10 @@ class HomeHandler(tornado.web.RequestHandler):
                 self.render('../../static/goficina_menu.html')
            elif tipo == 'Cajero':
                 self.render('../../static/cajero-menu.html')
+           elif tipo == 'Cliente Natural':
+                self.render('../../static/cliente-menu.html')
+           elif tipo == 'Cliente Juridico':
+                self.render('../../static/clientej-menu.html') 
            else:
                 self.write('%d : %s' % (id, values[1]))
 
