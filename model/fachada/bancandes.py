@@ -144,10 +144,6 @@ class BancAndes(object):
         search_count, count, data = self.dao.obtener_operacionL(col, orden, a, b, perm, params, _id)
         return search_count, count, data
 
-    def obtener_prestamosL(self, col, orden, a, b, perm, params, _id):
-        search_count, count, data = self.dao.obtener_prestamosL(col, orden, a, b, perm, params, _id)
-        return search_count, count, data
-
     def obtener_tipo_de_usuario(self, idUsuario):
         return self.dao.obtener_tipo_de_usuario(idUsuario)
 

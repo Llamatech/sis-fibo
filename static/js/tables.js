@@ -157,18 +157,17 @@ function deleteFuncC(elem) {
                                             data: {
                                                 'numero_acc': $('#acc_subs').val()
                                             },
-                                            dataType: 'json',
-                                            encode: true
-
-                                        }).done(function(data){
-                                            $.ajax({
-                                                url: urlD,
-                                                type: 'DELETE',
-                                                success: function(response) {
-                                                    //...
-                                                    table.search("").draw();
-                                                }
-                                            });                    
+                                            success: function(response) {
+                                                //...
+                                                $.ajax({
+                                                    url: urlD,
+                                                    type: 'DELETE',
+                                                    success: function(response) {
+                                                        //...
+                                                        table.search("").draw();
+                                                    }
+                                                });
+                                            }
                                         });
                                     }
                                 }

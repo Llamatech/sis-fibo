@@ -516,7 +516,7 @@ class ConsultaDAO(object):
         cur.execute(stmt)
 
 
-        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"','"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"',"+str(operacion.cajero)+",'"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
         print(stmt)
         cur.execute(stmt)
         self.conn.commit()
@@ -777,7 +777,7 @@ class ConsultaDAO(object):
         print params
         cond = ''
         if params['search_term'] != "":
-            search_term = params['search_term']+'%' 
+            search_term = '%'+params['search_term'] 
             if params['client']:
                 cond += "(NOM_CLIENTE LIKE '%s' OR AP_CLIENTE LIKE '%s') " % (search_term, search_term)
             elif params['account']:
@@ -826,63 +826,6 @@ class ConsultaDAO(object):
         info = map(lambda x: cuenta.CuentaR(x[0], x[1], x[2], x[3],
                                             x[4], x[5], x[6], x[7],
                                             x[8], x[9], x[10]), info)
-        return search_count, count, info
-
-    def obtener_prestamosL(self, col, order, a, b, perm, params, _id=None):
-        view = 'PRESTAMO_INF'
-        cond = ''
-        if params['search_term'] != "":
-            search_term = params['search_term']+'%' 
-            if params['client']:
-                cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
-            elif params['loan']:
-                cond += "(TIPO_P LIKE '%s') " % (search_term)
-        if params['last_movement'][0] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "VENCIMIENTO_CUOTA >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
-        if params['last_movement'][1] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "VENCIMIENTO_CUOTA <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
-        if params['app_date'][0] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "FECHA_CREACION >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['existance'][0].strftime('%d/%m/%Y'))
-        if params['app_date'][1] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "FECHA_CREACION <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['existance'][1].strftime('%d/%m/%Y'))
-        if params['sum'][0] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "SALDO >= %s " % (str(params['sum'][0]))
-        if params['sum'][1] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "SALDO <= %s " % (str(params['sum'][1]))
-        if perm['goficina']:
-            if len(cond) > 0:
-               cond += 'AND '
-            of = self.get_id_oficina(_id)
-            cond += 'OFICINA = %d' % (of)
-        elif perm['cliente']:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += 'ID_CLIENTE = %d' % (_id)
-        info, search_count = self.obtener_elementos_ordenados(view, col, order, a, b, cond)
-        stmt = 'SELECT count(*) FROM PRESTAMO_INF'
-        self.establecer_conexion()
-        cur = self.conn.cursor()
-        cur.execute(stmt)
-        count = cur.fetchall()[0][0]
-        # search_count = len(info)
-        # info = info[a:b]
-        print info[0]
-        info = map(lambda x: prestamo.PrestamoR2(x[0], x[1], x[2], x[3],
-                                                x[4], x[5], x[6], x[7],
-                                                x[8], x[9], x[10], x[11],
-                                                x[12], x[13], x[14], x[15], x[16]), info)
         return search_count, count, info
 
     def obtener_operacionL(self, col, order, a, b, perm, params, _id):
@@ -1260,3 +1203,4 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return True, 200
+     

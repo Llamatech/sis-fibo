@@ -40,8 +40,7 @@ def main():
         (r"/pago/nomina", handlers.pago_nomina.PagoHandler),
         (r"/registrar/nomina", handlers.registro_nomina.RegistroHandler),
         (r"/operaciones", handlers.operacion.ListHandler),
-        (r"/nomina/migrar", handlers.nomina.MigrationHandler),
-        (r"/prestamos", handlers.prestamos.MainHandler)], 
+        (r"/nomina/migrar", handlers.nomina.MigrationHandler)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     application.listen(8000)

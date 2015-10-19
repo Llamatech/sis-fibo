@@ -32,9 +32,7 @@
 <!--/head-->
 
 <body>
-    <script>
-        alert("Ha ocurrido un error: "{{escape(str(error))}});
-    </script>
+
     <header id="header">
         <div class="top-bar">
             <div class="container">
@@ -117,6 +115,12 @@
     <section id="contact-page">
         <div class="container">
             <div class="center">
+                <div class="col-sm-10 col-sm-offset-1">
+                        <div>
+                            <div class="alert alert-danger fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>Ha ocurrido un error!</strong> {{escape(str(error))}}
+  </div>
                 <h2>Operación sobre cuenta</h2>
                 <p class="lead">En esta sección, puede realizar cualquier operación valida sobre cualquier cuenta que le pertenezca.</p>
             </div>
@@ -129,22 +133,39 @@
                             debugger;
                             document.getElementById("consignar").style.display = "inherit";
                             document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "none";
                         }
 
                         function retirar() {
                             document.getElementById("consignar").style.display = "none";
                             document.getElementById("retirar").style.display = "inherit";
+                            document.getElementById("consOtra").style.display = "none";
+                        }
+                        function consOtra(){
+                            document.getElementById("consignar").style.display = "none";
+                            document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "inherit";
                         }
 
                         function cons() {
                             debugger;
                             document.getElementById("cambiar").value = "consignar";
                             document.getElementById("montoRet").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
                         }
 
                         function ret() {
                             document.getElementById("cambiar").value = "retirar";
                             document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
+                        }
+                        
+                        function ori() {
+                            document.getElementById("cambiar").value = "origen";
+                            document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoRet").value = "0";
                         }
                     </script>
                     <div class="col-sm-10 col-sm-offset-1">
@@ -160,8 +181,9 @@
                             </div>
                             <!---<button class="btn btn-default">Abrir Cuenta</button>
                             <button class="btn btn-default">Cerrar Cuenta</button>--->
-                            <a class="btn btn-default" onclick="consignar()">Consignar Monto</a>
+                            <a class="btn btn-default" onclick="consignar()">Consignar Monto en efectivo</a>
                             <a class="btn btn-default" onclick="retirar()">Retirar Monto</a>
+                            <a class="btn btn-default" onclick="consOtra()">Consignar desde cuenta BancAndes</a>
 
                         </div>
 
@@ -176,6 +198,18 @@
                             <label>Monto a retirar:</label>
                             <input type="text" name="montoRet" id="montoRet" class="form-control" required="required">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ret()">Retirar</button>
+                        </div>
+                        <div id="consOtra" style="display:none" class="form-group">
+                            <label>Monto a consignar:</label>
+                            <input type="text" name="montoConsig" id="montoConsig" class="form-control" required="required">
+                            <label>Cuenta origen:</label>
+                            <select class="form-control" id="origen" name="origen">
+                                    <option></option>
+                                    {% for cuenta in cuentas%}
+                                    <option value="{{cuenta.numero}}">{{escape(str(cuenta.numero))}}</option>
+                                    {% end %}
+                                </select>
+                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ori()">Transferir</button>
                         </div>
 
 
@@ -280,7 +314,8 @@
         </div>
     </footer>
     <!--/#footer-->
-
+<!--  
+    <script src="{{ static_url("js/maps.js")}}"></script>-->
     <script src="{{ static_url("js/jquery.js")}}"></script>
     <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
     <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
