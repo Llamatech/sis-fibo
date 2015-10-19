@@ -175,4 +175,68 @@ $(".itemSearch").select2({
             }
         }
     });
+    
+    $(".itemSearchNC").select2({
+        // tags: true,
+        // multiple: true,
+        // tokenSeparators: [',', ' '],
+        minimumInputLength: 1,
+        minimumResultsForSearch: 20,
+        ajax: {
+            url: '/cuentas/nocerradas',
+            dataType: "json",
+            type: "POST",
+            delay:250,
+            data: function(params) {
+
+                var queryParameters = {
+                    term: params.term
+                }
+                return queryParameters;
+            },
+            processResults: function(data) {
+                return {
+                    results: $.map(data, function(item) {
+                        var obj = {
+                            id: item.numero,
+                            text: 'Número Cuenta: '+item.numero
+                        };
+                        return obj;
+                    })
+                };
+            }
+        }
+    });
+    
+    $(".itemSearchPNC").select2({
+        // tags: true,
+        // multiple: true,
+        // tokenSeparators: [',', ' '],
+        minimumInputLength: 1,
+        minimumResultsForSearch: 20,
+        ajax: {
+            url: '/prestamos/nocerrados',
+            dataType: "json",
+            type: "POST",
+            delay:250,
+            data: function(params) {
+
+                var queryParameters = {
+                    term: params.term
+                }
+                return queryParameters;
+            },
+            processResults: function(data) {
+                return {
+                    results: $.map(data, function(item) {
+                        var obj = {
+                            id: item.id,
+                            text: 'Número Préstamo: '+item.id
+                        };
+                        return obj;
+                    })
+                };
+            }
+        }
+    });
 });

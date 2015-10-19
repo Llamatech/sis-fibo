@@ -122,12 +122,81 @@ function deleteFuncC(elem) {
                 // console.log(table);
                 console.log($(elem).parents('tr'));
                 $(elem).parents('tr').addClass('selected');
+                var param = urlD.split('?')[1]
                 $.ajax({
-                    url: urlD,
-                    type: 'DELETE',
-                    success: function(response) {
-                        //...
-                        table.search("").draw();
+                    type: 'POST',
+                    url: '/nomina/migrar?' + param,
+                    dataType: 'json',
+                    encode: true
+                }).done(function(data) {
+                    if (data.has) {
+                        var acc = data.acc;
+                        if (acc.length > 0) {
+                            var sel = '<select id="acc_subs"> \n';
+                            for (var i = acc.length - 1; i >= 0; i--) {
+                                var num = acc[i].numero;
+                                sel += '<option value = "' + num + '">' + num + '</option> \n'
+                            }
+                            sel += '</select>'
+
+                            BootstrapDialog.confirm({
+                                title: '¡Atención!',
+                                message: 'La cuenta empresarial a eliminar, realiza pagos recurrentes de nómina <br> Por favor, seleccione una cuenta a la cual desea transferir los pagos.' + sel,
+                                type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                                closable: true, // <-- Default value is false
+                                draggable: true, // <-- Default value is false
+                                btnCancelLabel: 'Cancelar', // <-- Default value is 'Cancel',
+                                btnOKLabel: 'Transferir', // <-- Default value is 'OK',
+                                btnOKClass: 'btn-warning',
+                                callback: function(result) {
+                                    // result will be true if button was click, while it will be false if users close the dialog directly.
+                                    if (result) {
+                                        $.ajax({
+                                            url: '/nomina/migrar?' + param,
+                                            type: 'PUT',
+                                            data: {
+                                                'numero_acc': $('#acc_subs').val()
+                                            },
+                                            dataType: 'json',
+                                            encode: true
+
+                                        }).done(function(data){
+                                            $.ajax({
+                                                url: urlD,
+                                                type: 'DELETE',
+                                                success: function(response) {
+                                                    //...
+                                                    table.search("").draw();
+                                                }
+                                            });                    
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            BootstrapDialog.confirm({
+                                title: 'Error',
+                                message: 'El cliente no cuenta con cuentas adicionales a las cuales pueda delegar el pago de nómina.',
+                                type: BootstrapDialog.TYPE_DANGER, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                                closable: true, // <-- Default value is false
+                                draggable: true, // <-- Default value is false
+                                btnCancelLabel: 'Cancelar', // <-- Default value is 'Cancel',
+                                btnOKLabel: 'Salir', // <-- Default value is 'OK',
+                                btnOKClass: 'btn-danger',
+                                callback: function(result) {
+                                    $(elem).parents('tr').removeClass('selected');
+                                }
+                            });
+                        }
+                    } else {
+                        $.ajax({
+                            url: urlD,
+                            type: 'DELETE',
+                            success: function(response) {
+                                //...
+                                table.search("").draw();
+                            }
+                        });
                     }
                 });
             } else {
@@ -136,6 +205,7 @@ function deleteFuncC(elem) {
         }
     });
 }
+
 
 $(document).ready(function() {
 
@@ -211,7 +281,7 @@ $(document).ready(function() {
         }]
     });
 
-	$('#pa_table').DataTable({
+    $('#pa_table').DataTable({
         "processing": true,
         "serverSide": true,
         "ajax": {
@@ -246,28 +316,26 @@ $(document).ready(function() {
         dom: 'Bfrtip',
         stateSave: true,
         buttons: [
-            'colvis',
-            {
+            'colvis', {
                 text: 'Buscar por nombre de cliente',
-                action: function ( e, dt, node, config ) {
+                action: function(e, dt, node, config) {
                     $(this).attr("test_attr", "a");
                     state = "1";
                     // console.log(state);
                     $("#paramF").text('Buscando por: Nombre de cliente');
                     // alert($(this).attr("test_attr")) 
                 },
-                className:'info'
-            },
-            {
+                className: 'info'
+            }, {
                 text: 'Buscar por Tipo de cuenta',
-                action: function ( e, dt, node, config ) {
+                action: function(e, dt, node, config) {
                     $(this).attr("test_attr", "a");
                     state = "2";
                     // console.log(state);
                     $("#paramF").text('Buscando por: Tipo de cuenta');
                     // alert($(this).attr("test_attr")) 
                 },
-                className:'info'
+                className: 'info'
             }
         ],
         "processing": true,
@@ -275,14 +343,14 @@ $(document).ready(function() {
         "ajax": {
             "url": "/cuentas",
             "type": "POST",
-            "data": function ( d ) {
+            "data": function(d) {
                 d.test = state,
                 d.creacionStart = $("#fromD").val(),
                 d.creacionStop = $("#toD").val(),
                 d.uMovStart = $("#fromMD").val(),
                 d.uMovStop = $("#toMD").val(),
                 d.saldoFrom = $("#sumFrom").val(),
-                d.saldoTo =  $("#sumTo").val()
+                d.saldoTo = $("#sumTo").val()
                 // d.custom = $('#myInput').val();
                 // etc
             }
@@ -317,28 +385,26 @@ $(document).ready(function() {
         dom: 'Bfrtip',
         stateSave: true,
         buttons: [
-            'colvis',
-            {
+            'colvis', {
                 text: 'Buscar por nombre de cliente',
-                action: function ( e, dt, node, config ) {
+                action: function(e, dt, node, config) {
                     $(this).attr("test_attr", "a");
                     state_o = "1";
                     // console.log(state);
                     $("#paramF").text('Buscando por: Nombre de cliente');
                     // alert($(this).attr("test_attr")) 
                 },
-                className:'info'
-            },
-            {
+                className: 'info'
+            }, {
                 text: 'Buscar por Tipo de cuenta',
-                action: function ( e, dt, node, config ) {
+                action: function(e, dt, node, config) {
                     $(this).attr("test_attr", "a");
                     state_o = "2";
                     // console.log(state);
                     $("#paramF").text('Buscando por: Tipo de cuenta');
                     // alert($(this).attr("test_attr")) 
                 },
-                className:'info'
+                className: 'info'
             }
         ],
         "processing": true,
@@ -346,14 +412,14 @@ $(document).ready(function() {
         "ajax": {
             "url": "/cuentas",
             "type": "POST",
-            "data": function ( d ) {
+            "data": function(d) {
                 d.test = state_o,
                 d.creacionStart = $("#fromD").val(),
                 d.creacionStop = $("#toD").val(),
                 d.uMovStart = $("#fromMD").val(),
                 d.uMovStop = $("#toMD").val(),
                 d.saldoFrom = $("#sumFrom").val(),
-                d.saldoTo =  $("#sumTo").val()
+                d.saldoTo = $("#sumTo").val()
                 // d.custom = $('#myInput').val();
                 // etc
             }
@@ -380,24 +446,194 @@ $(document).ready(function() {
             "data": "of_nombre"
         }, {
             "data": "fecha_umov"
-        },
-        {"data": "delete"}],
+        }, {
+            "data": "delete"
+        }],
         "columnDefs": [{
             "render": function(data, type, row) {
-            	console.log(data);
-            	if(data !== null)
-                {
-                   var style = '<div class="row"><div class="col-xs-2"><a onClick="' + 'return deleteFuncC(this)' + '" deleteP="' + data + '"><i class="fa fa-times"></i>Cerrar</a></div>';
-                   return style;
+                console.log(data);
+                if (data !== null) {
+                    var style = '<div class="row"><div class="col-xs-2"><a onClick="' + 'return deleteFuncC(this)' + '" deleteP="' + data + '"><i class="fa fa-times"></i>Cerrar</a></div>';
+                    return style;
                 }
                 return '';
             },
             "targets": 11
-    }]
-});
+        }]
+    });
 
-	$('#acc_search_btn').click(function() {
+    var state_p = '1'
+    $('#pres_table').DataTable({
+        dom: 'Bfrtip',
+        stateSave: true,
+        buttons: [
+            'colvis', {
+                text: 'Buscar por nombre de cliente',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_p = "1";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Nombre de cliente');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }, {
+                text: 'Buscar por Tipo de prestamo',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_p = "2";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Tipo de prestamo');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }
+        ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "/prestamos",
+            "type": "POST",
+            "data": function(d) {
+                d.test = state,
+                d.creacionStart = $("#fromD").val(),
+                d.creacionStop = $("#toD").val(),
+                d.uMovStart = $("#fromMD").val(),
+                d.uMovStop = $("#toMD").val(),
+                d.saldoFrom = $("#sumFrom").val(),
+                d.saldoTo = $("#sumTo").val()
+                // d.custom = $('#myInput').val();
+                // etc
+            }
+        },
+        "columns": [{
+            "data": "id"
+        }, {
+            "data": "cerrado"
+        }, {
+            "data": "monto"
+        }, {
+            "data": "fecha_creacion"
+        }, {
+            "data": "num_cuotas"
+        }, {
+            "data": "valor_cuota"
+        }, {
+            "data": "interes"
+        }, {
+            "data": "id_cliente"
+        }, {
+            "data": "nombre"
+        }, {
+            "data": "apellido"
+        }, {
+            "data": "oficina"
+        },{
+            "data": "nombre_of"
+        }]
+    });
+
+
+    var state_op = '1'
+    $('#op_table').DataTable({
+        dom: 'Bfrtip',
+        stateSave: true,
+        buttons: [
+            'colvis', {
+                text: 'Buscar por nombre de cliente',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_o = "1";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Nombre de cliente');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }, {
+                text: 'Buscar por número de cuenta',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_op = "2";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Número de cuenta');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }, {
+                text: 'Buscar por número de préstamo',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_op = "3";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Número de préstamo');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }
+        ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "/operaciones",
+            "type": "POST",
+            "data": function(d) {
+                d.test = state_op,
+                d.tipoOp = $("#tOperacion").val(),
+                d.uMovStart = $("#fromMD").val(),
+                d.uMovStop = $("#toMD").val(),
+                d.saldoFrom = $("#sumFrom").val(),
+                d.saldoTo = $("#sumTo").val()
+                // d.custom = $('#myInput').val();
+                // etc
+            }
+        },
+        "columns": [{
+            "data": "numero"
+        }, {
+            "data": "fecha"
+        }, {
+            "data": "tipo"
+        }, {
+            "data": "id_cliente"
+        }, {
+            "data": "nombre"
+        }, {
+            "data": "apellido"
+        }, {
+            "data": "cuenta"
+        }, {
+            "data": "prestamo"
+        }, {
+            "data": "valor"
+        }, {
+            "data": "punto_atencion"
+        }, {
+            "data": "tipo_pa"
+        }, {
+            "data": "id_oficina"
+        }, {
+            "data": "nombre_oficina"
+        }, {
+            "data": "cajero"
+        }, {
+            "data": "nombre_emp"
+        }, {
+            "data": "apellido_emp"
+        }]
+    });
+
+    $('#acc_search_btn').click(function() {
         var table = $('#acc_tableggeneral').DataTable();
+        table.search("").draw();
+    });
+
+    $('#op_search_btn').click(function() {
+        var table = $('#op_table').DataTable();
+        table.search("").draw();
+    });
+
+    $('#p_search_btn').click(function() {
+        var table = $('#pres_table').DataTable();
         table.search("").draw();
     });
     // $('#example tbody').on( 'click', 'tr', function () {

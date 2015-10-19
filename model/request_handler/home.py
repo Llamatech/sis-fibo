@@ -31,7 +31,11 @@ class HomeHandler(tornado.web.RequestHandler):
            elif tipo == 'Cajero':
                 self.render('../../static/cajero-menu.html')
            elif tipo == 'Cliente Natural':
-                self.render('../../static/cliente-menu.html')
+                inst = bancandes.BancAndes.dar_instancia()
+                inst.inicializar_ruta('data/connection')
+                notificaciones = inst.obtener_notificaciones_cliente(id)
+                print notificaciones
+                self.render('../../static/cliente-menu.html',notifications=notificaciones)
            elif tipo == 'Cliente Juridico':
                 self.render('../../static/clientej-menu.html') 
            else:

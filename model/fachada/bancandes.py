@@ -103,8 +103,8 @@ class BancAndes(object):
     def get_id_oficina(self, idGerente):
         return self.dao.get_id_oficina(idGerente)
 
-    def obtener_cuentas(self, idUsuario, cond = None):
-        return self.dao.obtener_cuentas(idUsuario, cond)
+    def obtener_cuentas(self, idUsuario, cond = None, closed=True):
+        return self.dao.obtener_cuentas(idUsuario, cond, closed)
 
     def es_cajero(self, idUsuario):
         return self.dao.es_cajero(idUsuario)
@@ -138,6 +138,14 @@ class BancAndes(object):
 
     def obtener_cuentasL(self, col, orden, a, b, perm, params, _id):
         search_count, count, data = self.dao.obtener_cuentasL(col, orden, a, b, perm, params, _id)
+        return search_count, count, data
+
+    def obtener_operacionL(self, col, orden, a, b, perm, params, _id):
+        search_count, count, data = self.dao.obtener_operacionL(col, orden, a, b, perm, params, _id)
+        return search_count, count, data
+
+    def obtener_prestamosL(self, col, orden, a, b, perm, params, _id):
+        search_count, count, data = self.dao.obtener_prestamosL(col, orden, a, b, perm, params, _id)
         return search_count, count, data
 
     def obtener_tipo_de_usuario(self, idUsuario):
@@ -197,3 +205,19 @@ class BancAndes(object):
 
     def obtener_prestamos_NC(self, search_term):
         return self.dao.obtener_prestamos_NC(search_term)
+
+    def pagar_nomina(self, cuenta):
+        return self.dao.pagar_nomina(cuenta)
+
+    def obtener_tipo_operacion(self):
+        return self.dao.obtener_tipo_operacion()
+
+    def cuenta_nomina(self, acc_number):
+        return self.dao.cuenta_nomina(acc_number)
+
+    def obtener_notificaciones_cliente(self, idCliente):
+        return self.dao.obtener_notificaciones_cliente(idCliente)
+
+    def migrar_nomina(self, acc_old, acc_new):
+        succ, code = self.dao.migrar_nomina(acc_old, acc_new)
+        return succ, code

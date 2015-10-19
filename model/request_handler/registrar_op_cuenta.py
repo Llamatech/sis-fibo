@@ -70,7 +70,7 @@ class RegistroHandler(tornado.web.RequestHandler):
         else:
             origen = self.get_body_argument('origen')
             exists = inst.registrar_op_cuenta_origen(oper, origen)
-        if exists:
+        if exists==True:
             self.render('../../static/transaccionExitosa.html')
         else:
             if self.es_cajero:

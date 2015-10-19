@@ -45,7 +45,7 @@ class RegistroHandler(tornado.web.RequestHandler):
             exists = inst.registrar_operacion_prestamo_origen(oper,origen)
         else:
             exists = inst.registrar_operacion_prestamo(oper)
-        if exists:
+        if exists == True:
             self.render('../../static/transaccionExitosa.html')
         else: 
             self.render('../../static/registrarOperacionPrestamoError.html', error=exists)

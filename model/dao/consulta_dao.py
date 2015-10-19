@@ -3,6 +3,7 @@
 import os
 import sys
 import cx_Oracle
+import datetime
 from model.vos import tipo
 from model.vos import cuenta
 from model.vos import usuario
@@ -74,6 +75,17 @@ class ConsultaDAO(object):
         data = map(lambda x: cliente.ClienteR(x[0], x[1], x[2], x[3], x[4], x[5], x[6]), data)
         return data
 
+        """
+        La trasacción involucrada en registrar un cliente maneja un
+        nivel de aislamiento READ COMMITTED. Este nivel se utiliza 
+        para evitar que alguna consulta lea algún cliente para el cual
+        no se ha terminado el proceso de registro. No es necesario
+        un mayor nivel de aislamiento, puesto que las consultas deberían 
+        poder hacerse mientras se esta registrando un nuevo cliente,
+        para mantener la disponibilidad.
+        No se hace ninguna sentencia adicional dado que este es el nivel 
+        de aislamiento por defecto en Oracle.
+        """
     def registrar_cliente(self, _usuario, _cliente):
         stmt_0 = 'SELECT MAX(ID) FROM USUARIO'
         stmt = 'INSERT INTO USUARIO(ID, PIN, EMAIL, TIPO) VALUES %s'
@@ -219,6 +231,18 @@ class ConsultaDAO(object):
         self.conn.close()
         return tipo_cuenta_l
 
+
+        """
+        La trasacción involucrada en registrar una cuenta maneja un
+        nivel de aislamiento READ COMMITTED. Este nivel se utiliza 
+        para evitar que alguna consulta lea alguna cuenta para la cual
+        no se ha terminado el proceso de registro. No es necesario
+        un mayor nivel de aislamiento, puesto que las consultas deberían 
+        poder hacerse mientras se esta registrando una nueva cuenta,
+        para mantener la disponibilidad.
+        No se hace ninguna sentencia adicional dado que este es el nivel 
+        de aislamiento por defecto en Oracle.
+        """
     def registrar_cuenta(self, tipo, idCliente, idOficina, saldo):
         stmt = "SELECT * FROM USUARIO u WHERE u.id= %d" % (idCliente)
         self.establecer_conexion()
@@ -262,10 +286,12 @@ class ConsultaDAO(object):
         self.conn.close()
         return data[0][0]
 
-    def obtener_cuentas(self, idUsuario, cond = None):
+    def obtener_cuentas(self, idUsuario, cond = None, closed = True):
         stmt = "SELECT * FROM CUENTA where cliente = " + "'"+str(idUsuario)+ "'"
         if cond:
             stmt += ' AND TIPO_CUENTA <= 2'
+        if not closed:
+            stmt += " AND CERRADA = 'N'"
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -379,9 +405,18 @@ class ConsultaDAO(object):
         self.conn.close()
         return data[0][0]
 
+        """
+        La trasacción involucrada en el registro de una operacion sobre una cuenta tiene
+        nivel de aislamiento SERIALIZABLE, puesto que involucra el cambiar cantidades
+        de dinero en los saldos de una cuenta. Si no se hiciera SERIALIZABLE, sería posible
+        retirar todo el dinero de una cuenta dos veces, si se hace al tiempo, por lo que el resultado
+        sería que el cliente puede retirar más plata de la que posee. Otros tipos de error 
+        como este con posibles, por lo que se usa el mayor nivel de aislamiento.
+        """
     def registrar_operacion_cuenta(self, operacion):
         self.establecer_conexion()
         cur = self.conn.cursor()
+        cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
         stmt = "SELECT * FROM CUENTA c, PERMITEOPERACIONCU p WHERE c.tipo_cuenta=p.id_tipocuenta AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.numero="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 232 dao")
         cur.execute(stmt)
@@ -417,7 +452,7 @@ class ConsultaDAO(object):
         print(stmt + " 259 dao")
         cur.execute(stmt)
         print("PAPI") #Llami, regreso en un par de horas!
-        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"','"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"',"+str(operacion.cajero)+",'"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
         print(stmt)
         cur.execute(stmt)
         self.conn.commit()
@@ -425,9 +460,18 @@ class ConsultaDAO(object):
         self.conn.close()
         return True
 
+        """
+        La trasacción involucrada en el registro de una operacion sobre una cuenta desde una cuenta origen tiene
+        nivel de aislamiento SERIALIZABLE, puesto que involucra el cambiar cantidades
+        de dinero en los saldos de una cuenta. Si no se hiciera SERIALIZABLE, sería posible
+        retirar todo el dinero de una cuenta dos veces, si se hace al tiempo, por lo que el resultado
+        sería que el cliente puede retirar más plata de la que posee. Otros tipos de error 
+        como este con posibles, por lo que se usa el mayor nivel de aislamiento.
+        """
     def registrar_op_cuenta_origen(self, operacion, origen):
         self.establecer_conexion()
         cur = self.conn.cursor()
+        cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
         stmt = "SELECT * FROM CUENTA c, PERMITEOPERACIONCU p WHERE c.tipo_cuenta=p.id_tipocuenta AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.numero="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 398 dao")
         cur.execute(stmt)
@@ -531,11 +575,21 @@ class ConsultaDAO(object):
             return True
 
 
+        """
+        La trasacción involucrada en el registro de una operacion sobre un prestamo tiene
+        nivel de aislamiento SERIALIZABLE, puesto que involucra el cambiar cantidades
+        de dinero en los montos de un prestamo. Si no se hiciera SERIALIZABLE, sería posible
+        pagar todo el prestamo 2 veces, si se hace al tiempo, por lo que el resultado
+        sería que el cliente puede pagar todo el prestamo 2 veces, pero solo se veria
+        reflejado 1 vez en la base de datos . Otros tipos de error 
+        como este con posibles, por lo que se usa el mayor nivel de aislamiento.
+        """
     def registrar_operacion_prestamo(self, operacion):
         stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 232 dao")
         self.establecer_conexion()
         cur = self.conn.cursor()
+        cur.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
         cur.execute(stmt)
         data = cur.fetchall()
 
@@ -573,11 +627,21 @@ class ConsultaDAO(object):
         self.conn.close()
         return True
 
+        """
+        La trasacción involucrada en el registro de una operacion sobre un prestamo desde una cuenta origen tiene
+        nivel de aislamiento SERIALIZABLE, puesto que involucra el cambiar cantidades
+        de dinero en los saldos de un prestamo. Si no se hiciera SERIALIZABLE, sería posible
+        retirar todo el dinero de una cuenta al pagar el prestamo y reitrar por otro lado, 
+        por lo que el resultado si se hace al tiempo, 
+        sería que el cliente puede retirar más plata de la que posee. Otros tipos de error 
+        como este son posibles, por lo que se usa el mayor nivel de aislamiento.
+        """
     def registrar_operacion_prestamo_origen(self, operacion,origen):
         stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 544 dao")
         self.establecer_conexion()
         cur = self.conn.cursor()
+        cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
         cur.execute(stmt)
         data = cur.fetchall()
 
@@ -713,7 +777,7 @@ class ConsultaDAO(object):
         print params
         cond = ''
         if params['search_term'] != "":
-            search_term = '%'+params['search_term'] 
+            search_term = params['search_term']+'%' 
             if params['client']:
                 cond += "(NOM_CLIENTE LIKE '%s' OR AP_CLIENTE LIKE '%s') " % (search_term, search_term)
             elif params['account']:
@@ -763,7 +827,126 @@ class ConsultaDAO(object):
                                             x[4], x[5], x[6], x[7],
                                             x[8], x[9], x[10]), info)
         return search_count, count, info
-        
+
+    def obtener_prestamosL(self, col, order, a, b, perm, params, _id=None):
+        view = 'PRESTAMO_INF'
+        cond = ''
+        if params['search_term'] != "":
+            search_term = params['search_term']+'%' 
+            if params['client']:
+                cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
+            elif params['loan']:
+                cond += "(TIPO_P LIKE '%s') " % (search_term)
+        if params['last_movement'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VENCIMIENTO_CUOTA >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
+        if params['last_movement'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VENCIMIENTO_CUOTA <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
+        if params['app_date'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "FECHA_CREACION >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['existance'][0].strftime('%d/%m/%Y'))
+        if params['app_date'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "FECHA_CREACION <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['existance'][1].strftime('%d/%m/%Y'))
+        if params['sum'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "SALDO >= %s " % (str(params['sum'][0]))
+        if params['sum'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "SALDO <= %s " % (str(params['sum'][1]))
+        if perm['goficina']:
+            if len(cond) > 0:
+               cond += 'AND '
+            of = self.get_id_oficina(_id)
+            cond += 'OFICINA = %d' % (of)
+        elif perm['cliente']:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += 'ID_CLIENTE = %d' % (_id)
+        info, search_count = self.obtener_elementos_ordenados(view, col, order, a, b, cond)
+        stmt = 'SELECT count(*) FROM PRESTAMO_INF'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        count = cur.fetchall()[0][0]
+        # search_count = len(info)
+        # info = info[a:b]
+        print info[0]
+        info = map(lambda x: prestamo.PrestamoR2(x[0], x[1], x[2], x[3],
+                                                x[4], x[5], x[6], x[7],
+                                                x[8], x[9], x[10], x[11],
+                                                x[12], x[13], x[14], x[15], x[16]), info)
+        return search_count, count, info
+
+    def obtener_operacionL(self, col, order, a, b, perm, params, _id):
+        view = 'OPERACION_INF'
+        cond = ''
+        if params['search_term'] != "":
+            search_term = params['search_term']+'%'
+            if params['client']:
+                cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
+            elif params['account']:
+                cond += "TO_CHAR(CUENTA) LIKE '%s' " % (search_term)
+            else:
+                cond += "TO_CHAR(PRESTAMO) LIKE '%s' " % (search_term)
+        if params['op_type'] != -1:
+            if len(cond) > 0:
+                cond += "AND "
+            cond += " TIPO_OP = %d " % (params['op_type'])
+        if params['last_movement'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "FECHA >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
+        if params['last_movement'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "FECHA <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
+        if params['sum'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VALOR >= %s " % (str(params['sum'][0]))
+        if params['sum'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VALOR <= %s " % (str(params['sum'][1]))
+
+        if perm['goficina']:
+            if len(cond) > 0:
+               cond += 'AND '
+            id_of = self.get_id_oficina(_id)
+            cond += "ID_OFICINA = %d " % (id_of)
+        elif perm['cliente']:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "ID_CLIENTE = %d" % (_id)
+
+        info, search_count = self.obtener_elementos_ordenados(view, col, order, a, b, cond)
+        stmt = 'SELECT count(*) FROM OPERACION_INF'
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        count = cur.fetchall()[0][0]
+        info = map(lambda x: operacion.OperacionR(x[0], x[1], x[2], x[3], x[4],
+                                                  x[5], x[6], x[7], x[8], x[9],
+                                                  x[10], x[11], x[12], x[13],
+                                                  x[14], x[15], x[16]), info)
+        return search_count, count, info        
+
+        """
+        La trasacción involucrada en el cierre de una cuenta tiene
+        nivel de aislamiento SERIALIZABLE, puesto que involucra el cambiar cantidades
+        de dinero en los saldos de una cuenta. Si no se hiciera SERIALIZABLE, sería posible
+        retirar retirar dinero de una cuenta que esta siendo cerrada, por lo que el resultado
+        sería que el cliente puede retirar plata aunque la cuenta este cerrada. Otros tipos de error 
+        como este son posibles, por lo que se usa el mayor nivel de aislamiento.
+        """
     def cerrar_cuenta(self, numero):
         stmt = "UPDATE CUENTA SET SALDO = 0, CERRADA = 'S' WHERE NUMERO = %d"
         stmt = stmt % (numero)
@@ -846,6 +1029,11 @@ class ConsultaDAO(object):
             cuentas.append(cuentaa)
         return cuentas
 
+    """
+       Debido a que antes de realizar una operación, éste debe existir. Toda operación que desee realiza
+       una consulta sobre los préstamos del sistema BancAndes, debería realizarla nuevamente, si desea 
+       visualizar nuevos préstamos, esto implica que el nivel de aislamiento definido corresponde a READ COMMITTED.
+    """
     def registrar_prestamo(self, _prestamo):
         stmt = 'INSERT INTO PRESTAMO(id, interes, monto, vencimiento_cuota, num_cuotas, valor_cuota, tipo, cliente, oficina) VALUES %s'
         stmt_2 = 'SELECT MAX(ID) FROM PRESTAMO'
@@ -860,6 +1048,12 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
 
+    """
+        Para cerrar un préstamo, es necesario que el saldo de este, sea equivalente a cero.
+        Esto implica que otra transacción no puede realizar una operación sobre el mismo préstamo,
+        y por lo tanto, el modo de aislamiento corresponde a READ COMMITTED (Modo de aislamiento
+        transaccional definido por defecto en Oracle 12c).
+    """
     def cerrar_prestamo(self, _numero):
         stmt = "UPDATE PRESTAMO SET CERRADO = 'S' WHERE ID = %d"
         stmt = stmt % (_numero)
@@ -910,6 +1104,12 @@ class ConsultaDAO(object):
         self.conn.close()
         return data[0][0]
 
+    """
+        Debido a que la inserción de nuevas cuentas en una nómina no debe modificar el proceso
+        de pago de la misma, si éste ha iniciado. Es decir, que las cuentas que se añaden a una
+        nómina, mientras esta es pagada, no deberían incrementar su saldo. Por lo tanto, el nivel
+        de aislamiento definido corresponde a READ COMMITED (Nivel definido por defecto).  
+    """
     def actualizar_nomina(self, cuenta, cuenta_empl, salario, frecuencia):
         stmt = """INSERT INTO NOMINA(CUENTA_EMPLEADO, CUENTA_EMPRESA, SALARIO, FRECUENCIA)
                   VALUES (%d, %d, %s, %d)""" % (cuenta_empl, cuenta, salario, frecuencia)
@@ -926,3 +1126,137 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return True, 200, "Success"
+
+    """
+        Debido a que el proceso de pagar la nómina de un empleador, depende del saldo actual disponible en la cuenta empresarial,
+        éste debe permanecer constante y estático durante la transacción, y por lo tanto, otra operación que desee modificar el saldo
+        debe esperar hasta que esta transacción finalice. Esto implica que el modo de aislamiento actual de la transaccción debe
+        ser SERIALIZABLE. 
+    """
+    def pagar_nomina(self, cuenta):
+        stmt ="SELECT n.CUENTA_EMPLEADO, n.SALARIO FROM NOMINA n WHERE n.CUENTA_EMPRESA="+ str(cuenta) 
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+        cur.execute(stmt)
+        data = cur.fetchall()
+        noPagos = []
+        ok = True
+        for x in data:
+            if ok:
+                ok = self.pagar_empleado(cuenta, x[0],x[1],cur)
+            if not ok:
+                noPagos.append(x[0])
+
+        if not ok:
+            for y in noPagos:
+                self.notificar_empleado(y,cur)
+            r = self.obtener_nombres_empleados(noPagos, cur)
+            cur.close()
+            self.conn.close()
+            return r
+        else:
+            cur.close()
+            self.conn.close()
+            return True
+
+
+    def pagar_empleado(self, cuenta_empresa,cuenta_empleado,salario,cur):
+        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empresa)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        saldo = float(data[0][0])-float(salario)
+        if saldo < 0:
+            return False
+        stmt = "UPDATE CUENTA SET SALDO ="+str(saldo)+" WHERE NUMERO="+str(cuenta_empresa)
+        print stmt
+        cur.execute(stmt)
+        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empresa)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        saldo = float(data[0][0])+float(salario)
+        stmt = "UPDATE CUENTA SET SALDO ="+str(saldo)+" WHERE NUMERO="+str(cuenta_empleado)
+        cur.execute(stmt)
+        self.conn.commit() #savepoint
+        return True
+
+    def notificar_empleado(self, cuenta_empleado, cur):
+        stmt = "SELECT u.ID FROM CLIENTE u, CUENTA c WHERE c.CLIENTE=u.ID AND c.NUMERO ="+str(cuenta_empleado)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        id = data[0][0]
+        stmt = "INSERT INTO NOTIFICACIONES(USUARIO,MENSAJE,FECHA) VALUES("+str(id)+",'Su nomina no pudo ser pagada por fondos insuficientes en la cuenta corporativa. Fecha y hora: "+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"', TO_DATE('"+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"','YYYY-MM-DD hh24:mi:ss')"+")"
+        print stmt
+        cur.execute(stmt)
+        self.conn.commit() #Savepoint
+
+    def obtener_nombres_empleados(self, cuentas, cur):
+        l = ['NUMERO = '+str(cuentas[0])]
+        for x in range(1,len(cuentas)):
+            l.append(' OR NUMERO = '+str(x))
+        s = ''.join(l)
+        stmt = "SELECT p.NOMBRE FROM CUENTA c, CLIENTE p WHERE p.id=c.cliente AND ("+s+')'
+        print stmt + "dao 1023"
+        cur.execute(stmt)
+        data = cur.fetchall()
+        nom_cuenta = []
+        for x in range(0, len(cuentas)):
+            nom_cuenta.append({'nombre':data[x][0], 'cuenta':cuentas[x]})
+
+        return nom_cuenta
+
+    def obtener_tipo_operacion(self):
+        stmt = "SELECT * FROM TIPOOPERACION"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: tipo.TipoOperacion(x[0], x[1]), data)
+        return data
+
+    def cuenta_nomina(self, acc_number):
+        stmt = "SELECT COUNT(*) FROM NOMINA WHERE CUENTA_EMPRESA = %d" % (acc_number)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+        return data > 0
+
+    def obtener_notificaciones_cliente(self, idCliente):
+        stmt = "SELECT MENSAJE FROM NOTIFICACIONES WHERE USUARIO ="+  str(idCliente)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        stmt2 = "DELETE FROM NOTIFICACIONES WHERE USUARIO ="+  str(idCliente)
+        print stmt2
+        cur.execute(stmt2)
+        self.conn.commit()#Que susto Jajajaja, el commit fantasma Delusionando
+        cur.close()
+        self.conn.close()
+        return data
+
+    """
+        El nivel de aislamiento transaccional definido por defecto en Oracle 12c, es READ COMMITTED.
+        Debido a que la sentencia expresada solo debe considerar las cuentas registradas y existentes en la tabla
+        NOMINA al momento de realizar la consulta, el procedimiento para realizar la migración de nómina entre cuentas,
+        se realiza con un nivel de aislamiento READ COMMITTED
+     """
+    def migrar_nomina(self, acc_old, acc_new):
+        stmt = 'UPDATE NOMINA SET CUENTA_EMPRESA = %d WHERE CUENTA_EMPRESA = %d' % (acc_new, acc_old)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        try:
+            cur.execute(stmt)
+        except cx_Oracle.DatabaseError:
+            self.conn.rollback()
+            cur.close()
+            return False, 500
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True, 200

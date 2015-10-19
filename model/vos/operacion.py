@@ -24,3 +24,44 @@ class Operacion(object):
 
     def __str__(self):
         return self.__repr__()
+
+class OperacionR(object):
+    def __init__(self, numero, tipo_op, tipo, id_cliente, nombre, apellido, valor, punto_atencion, tipo_pa, id_oficina, nombre_oficina, cajero, nombre_emp, apellido_emp, cuenta, prestamo, fecha):
+        self.numero = numero
+        self.tipo_op = tipo_op
+        self.tipo = tipo
+        self.id_cliente = id_cliente
+        self.nombre = nombre
+        self.apellido = apellido
+        self.valor = valor
+        self.punto_atencion = punto_atencion
+        self.tipo_pa = tipo_pa 
+        self.id_oficina = id_oficina
+        self.nombre_oficina = nombre_oficina
+        self.cajero = cajero
+        self.nombre_emp = nombre_emp
+        self.apellido_emp = apellido_emp
+        self.cuenta = cuenta
+        self.prestamo = prestamo
+        self.fecha = fecha.strftime('%d/%m/%Y')
+
+    def dict_repr(self):
+        d = {
+            'numero':self.numero,
+            'fecha':self.fecha,
+            'tipo':self.tipo,
+            'id_cliente':self.id_cliente,
+            'nombre':self.nombre,
+            'apellido':self.apellido,
+            'cuenta':self.cuenta,
+            'prestamo':self.prestamo,
+            'valor':self.valor,
+            'punto_atencion':self.punto_atencion,
+            'tipo_pa':self.tipo_pa,
+            'id_oficina':self.id_oficina,
+            'nombre_oficina':self.nombre_oficina,
+            'cajero':self.cajero,
+            'nombre_emp':self.nombre_emp,
+            'apellido_emp':self.apellido_emp
+        }
+        return d

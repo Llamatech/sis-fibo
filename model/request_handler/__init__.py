@@ -10,7 +10,9 @@ import empleado
 import usuarios
 import empleados
 import prestamos
+import operacion
 import registro_pa
+import pago_nomina
 import login_handler
 import punto_atencion
 import puntos_atencion
@@ -23,6 +25,7 @@ import registro_empleado
 import registrar_op_cuenta
 import registrar_op_prestamo
 import consultar_info_cliente
+
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))

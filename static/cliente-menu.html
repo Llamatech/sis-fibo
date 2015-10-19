@@ -95,6 +95,12 @@
     <section id="feature" class="transparent-bg">
         <div class="container">
            <div class="center wow fadeInDown">
+               {% for noti in notifications%} 
+               <div class="alert alert-info">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Notificación pendiente!</strong> {{escape(str(noti[0]))}}
+                </div>
+               {% end %}
                 <h2>Servicios de Cliente</h2>
                 <p class="lead">En este menú podrá encontrar los servicios que Bancandes le ofrece</p>
             </div>

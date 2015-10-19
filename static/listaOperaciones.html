@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Cuentas | BancAndes</title>
+    <title>Operaciones | BancAndes</title>
     
     <!-- core CSS -->
     <link href="{{ static_url("css/bootstrap.min.css")}}" rel="stylesheet">
@@ -98,46 +98,51 @@
     <section id="feature" class="transparent-bg">
         <div class="container">
             <div class="center">
-                <h2>Cuentas BancAndes</h2>
+                <h2>Operaciones BancAndes</h2>
                 <p id="paramF">Buscando por: Nombre de cliente</p>
             </div>
             <div class="row">
-                <table id="acc_table{{role}}" class="table table-striped table-bordered" width="100%" cellspacing="0">
+                <table id="op_table" class="table table-striped table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                        <!-- NUMERO, TIPO, ID_CLIENTE, NOMBRE, APELLIDO, VALOR, PUNTO_ATENCION, TIPO_PA, ID_OFICINA, NOMBRE_OFICINA, CAJERO, NOMBRE_EMP, APELLIDO_EMP, CUENTA, PRESTAMO, FECHA -->
                             <th>Número</th>
-                            <th>Fecha Creación</th>
-                            <th>Saldo</th>
+                            <th>Fecha</th>
                             <th>Tipo</th>
-                            <th>Cerrada</th>
                             <th>Id Cliente</th>
                             <th>Nombre Cliente</th>
                             <th>Apellido Cliente</th>
+                            <th>Cuenta</th>
+                            <th>Prestamo</th>
+                            <th>Valor</th>
+                            <th>Id Punto Atención</th>
+                            <th>Tipo Punto Atención</th>
                             <th>Id Oficina</th>
                             <th>Oficina</th>
-                            <th>Último Movimiento</th>
-                            {% if g_oficina %}
-                            <th>Edición</th>
-                            {% end %}
+                            <th>Id Cajero</th>
+                            <th>Nombre Cajero</th>
+                            <th>Apellido Cajero</th>
                         </tr>
                     </thead>
      
                     <tfoot>
                         <tr>
                             <th>Número</th>
-                            <th>Fecha Creación</th>
-                            <th>Saldo</th>
+                            <th>Fecha</th>
                             <th>Tipo</th>
-                            <th>Cerrada</th>
                             <th>Id Cliente</th>
                             <th>Nombre Cliente</th>
                             <th>Apellido Cliente</th>
+                            <th>Cuenta</th>
+                            <th>Prestamo</th>
+                            <th>Valor</th>
+                            <th>Id Punto Atención</th>
+                            <th>Tipo Punto Atención</th>
                             <th>Id Oficina</th>
                             <th>Oficina</th>
-                            <th>Último Movimiento</th>
-                            {% if g_oficina %}
-                            <th>Edición</th>
-                            {% end %}
+                            <th>Id Cajero</th>
+                            <th>Nombre Cajero</th>
+                            <th>Apellido Cajero</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -145,20 +150,21 @@
 
             <div class="row" style="padding-top:10px">
                 <div class="row" style="text-align:center;">
-                  <label>Fecha de creación</label>
+                  <label>Tipo Operación</label>
                 </div>
-                <div class="col-md-6 col-xs-12">
-                     <label for="fromD">Desde:</label>
-                     <input id="fromD" type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                </div>
-                <div class="col-md-6 col-xs-12">
-                     <label for="toD">Hasta:</label>
-                     <input id="toD" type="text" class="form-control" style="width:100%"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                <div class="col-md- col-xs-12">
+                     <select id="tOperacion" name="tOp" style="width:100%">
+                     <option value="-1" selected="selected">Todas las operaciones</option>
+                     {% for tipo in tipos%}
+                        <option value="{{tipo.id}}">{{escape(str(tipo.tipo))}}</option>        
+                     {% end %}
+                     </select>
                 </div>
             </div>
+
             <div class="row" style="padding-top:10px">
                 <div class="row" style="text-align:center;">
-                  <label>Fecha Último movimiento</label>
+                  <label>Fecha operación</label>
                 </div>
                 <div class="col-md-6 col-xs-12">
                      <label for="fromMD">Desde:</label>
@@ -171,7 +177,7 @@
             </div>
             <div class="row" style="padding-top:10px">
                 <div class="row" style="text-align:center;">
-                  <label>Saldo</label>
+                  <label>Monto</label>
                 </div>
                 <div class="col-md-6 col-xs-12">
                      <label for="">Desde:</label>
@@ -187,7 +193,7 @@
                      <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
                 </div>
                 <div class="col-md-6 col-xs-12">
-                     <button id="acc_search_btn" type="button" class="btn btn-primary">Buscar</button>
+                     <button id="op_search_btn" type="button" class="btn btn-primary">Buscar</button>
                 </div>
             </div>
 <!-- ID, TIPO_DOCUMENTO, NUM_DOCUMENTO, -->
