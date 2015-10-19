@@ -91,7 +91,7 @@ class ListHandler(tornado.web.RequestHandler):
             inst.inicializar_ruta('data/connection')
             perm = {'ggeneral':False, 'goficina':False, 'cliente':False}
             if tipo == 'Gerente General':
-                perm['ggeneral'] = True 
+                perm['ggeneral'] = True
             elif tipo == 'Gerente Oficina':
                 perm['goficina'] = True
             elif tipo == 'Cliente Natural' or tipo == 'Cliente Juridico':

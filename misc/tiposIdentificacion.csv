@@ -1,1 +1,5 @@
-ID,TIPO1,Tarjeta de Identidad2,Cedula de Ciudadania3,Cedula de Extranjeria4,Pasaporte
+ID,TIPO
+1,Tarjeta de Identidad
+2,Cedula de Ciudadania
+3,Cedula de Extranjeria
+4,Pasaporte

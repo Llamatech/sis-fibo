@@ -4,7 +4,7 @@
 Clase que modela la información de un cliente en el sistema    
 """
 
-# ID
+# I
 # TIPO_DOCUMENTO
 # NUM_DOCUMENTO
 # NOMBRE

@@ -50,3 +50,6 @@ class HomeHandler(tornado.web.RequestHandler):
 
     def write_error(self, status_code, **kwargs):
         self.write("An error has ocurred")
+
+
+        

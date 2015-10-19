@@ -619,7 +619,7 @@ class ConsultaDAO(object):
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
         cur.execute(stmt) 
-        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"',NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"',"+str(operacion.cajero)+",NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
         print(stmt)
         cur.execute(stmt)
         self.conn.commit()
@@ -696,7 +696,7 @@ class ConsultaDAO(object):
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
         cur.execute(stmt) 
-        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"','"+str(operacion.cajero)+"',NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"',"+str(operacion.cajero)+",NULL,TO_DATE('"+str(operacion.fecha)+"','YYYY-MM-DD'),'"+str(operacion.cuenta)+ "')"
         print(stmt)
         cur.execute(stmt)
 

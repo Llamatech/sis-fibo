@@ -29,7 +29,6 @@ class RegistroHandler(tornado.web.RequestHandler):
             monto=inst.get_monto_prestamo(numeroPrestamo)
         else:
             monto=self.get_body_argument("monto")
-  
         numero = inst.generar_numero_operacion()
         print numero
         idPuntoAtencion = inst.get_id_pa(self.get_cookie("authcookie").split('-')[0])

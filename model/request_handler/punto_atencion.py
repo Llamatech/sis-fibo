@@ -14,15 +14,15 @@ class EditionHandler(tornado.web.RequestHandler):
 
     @tornado.gen.coroutine
     def get(self):
-    	_id = int(self.get_argument('id', None))
-    	inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
+        _id = int(self.get_argument('id', None))
+        inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
         inst.inicializar_ruta('data/connection')
         tipos_pa = inst.obtener_tipo_pa()
         pa = inst.obtener_pa(_id)
-    	for i,tipo in enumerate(tipos_pa):
-    		if tipo.tipo == pa.tipo_pa:
-    			tipos_pa[0], tipos_pa[i] = tipos_pa[i], tipos_pa[0]
-    	self.render('../../static/informacionPuntoAtencion.html', tipos=tipos_pa, pa = pa)
+        for i,tipo in enumerate(tipos_pa):
+            if tipo.tipo == pa.tipo_pa:
+                tipos_pa[0], tipos_pa[i] = tipos_pa[i], tipos_pa[0]
+        self.render('../../static/informacionPuntoAtencion.html', tipos=tipos_pa, pa = pa)
 
     @tornado.gen.coroutine
     def delete(self):
