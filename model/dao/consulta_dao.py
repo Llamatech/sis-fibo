@@ -429,7 +429,7 @@ class ConsultaDAO(object):
             return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto<="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -446,7 +446,13 @@ class ConsultaDAO(object):
         if operacion.tipo_operacion == '3':
             saldo = float(cur.fetchall()[0][0])+float(operacion.valor)
         elif operacion.tipo_operacion == '4':
-            saldo = float(cur.fetchall()[0][0])-float(operacion.valor) 
+            saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+        if saldo<0:
+            print("no se puede por saldo negativo")
+            cur.close()
+            self.conn.close()
+            return "El saldo de la cuenta no es suficiente para hacer el retiro."
 
         stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
@@ -484,7 +490,7 @@ class ConsultaDAO(object):
             return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto<="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" <AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -509,6 +515,12 @@ class ConsultaDAO(object):
         print(stmt+" 426 dao")
         cur.execute(stmt) 
         saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+        if saldo<0:
+            self.conn.rollback()
+            cur.close()
+            self.conn.close()
+            return "La cuenta origen no tiene saldo suficiente"
 
 
         stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+origen+"'"
@@ -585,7 +597,7 @@ class ConsultaDAO(object):
         como este con posibles, por lo que se usa el mayor nivel de aislamiento.
         """
     def registrar_operacion_prestamo(self, operacion):
-        stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 232 dao")
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -600,7 +612,7 @@ class ConsultaDAO(object):
             return False
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -615,6 +627,9 @@ class ConsultaDAO(object):
         print(stmt+" 255 dao")
         cur.execute(stmt)
         saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+        if saldo<0:
+            saldo=0
 
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
@@ -637,7 +652,7 @@ class ConsultaDAO(object):
         como este son posibles, por lo que se usa el mayor nivel de aislamiento.
         """
     def registrar_operacion_prestamo_origen(self, operacion,origen):
-        stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PRESTAMO c, PERMITEOPERACIONPRE p WHERE c.tipo=p.id_tipoprestamo AND p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND c.id="+"'"+str(operacion.cuenta)+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 544 dao")
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -652,7 +667,7 @@ class ConsultaDAO(object):
             return False
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND (p.monto<="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND (p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 558 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -693,6 +708,9 @@ class ConsultaDAO(object):
         cur.execute(stmt)
         saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
 
+        if saldo<0:
+            saldo=0
+
         stmt = "UPDATE PRESTAMO SET monto="+"'"+str(saldo)+"'"+" WHERE id ="+"'"+operacion.cuenta+"'"
         print(stmt + " 259 dao")
         cur.execute(stmt) 
@@ -704,6 +722,12 @@ class ConsultaDAO(object):
         print(stmt+" 619 dao")
         cur.execute(stmt)
         saldo = float(cur.fetchall()[0][0])-float(operacion.valor) 
+        if saldo<0:
+            print("no permite por saldo")
+            self.conn.rollback()
+            cur.close()
+            self.conn.close()
+            return "La cuenta origen no tiene fondos suficientes"
 
         stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+str(origen)+"'"
         print(stmt + " 624 dao")

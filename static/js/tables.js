@@ -24,6 +24,17 @@ function deleteFunc(elem) {
                     type: 'DELETE',
                     success: function(response) {
                         //...
+                        BootstrapDialog.alert({
+                            title: 'Éxito',
+                            message: 'La solicitud ha sido procesada satisfactoriamente.',
+                            type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                            closable: true, // <-- Default value is false
+                            draggable: true, // <-- Default value is false
+                            buttonLabel: 'Cerrar', // <-- Default value is 'OK',
+                            callback: function(result) {
+                                // result will be true if button was click, while it will be false if users close the dialog directly
+                            }
+                        });
                         table.rows('.selected').remove().draw();
                     }
                 });
@@ -58,6 +69,17 @@ function deleteFuncO(elem) {
                     type: 'DELETE',
                     success: function(response) {
                         //...
+                        BootstrapDialog.alert({
+                            title: 'Éxito',
+                            message: 'La solicitud ha sido procesada satisfactoriamente.',
+                            type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                            closable: true, // <-- Default value is false
+                            draggable: true, // <-- Default value is false
+                            buttonLabel: 'Cerrar', // <-- Default value is 'OK',
+                            callback: function(result) {
+                                // result will be true if button was click, while it will be false if users close the dialog directly
+                            }
+                        });
                         table.rows('.selected').remove().draw();
                     }
                 });
@@ -92,6 +114,17 @@ function deleteFuncP(elem) {
                     type: 'DELETE',
                     success: function(response) {
                         //...
+                        BootstrapDialog.alert({
+                            title: 'Éxito',
+                            message: 'La solicitud ha sido procesada satisfactoriamente.',
+                            type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                            closable: true, // <-- Default value is false
+                            draggable: true, // <-- Default value is false
+                            buttonLabel: 'Cerrar', // <-- Default value is 'OK',
+                            callback: function(result) {
+                                // result will be true if button was click, while it will be false if users close the dialog directly
+                            }
+                        });
                         table.rows('.selected').remove().draw();
                     }
                 });
@@ -160,15 +193,26 @@ function deleteFuncC(elem) {
                                             dataType: 'json',
                                             encode: true
 
-                                        }).done(function(data){
+                                        }).done(function(data) {
                                             $.ajax({
                                                 url: urlD,
                                                 type: 'DELETE',
                                                 success: function(response) {
                                                     //...
+                                                    BootstrapDialog.alert({
+                                                        title: 'Éxito',
+                                                        message: 'La solicitud ha sido procesada satisfactoriamente.',
+                                                        type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                                                        closable: true, // <-- Default value is false
+                                                        draggable: true, // <-- Default value is false
+                                                        buttonLabel: 'Cerrar', // <-- Default value is 'OK',
+                                                        callback: function(result) {
+                                                            // result will be true if button was click, while it will be false if users close the dialog directly
+                                                        }
+                                                    });
                                                     table.search("").draw();
                                                 }
-                                            });                    
+                                            });
                                         });
                                     }
                                 }
@@ -194,6 +238,17 @@ function deleteFuncC(elem) {
                             type: 'DELETE',
                             success: function(response) {
                                 //...
+                                BootstrapDialog.alert({
+                                    title: 'Éxito',
+                                    message: 'La solicitud ha sido procesada satisfactoriamente.',
+                                    type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+                                    closable: true, // <-- Default value is false
+                                    draggable: true, // <-- Default value is false
+                                    buttonLabel: 'Cerrar', // <-- Default value is 'OK',
+                                    callback: function(result) {
+                                        // result will be true if button was click, while it will be false if users close the dialog directly
+                                    }
+                                });
                                 table.search("").draw();
                             }
                         });
@@ -528,7 +583,7 @@ $(document).ready(function() {
             "data": "apellido"
         }, {
             "data": "oficina"
-        },{
+        }, {
             "data": "nombre_of"
         }]
     });
