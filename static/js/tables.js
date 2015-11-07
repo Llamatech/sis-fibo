@@ -677,6 +677,80 @@ $(document).ready(function() {
         }]
     });
 
+    var state_cons = '1'
+    $('#cons_table').DataTable({
+        dom: 'Bfrtip',
+        stateSave: true,
+        buttons: [
+            'colvis', {
+                text: 'Buscar por nombre de cliente',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_cons = "1";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Nombre de cliente');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }, {
+                text: 'Buscar por número de cuenta',
+                action: function(e, dt, node, config) {
+                    $(this).attr("test_attr", "a");
+                    state_cons = "2";
+                    // console.log(state);
+                    $("#paramF").text('Buscando por: Número de cuenta');
+                    // alert($(this).attr("test_attr")) 
+                },
+                className: 'info'
+            }
+        ],
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "/consignaciones",
+            "type": "POST",
+            "data": function(d) {
+                d.test = state_op,
+                d.tipoPre = $("#tPrestamo").val(),
+                d.saldoFrom = $("#sumFrom").val(),
+                d.saldoTo = $("#sumTo").val()
+                // d.custom = $('#myInput').val();
+                // etc
+            }
+        },
+        "columns": [{
+            "data": "numero"
+        }, {
+            "data": "fecha"
+        },  {
+            "data": "id_cliente"
+        }, {
+            "data": "nombre"
+        }, {
+            "data": "apellido"
+        }, {
+            "data": "cuenta"
+        }, {
+            "data": "prestamo"
+        }, {
+            "data": "valor"
+        }, {
+            "data": "punto_atencion"
+        }, {
+            "data": "tipo_pa"
+        }, {
+            "data": "id_oficina"
+        }, {
+            "data": "nombre_oficina"
+        }, {
+            "data": "cajero"
+        }, {
+            "data": "nombre_emp"
+        }, {
+            "data": "apellido_emp"
+        }]
+    });
+
     $('#acc_search_btn').click(function() {
         var table = $('#acc_tableggeneral').DataTable();
         table.search("").draw();
@@ -690,6 +764,28 @@ $(document).ready(function() {
     $('#p_search_btn').click(function() {
         var table = $('#pres_table').DataTable();
         table.search("").draw();
+    });
+
+    $('#cons_search_btn').click(function() {
+        var table = $('#cons_table').DataTable();
+        table.search("").draw();
+    });
+
+
+    $('#ad-busq').click(function() {
+        if($('#ad-busq').is(':checked')){
+            $('#fromMD').prop('disabled', false);
+            $('#toMD').prop('disabled', false);
+            $('#sumFrom').prop('disabled', false);
+            $('#sumTo').prop('disabled', false);
+        }
+        else 
+        {
+            $('#fromMD').prop('disabled', true);
+            $('#toMD').prop('disabled', true);
+            $('#sumFrom').prop('disabled', true);
+            $('#sumTo').prop('disabled', true);
+        }
     });
     // $('#example tbody').on( 'click', 'tr', function () {
     //         if ( $(this).hasClass('selected') ) {

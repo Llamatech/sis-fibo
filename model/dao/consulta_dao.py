@@ -11,6 +11,7 @@ from model.vos import cliente
 from model.vos import prestamo
 from model.vos import oficina
 from model.vos import operacion
+from model.vos import puntos_atencion
 
 
 class ConsultaDAO(object):
@@ -74,6 +75,25 @@ class ConsultaDAO(object):
         self.conn.close()
         data = map(lambda x: cliente.ClienteR(x[0], x[1], x[2], x[3], x[4], x[5], x[6]), data)
         return data
+
+    def obtener_puntos_at(self, search_term):
+        search_term = "'"+search_term+"%'"
+        stmt = """SELECT * FROM PA_SIMP
+                  WHERE (TO_CHAR(ID) LIKE %s OR 
+                  NOMBRE LIKE %s)
+                  ORDER BY ID 
+               """
+        stmt = stmt % (search_term, search_term)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        data = map(lambda x: puntos_atencion.PuntoAtencionR(x[0], x[1], x[2],
+                                                            x[3], x[4]), data)
+        return data
+
 
         """
         La trasacción involucrada en registrar un cliente maneja un
@@ -429,7 +449,7 @@ class ConsultaDAO(object):
             return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"' "+" AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -490,7 +510,7 @@ class ConsultaDAO(object):
             return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" <AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"'"+" AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -1284,3 +1304,48 @@ class ConsultaDAO(object):
         cur.close()
         self.conn.close()
         return True, 200
+
+
+    def obtener_operacionP(self, col, order, a, b, perm, params, _id):
+        view = "(SELECT o.* FROM OPERACION_INF o, PRESTAMO p, WHERE p.cliente=o.id_cliente AND o.tipo_op=3 AND p.tipo ='%d')" % params["pre_type"]
+        cond = ''
+
+        if params['search_term'] != "":
+            search_term = params['search_term']+'%'
+            if params['client']:
+                cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
+            elif params['account']:
+                cond += "TO_CHAR(CUENTA) LIKE '%s' " % (search_term)
+        if params['sum'][0] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VALOR >= %s " % (str(params['sum'][0]))
+        if params['sum'][1] is not None:
+            if len(cond) > 0:
+               cond += 'AND '
+            cond += "VALOR <= %s " % (str(params['sum'][1]))
+
+
+        info, search_count = self.obtener_elementos_ordenados(view, col, order, a, b, cond)
+        stmt = 'SELECT count(*) FROM %s' % view
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        count = cur.fetchall()[0][0]
+        info = map(lambda x: operacion.OperacionR(x[0], x[1], x[2], x[3], x[4],
+                                                  x[5], x[6], x[7], x[8], x[9],
+                                                  x[10], x[11], x[12], x[13],
+                                                  x[14], x[15], x[16]), info)
+        return search_count, count, info 
+
+        def obtener_id_cliente_prestamo(self, numPrestamo):
+            stmt = "SELECT cliente FROM PRESTAMO WHERE id = "+"'"+str(numPrestamo)+"'"
+            self.establecer_conexion()
+            cur = self.conn.cursor()
+            print(stmt)
+            cur.execute(stmt)
+            data = cur.fetchall()
+            cur.close()
+            self.conn.close()
+            if len(data)>0:
+                return data[0][0]

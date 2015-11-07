@@ -16,6 +16,7 @@ import pago_nomina
 import login_handler
 import punto_atencion
 import puntos_atencion
+import consignacion
 import registro_prestamo
 import registro_cuenta
 import registro_nomina

@@ -40,6 +40,7 @@ def main():
         (r"/pago/nomina", handlers.pago_nomina.PagoHandler),
         (r"/registrar/nomina", handlers.registro_nomina.RegistroHandler),
         (r"/operaciones", handlers.operacion.ListHandler),
+        (r"/consignaciones", handlers.consignacion.ListHandler),
         (r"/nomina/migrar", handlers.nomina.MigrationHandler),
         (r"/prestamos", handlers.prestamos.MainHandler)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)

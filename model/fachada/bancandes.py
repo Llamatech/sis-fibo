@@ -221,3 +221,11 @@ class BancAndes(object):
     def migrar_nomina(self, acc_old, acc_new):
         succ, code = self.dao.migrar_nomina(acc_old, acc_new)
         return succ, code
+
+    def obtener_operacionP(self, col_name, order, start, end, perm, params, _id):
+        return self.dao.obtener_operacionP(col_name, order, start, end, perm, params, _id)
+
+    def obtener_puntos_at(self, search_term):
+        return self.dao.obtener_puntos_at(search_term)
+
+        

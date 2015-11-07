@@ -1,6 +1,7 @@
 #-*- coding:iso-8859-1 -*-
 
 import os
+import sys
 import base64
 import random
 import datetime
@@ -119,7 +120,7 @@ def random_birth_date(start=1950, end=1993):
     day_end = 31
     if month == 2:
        if leap_year(year):
-          day_end = 29
+          day_end = 28
        else:
           day_end = 28
     elif month < 8:
@@ -479,12 +480,13 @@ def get_office_info(id):
 #Tipo Usuario:
 #1, Cliente Natural
 #2, Cliente Jurídico
-
-num_ti = 1
-num_passport = 1
-num_cc = i+1
-num_ce = 1
-num_nit = 1
+# max_num = 6334
+num_ti = 1639
+num_passport = 1254
+num_cc = 2880
+num_ce = 1330
+num_nit = 1310
+# max_num = 7775
 
 doc_info = {1:[(1998, 2003),"num_ti", "tarjetai", 'cliente'], 2:[(1920, 1997),"num_cc", 'cedula', 'cliente'],
             3:[(1920, 1997), "num_ce", 'cedulae', 'cliente'], 4:[(1920, 2003), "num_passport", 'pasaporte', 'cliente'],
@@ -494,35 +496,45 @@ def get_id_doc(idx):
     doc = random.choice(doc_info.keys())
     years, count, prefix, name = doc_info[doc]
     b_year = random_birth_date(years[0], years[1])
-    doc_num = prefix+str(eval(count))
-    instr = compile(count+' += 1', '<string>', 'exec')
-    exec instr
+    doc_num = prefix+str(idx)[0:6]
+    # instr = compile(count+' += 1', '<string>', 'exec')
+    # exec instr
     name = name+str(idx)
-    lastname = 'apellido'+str(random.randint(1, idx))
+    lastname = 'apellido'+str(random.randint(1, (idx % 10)+2))
     if doc == 5:
-       name = name+str(num_nit)
+       name = name+str(i)[0:6]
        lastname = 'null'
     return b_year, doc_num, doc, name, lastname
 
+
+init = int(sys.argv[1])
 office_id = 1
 city = get_office_info(office_id)
 
 print "Populating bank users..."
-for i in range(1653, 1653+20*306):
-    i_s = str(i)
+for i in range(init, init+int(1e6)):
+    i_s = str(i % 100)
     u_type = random.choice([1,2])
-    b_date, doc_num, doc_t, name, lastname = get_id_doc(i-1652)
+    b_date, doc_num, doc_t, name, lastname = get_id_doc(i)
     client = (i, doc_t, doc_num, name, 
               "%s", "direccion" + i_s, "telefono"+ i_s, 
               "TO_DATE('"+str(date.day)+'/'+str(date.month)+'/'+str(date.year)+"', 'dd/mm/yyyy')",
               "TO_DATE('"+str(b_date.day)+'/'+str(b_date.month)+'/'+str(b_date.year)+"', 'dd/mm/yyyy')",
-              city, 'departamento'+city[-1], '0'*(6-len(str(i)))+str(i))
+              city, 'departamento'+city[-1], str(i)[0:6])
     client_str = str(client).replace("\"", '') % (lastname)
-    print client_str
-
-
-       
-
+    # print client_str
+    stmt = s3 % (client_str)
+    user = (i, 'cliente'+str(i), 'cliente'+str(i)+'@example.com', u_type)
+    # print user
+    # max_num += 1
+    try:
+      cursor.execute(s % str(user))
+      cursor.execute(stmt)
+      cnx.commit()
+    except:
+      print i
+      break
+     
 uf.close()
 cf.close()
 ef.close()

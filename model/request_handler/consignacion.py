@@ -39,8 +39,8 @@ class ListHandler(tornado.web.RequestHandler):
             self.redirect('/login')
         else:
             if self.tipo != 'Administrador':
-                tipos = self.inst.obtener_tipo_operacion()
-                self.render('../../static/listaOperaciones.html', tipos = tipos, role=self.tipo)
+                tipos = self.inst.obtener_tipo_prestamo()
+                self.render('../../static/listaConsignaciones.html', tipos = tipos)
             else:
                 self.set_status(403)
                 self.write("No dispone con permisos suficientes para acceder a esta funcionalidad")
@@ -58,14 +58,10 @@ class ListHandler(tornado.web.RequestHandler):
             col_name = self.get_body_argument("columns["+ind_column+"][data]")
             searching_by = int(self.get_body_argument("test"))
             search_term = self.get_body_argument("search[value]")
-            op_type = int(self.get_body_argument("tipoOp"))
-            last_movement_from = self.get_body_argument("uMovStart")
-            last_movement_upto = self.get_body_argument("uMovStop")
+            pre_type = int(self.get_body_argument("tPrestamo"))
             sum_from = self.get_body_argument("saldoFrom")
             sum_upto = self.get_body_argument("saldoTo")
 
-            last_movement_from = from_timestamp(last_movement_from)
-            last_movement_upto = from_timestamp(last_movement_upto)
 
             if sum_from != '':
                 sum_from = float(sum_from)
@@ -77,28 +73,12 @@ class ListHandler(tornado.web.RequestHandler):
             else:
                 sum_upto = None
 
-            params = {'client':False, 'account':False, 'loan':False, 
-                      'op_type':op_type,
-                      'last_movement':[last_movement_from, last_movement_upto],
+            params = {'client':False, 'account':False, 
+                      'pre_type':pre_type,
                       'sum':[sum_from, sum_upto],
-                      'search_term':search_term}
-            if searching_by == 1:
-                params['client'] = True
-            elif searching_by == 2:
-                params['account'] = True
-            elif searching_by == 3:
-                params['loan'] = True
+                      'search_term':search_term}\
 
-
-            perm = {'ggeneral':False, 'goficina':False, 'cliente':False}
-            if self.tipo == 'Gerente General':
-                perm['ggeneral'] = True 
-            elif self.tipo == 'Gerente Oficina':
-                perm['goficina'] = True
-            elif self.tipo == 'Cliente Natural' or self.tipo == 'Cliente Juridico':
-                perm['cliente'] = True
-
-            search_count, count, cuentas = self.inst.obtener_operacionL(col_name, order, start, start+length, perm, params, self.id)
+            search_count, count, cuentas = self.inst.obtener_operacionP(col_name, order, start, start+length, perm, params, self.id)
             cuentas = map(lambda x: x.dict_repr(), cuentas)
 
             data = {"draw": draw,

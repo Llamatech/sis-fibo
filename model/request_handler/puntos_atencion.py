@@ -5,12 +5,20 @@ import tornado.web
 import tornado.escape
 from tornado import gen
 from model.vos import oficina
+from model.fachada import bancandes
 from model.vos import puntos_atencion
 from model.fachada import bancandesAdmin 
 
 class ListHandler(tornado.web.RequestHandler):
     def initialize(self, some_attribute=None):
         self.some_attribute = some_attribute
+        self.inst = bancandes.BancAndes.dar_instancia()
+        self.inst.inicializar_ruta('data/connection')
+        cookie = self.get_cookie("authcookie")
+        if cookie:
+            values = cookie.split("-")
+            self.id = int(values[0])
+            self.tipo = values[1].replace('_', ' ')
 
     @tornado.gen.coroutine
     def get(self):
@@ -53,6 +61,15 @@ class ListHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def put(self):
         search_term = self.get_body_argument("term")
+        if self.tipo == 'Gerente General':
+            pa = self.inst.obtener_puntos_at(search_term)
+            pa = map(lambda x : x.dict_repr(), pa)
+            for x in pa:
+                x['delete'] = None
+            self.set_header('Content-Type', 'text/javascript')
+            self.write(tornado.escape.json_encode(pa)) 
+        else:
+            self.set_status(403)    
         # print search_term
         # inst = bancandesAdmin.BancAndesAdmin.dar_instancia()
         # inst.inicializar_ruta('data/connection')
