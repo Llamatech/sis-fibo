@@ -40,7 +40,7 @@ class ListHandler(tornado.web.RequestHandler):
         else:
             if self.tipo != 'Administrador':
                 tipos = self.inst.obtener_tipo_prestamo()
-                self.render('../../static/listaConsignaciones.html', tipos = tipos)
+                self.render('../../static/listConsignaciones.html', tipos = tipos)
             else:
                 self.set_status(403)
                 self.write("No dispone con permisos suficientes para acceder a esta funcionalidad")
@@ -78,7 +78,7 @@ class ListHandler(tornado.web.RequestHandler):
                       'sum':[sum_from, sum_upto],
                       'search_term':search_term}\
 
-            search_count, count, cuentas = self.inst.obtener_operacionP(col_name, order, start, start+length, perm, params, self.id)
+            search_count, count, cuentas = self.inst.obtener_operacionP(col_name, order, start, start+length, params, self.id)
             cuentas = map(lambda x: x.dict_repr(), cuentas)
 
             data = {"draw": draw,

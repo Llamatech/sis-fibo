@@ -63,6 +63,9 @@ class ListHandler(tornado.web.RequestHandler):
             last_movement_upto = self.get_body_argument("uMovStop")
             sum_from = self.get_body_argument("saldoFrom")
             sum_upto = self.get_body_argument("saldoTo")
+            id_pa1 = int(self.get_body_argument("pa1"))
+            id_pa2 = int(self.get_body_argument("pa2"))
+            negate = eval(self.get_body_argument("negate"))
 
             last_movement_from = from_timestamp(last_movement_from)
             last_movement_upto = from_timestamp(last_movement_upto)
@@ -77,11 +80,20 @@ class ListHandler(tornado.web.RequestHandler):
             else:
                 sum_upto = None
 
+            if id_pa1 < 0:
+                id_pa1 = None
+
+            if id_pa2 < 0:
+                id_pa2 = None 
+ 
+
             params = {'client':False, 'account':False, 'loan':False, 
                       'op_type':op_type,
                       'last_movement':[last_movement_from, last_movement_upto],
                       'sum':[sum_from, sum_upto],
-                      'search_term':search_term}
+                      'pa':[id_pa1, id_pa2],
+                      'search_term':search_term,
+                      'negate':negate}
             if searching_by == 1:
                 params['client'] = True
             elif searching_by == 2:

@@ -935,31 +935,90 @@ class ConsultaDAO(object):
         if params['search_term'] != "":
             search_term = params['search_term']+'%'
             if params['client']:
-                cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
+                if not params['negate']:
+                    cond += "(NOMBRE LIKE '%s' OR APELLIDO LIKE '%s') " % (search_term, search_term)
+                else:
+                    cond += "(NOMBRE NOT LIKE '%s' AND APELLIDO NOT LIKE '%s') " % (search_term, search_term)
             elif params['account']:
-                cond += "TO_CHAR(CUENTA) LIKE '%s' " % (search_term)
+                if not params['negate']:
+                    cond += "TO_CHAR(CUENTA) LIKE '%s' " % (search_term)
+                else:
+                    cond += "TO_CHAR(CUENTA) NOT LIKE '%s' " % (search_term)
             else:
-                cond += "TO_CHAR(PRESTAMO) LIKE '%s' " % (search_term)
+                if not params['negate']:
+                    cond += "TO_CHAR(PRESTAMO) LIKE '%s' " % (search_term)
+                else:
+                    cond += "TO_CHAR(PRESTAMO) NOT LIKE '%s' " % (search_term)
         if params['op_type'] != -1:
-            if len(cond) > 0:
-                cond += "AND "
-            cond += " TIPO_OP = %d " % (params['op_type'])
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += "AND "    
+                cond += " TIPO_OP = %d " % (params['op_type'])
+            else:
+                if len(cond) > 0:
+                    cond += "OR "
+                cond += " TIPO_OP <> %d " % (params['op_type'])
         if params['last_movement'][0] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "FECHA >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += 'AND '
+                cond += "FECHA >= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
+            else:
+                if len(cond) > 0:
+                    cond += 'OR '
+                cond += "FECHA < TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][0].strftime('%d/%m/%Y'))
         if params['last_movement'][1] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "FECHA <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += 'AND '
+                cond += "FECHA <= TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
+            else:
+                if len(cond) > 0:
+                    cond += 'OR '
+                cond += "FECHA > TO_DATE('%s', 'dd/mm/yyyy') " % (params['last_movement'][1].strftime('%d/%m/%Y'))
         if params['sum'][0] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "VALOR >= %s " % (str(params['sum'][0]))
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += 'AND '
+                cond += "VALOR >= %s " % (str(params['sum'][0]))
+            else:
+                if len(cond) > 0:
+                    cond += 'OR '
+                cond += "VALOR < %s " % (str(params['sum'][0]))
         if params['sum'][1] is not None:
-            if len(cond) > 0:
-               cond += 'AND '
-            cond += "VALOR <= %s " % (str(params['sum'][1]))
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += 'AND '
+                cond += "VALOR <= %s " % (str(params['sum'][1]))
+            else:
+                if len(cond) > 0:
+                    cond += 'OR '
+                cond += "VALOR > %s " % (str(params['sum'][1]))
+        if params['pa'][0] is not None:
+            if not params['negate']:
+                if len(cond) > 0:
+                    cond += 'AND '
+                if params['pa'][1] is not None:
+                    cond += "(PUNTO_ATENCION = %d OR PUNTO_ATENCION = %d)" % (params['pa'][0], params['pa'][1])
+                else:
+                    cond += "PUNTO_ATENCION = %d " % (params['pa'][0])
+            else:
+                if len(cond) > 0:
+                    cond += 'OR '
+                if params['pa'][1] is not None:
+                    cond += "(PUNTO_ATENCION <> %d AND PUNTO_ATENCION <> %d)" % (params['pa'][0], params['pa'][1])
+                else:
+                    cond += "PUNTO_ATENCION <> %d " % (params['pa'][0])
+        else:
+            if params['pa'][1] is not None:
+                if not params['negate']:
+                    if len(cond) > 0:
+                        cond += 'AND '
+                    cond += "PUNTO_ATENCION = %d " % (params['pa'][1])
+                else:
+                    if len(cond) > 0:
+                        cond += 'OR '
+                    cond += "PUNTO_ATENCION <> %d " % (params['pa'][1])
 
         if perm['goficina']:
             if len(cond) > 0:
@@ -1306,8 +1365,11 @@ class ConsultaDAO(object):
         return True, 200
 
 
-    def obtener_operacionP(self, col, order, a, b, perm, params, _id):
-        view = "(SELECT o.* FROM OPERACION_INF o, PRESTAMO p, WHERE p.cliente=o.id_cliente AND o.tipo_op=3 AND p.tipo ='%d')" % params["pre_type"]
+    def obtener_operacionP(self, col, order, a, b, params, _id):
+        view = "SELECT o.* FROM OPERACION_INF o, PRESTAMO p WHERE p.cliente=o.id_cliente AND o.tipo_op=3 " 
+        if params["pre_type"] != -1:
+            view += "AND p.tipo ='%d'" % params["pre_type"]
+        view = '('+view+')'
         cond = ''
 
         if params['search_term'] != "":

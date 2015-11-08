@@ -637,7 +637,10 @@ $(document).ready(function() {
                 d.uMovStart = $("#fromMD").val(),
                 d.uMovStop = $("#toMD").val(),
                 d.saldoFrom = $("#sumFrom").val(),
-                d.saldoTo = $("#sumTo").val()
+                d.saldoTo = $("#sumTo").val(),
+                d.pa1 = $('#pa1').val(),
+                d.pa2 = $('#pa2').val(),
+                d.negate = $('#ad-busq').is(':checked').toString().charAt(0).toUpperCase() + $('#ad-busq').is(':checked').toString().slice(1)
                 // d.custom = $('#myInput').val();
                 // etc
             }
@@ -711,7 +714,7 @@ $(document).ready(function() {
             "type": "POST",
             "data": function(d) {
                 d.test = state_op,
-                d.tipoPre = $("#tPrestamo").val(),
+                d.tPrestamo = $("#tPrestamo").val(),
                 d.saldoFrom = $("#sumFrom").val(),
                 d.saldoTo = $("#sumTo").val()
                 // d.custom = $('#myInput').val();
@@ -772,21 +775,21 @@ $(document).ready(function() {
     });
 
 
-    $('#ad-busq').click(function() {
-        if($('#ad-busq').is(':checked')){
-            $('#fromMD').prop('disabled', false);
-            $('#toMD').prop('disabled', false);
-            $('#sumFrom').prop('disabled', false);
-            $('#sumTo').prop('disabled', false);
-        }
-        else 
-        {
-            $('#fromMD').prop('disabled', true);
-            $('#toMD').prop('disabled', true);
-            $('#sumFrom').prop('disabled', true);
-            $('#sumTo').prop('disabled', true);
-        }
-    });
+    // $('#ad-busq').click(function() {
+    //     if($('#ad-busq').is(':checked')){
+    //         $('#fromMD').prop('disabled', false);
+    //         $('#toMD').prop('disabled', false);
+    //         $('#sumFrom').prop('disabled', false);
+    //         $('#sumTo').prop('disabled', false);
+    //     }
+    //     else 
+    //     {
+    //         $('#fromMD').prop('disabled', true);
+    //         $('#toMD').prop('disabled', true);
+    //         $('#sumFrom').prop('disabled', true);
+    //         $('#sumTo').prop('disabled', true);
+    //     }
+    // });
     // $('#example tbody').on( 'click', 'tr', function () {
     //         if ( $(this).hasClass('selected') ) {
     //             $(this).removeClass('selected');
