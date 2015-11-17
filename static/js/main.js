@@ -42,6 +42,8 @@ jQuery(function($) {
         });
     });
 
+    var ws = new WebSocket('ws://localhost:8000/ws');
+
     // Contact form
     // var form = $('#main-contact-form');
     // form.submit(function(event){
@@ -228,7 +230,12 @@ jQuery(function($) {
         language: "es"
     });
 
+    // ws.onmessage = function(evt){
+    //     alert(evt.data);
+    // }
+
     $('#back_btn').click(function() {
+        ws.send("Test");
         parent.history.back();
         return false;
     });

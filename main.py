@@ -2,15 +2,25 @@
 
 import os
 import sys
+import pika
+import logging
 import tornado.web
+import coloredlogs
 import tornado.ioloop
+from model.queue_client import publisher
 import model.request_handler as handlers
+
+LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
+              '-35s %(lineno) -5d: %(message)s')
+LOGGER = logging.getLogger(__name__)
+coloredlogs.install(level='info')
 
 clr = 'clear'
 if os.name == 'nt':
    clr = 'cls'
 
 def main():
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     settings = {"static_path": os.path.join(os.path.dirname(__file__), "static")}
     application = tornado.web.Application([(r"/", handlers.home.HomeHandler),
         (r"/registrar/usuario", handlers.registro_usuario.RegistroHandler),
@@ -42,12 +52,18 @@ def main():
         (r"/operaciones", handlers.operacion.ListHandler),
         (r"/consignaciones", handlers.consignacion.ListHandler),
         (r"/nomina/migrar", handlers.nomina.MigrationHandler),
-        (r"/prestamos", handlers.prestamos.MainHandler)], 
+        (r"/prestamos", handlers.prestamos.MainHandler),
+        (r"/ws", handlers.web_socket.WebSocketHandlerTest)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
+    ioloop = tornado.ioloop.IOLoop.instance()
+    pc = publisher.ExamplePublisher(LOGGER)
+    application.pc = pc
+    application.pc.connect()
+
     application.listen(8000)
     try:
-      tornado.ioloop.IOLoop.instance().start()
+      ioloop.start()
     except KeyboardInterrupt:
       pass
     finally:
