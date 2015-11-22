@@ -7,7 +7,7 @@ import logging
 import tornado.web
 import coloredlogs
 import tornado.ioloop
-from model.queue_client import publisher
+from model.queue_client import publisher, client
 import model.request_handler as handlers
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -58,8 +58,11 @@ def main():
     print "Server is now at: 127.0.0.1:8000"
     ioloop = tornado.ioloop.IOLoop.instance()
     pc = publisher.ExamplePublisher(LOGGER)
+    outq = client.ExampleConsumer(LOGGER)
+    application.outq = outq
     application.pc = pc
     application.pc.connect()
+    application.outq.connect()
 
     application.listen(8000)
     try:
