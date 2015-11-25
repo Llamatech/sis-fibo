@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
+
+import json
+import time
 import pika
 import logging
+import hashlib
+import datetime
 from pika import adapters
+from model.vos import operacion
+from model.fachada import bancandes
 
 
 class ExampleConsumer(object):
@@ -16,12 +24,12 @@ class ExampleConsumer(object):
     commands that were issued and that should surface in the output as well.
 
     """
-    EXCHANGE = 'message'
+    EXCHANGE = 'transactions'
     EXCHANGE_TYPE = 'topic'
-    QUEUE = 'incoming'
-    ROUTING_KEY = 'example.text'
+    QUEUE = 'llamabank'
+    ROUTING_KEY = 'bancandes.requests'
 
-    def __init__(self, logger, amqp_url='amqp://llamabank:123llama123@margffoy-tuay.com:5672'):
+    def __init__(self, logger, publisher, amqp_url='amqp://llamabank:123llama123@margffoy-tuay.com:5672'):
         """Create a new instance of the consumer class, passing in the AMQP
         URL used to connect to RabbitMQ.
 
@@ -35,6 +43,8 @@ class ExampleConsumer(object):
         self._consumer_tag = None
         self._url = amqp_url
         self.logger = logger
+        self.publisher = publisher
+        self._outdb = bancandes.BancAndes.dar_instancia()
 
     def connect(self):
         """This method connects to RabbitMQ, returning the connection handle.
@@ -226,6 +236,30 @@ class ExampleConsumer(object):
         self.logger.info('Acknowledging message %s', delivery_tag)
         self._channel.basic_ack(delivery_tag)
 
+    def add_listener(self, listener):
+        random_seq = hashlib.md5(str(time.time())).hexdigest()[0:7]
+        self._listeners[random_seq] = listener
+        return random_seq
+
+    def remove_listener(self, sec):
+        del self._listeners[sec]
+
+    def init_transaction(self, msg):
+        print msg
+        op_type = 3
+        if msg['tipo'] is "consignar":
+            op_type = 4
+
+        can = self._outdb.verificar_transaccion_cuenta(msg['cuentaOrigen'], msg['monto'], op_type)
+        print can
+        if can:
+            self._outdb.inicializar_estado_externo(msg)
+            self.publisher.publish_message(msg)
+        else:
+            msg['estado'] = 'error'
+            msg['msg'] = "No cuenta con suficientes fondos en la cuenta %d para realizar esta operación" % (msg["cuentaOrigen"])
+            self._listeners[msg['id']].notify_client(msg)
+
     def on_message(self, unused_channel, basic_deliver, properties, body):
         """Invoked by pika when a message is delivered from RabbitMQ. The
         channel is passed for your convenience. The basic_deliver object that
@@ -240,9 +274,75 @@ class ExampleConsumer(object):
         :param str|unicode body: The message body
 
         """
+        self.acknowledge_message(basic_deliver.delivery_tag)
         self.logger.info('Received message # %s from %s: %s',
                     basic_deliver.delivery_tag, properties.app_id, body)
-        self.acknowledge_message(basic_deliver.delivery_tag)
+        #Aquí inicia el procesamiento!
+        #{“estado”: <”comienzo”|”confirmacion”|”error”>, “id”: nId, “tipo”: <“consignar”|”retirar”>, 
+        #“monto”: nMonto, “cuentaDestino”: nCDestino, “cuentaOrigen”: nCOrigen}
+
+        dic = json.loads(body)
+        regCuenta = False
+
+        if dic['estado'] is 'comienzo':
+            if dic['tipo'] is 'consignar':
+                tipo = 3
+                regCuenta = True
+            elif dic['tipo'] is 'retirar':
+                tipo = 4
+                regCuenta = True
+
+            if regCuenta:
+                numero = self._outdb.generar_numero_operacion()
+                idPuntoAtencion = '3'
+                cajero = 'NULL'
+                numeroCuenta = dic['cuentaDestino']
+                existe = self._outdb.existe_cuenta(numeroCuenta)
+                if existe:
+                    cliente = inst.duenio_cuenta(numeroCuenta)
+                    monto = dic['monto']
+                    oper = operacion.Operacion(numero,tipo,cliente,monto,idPuntoAtencion, cajero, numeroCuenta, str(datetime.date.today()))
+                    pudo = self._outdb.registrar_operacion_cuenta(oper)
+                    if pudo:
+                        dic['estado'] = 'confirmacion'
+                    else:
+                        dic['estado'] = 'error'
+                    self.publisher.publish_message(dic)
+
+
+        elif dic['estado'] is 'confirmacion':
+            if dic['tipo'] is 'consignar':
+                tipo = 3
+                regCuenta = True
+            elif dic['tipo'] is 'retirar':
+                tipo = 4
+                regCuenta = True
+
+            if regCuenta:
+                numero = self._outdb.generar_numero_operacion()
+                idPuntoAtencion = '3'
+                cajero = 'NULL'
+                numeroCuenta = dic['cuentaDestino']
+                existe = self._outdb.existe_cuenta(numeroCuenta)
+                if existe:
+                    cliente = inst.duenio_cuenta(numeroCuenta)
+                    monto = dic['monto']
+                    oper = operacion.Operacion(numero,tipo,cliente,monto,idPuntoAtencion, cajero, numeroCuenta, str(datetime.date.today()))
+                    pudo = self._outdb.registrar_operacion_cuenta_externo(oper)
+                    if pudo:
+                        self._listeners[dic['id']].notify_client(dic)
+                    else:
+                        dic['estado'] = 'error'
+                        dic['msg'] = "Ha ocurrido un error mientras se realizaba la operación"
+                        self._listeners[dic['id']].notify_client(dic)
+
+        elif dic['estado'] is 'error':
+            dic['msg'] = "Ha ocurrido un error mientras se realizaba la operación"
+            self._listeners[dic['id']].notify_client(dic)
+
+
+        self._outdb.actualizar_estado_externo(dic['id'], dic['estado'])
+     
 
     def on_cancelok(self, unused_frame):
         """This method is invoked by pika when RabbitMQ acknowledges the

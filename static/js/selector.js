@@ -133,6 +133,7 @@ $(document).ready(function() {
     });
     $("#comp_acc").select2();
     $("#frec_sel").select2();
+    $("#extop_type").select2();
     $(".itemSearchE").select2({
         // tags: true,
         // multiple: true,

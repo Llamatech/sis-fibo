@@ -25,7 +25,7 @@ class ConsultaDAOcatalogo(object):
         dsn_tns = cx_Oracle.makedsn(self.conn_info['URL'],
                                     self.conn_info['PORT'], self.conn_info['SERV'])
         self.conn = cx_Oracle.connect(
-            self.conn_info['USER'], self.conn_info['PWD'], dsn_tns)
+            self.conn_info['USER'], self.conn_info['PWD'], dsn_tns, threaded=True)
 
     def cerrar_conexion(self):
         self.conn.close()

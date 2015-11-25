@@ -1400,14 +1400,85 @@ class ConsultaDAO(object):
                                                   x[14], x[15], x[16]), info)
         return search_count, count, info 
 
-        def obtener_id_cliente_prestamo(self, numPrestamo):
-            stmt = "SELECT cliente FROM PRESTAMO WHERE id = "+"'"+str(numPrestamo)+"'"
-            self.establecer_conexion()
-            cur = self.conn.cursor()
-            print(stmt)
+    def obtener_id_cliente_prestamo(self, numPrestamo):
+        stmt = "SELECT cliente FROM PRESTAMO WHERE id = "+"'"+str(numPrestamo)+"'"
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        print(stmt)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        cur.close()
+        self.conn.close()
+        if len(data)>0:
+            return data[0][0]
+
+
+    def verificar_transaccion_cuenta(self, numCuenta,monto,tipo):
+        stmt = "SELECT * FROM CUENTA WHERE CERRADA = 'N' AND NUMERO = "+str(numCuenta)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        data = cur.fetchall()
+        if len(data) is 0:
+            return False
+        if tipo is 4:
+            stmt = "SELECT saldo FROM CUENTA WHERE NUMERO = "+str(numCuenta)
             cur.execute(stmt)
-            data = cur.fetchall()
+            saldo = cur.fetchall()[0][0]
+            if saldo-monto <0:
+                return False
+        return True
+
+
+    def inicializar_estado_externo(self, msg):
+        stmt = "INSERT INTO COLA_ESTADO(NUM_SEC, ESTADO) VALUES ('%s', '%s')"
+        stmt = stmt % (msg['id'], msg['estado'])
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+
+
+    def registrar_operacion_cuenta_externo(self, operacion):
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+
+
+        stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+operacion.cuenta+"'"
+        print(stmt+" 255 dao")
+        cur.execute(stmt)
+        if operacion.tipo_operacion == '3':
+            saldo = float(cur.fetchall()[0][0])+float(operacion.valor)
+        elif operacion.tipo_operacion == '4':
+            saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
+
+        if saldo<0:
+            print("no se puede por saldo negativo")
             cur.close()
             self.conn.close()
-            if len(data)>0:
-                return data[0][0]
+            return "El saldo de la cuenta no es suficiente para hacer el retiro."
+
+        stmt = "UPDATE CUENTA SET saldo="+"'"+str(saldo)+"'"+" WHERE numero ="+"'"+operacion.cuenta+"'"
+        print(stmt + " 259 dao")
+        cur.execute(stmt)
+        print("PAPI") #Llami, regreso en un par de horas!
+        stmt = 'INSERT INTO OPERACION VALUES ('+"'"+str(operacion.numero)+"','"+str(operacion.tipo_operacion)+"','"+str(operacion.cliente)+"','"+str(operacion.valor)+"','"+str(operacion.punto_atencion)+"',"+str(operacion.cajero)+",'"+str(operacion.cuenta)+"',TO_DATE('"+operacion.fecha+"','YYYY-MM-DD')"+ ",NULL)"
+        print(stmt)
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True
+
+    def actualizar_estado_externo(self, id, estado):
+        stmt = "UPDATE COLA_ESTADO SET ESTADO = '%s' WHERE ID = '%s'"
+        stmt = stmt % (estado, id)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+        cur.close()
+        self.conn.close()

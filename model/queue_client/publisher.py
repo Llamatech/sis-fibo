@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import logging
+import time
 import pika
 import json
+import logging
+import hashlib
 
 
 class ExamplePublisher(object):
@@ -18,11 +20,11 @@ class ExamplePublisher(object):
     messages that have been sent and if they've been confirmed by RabbitMQ.
 
     """
-    EXCHANGE = 'message'
+    EXCHANGE = 'transactions'
     EXCHANGE_TYPE = 'topic'
     PUBLISH_INTERVAL = 60
-    QUEUE = 'outgoing'
-    ROUTING_KEY = 'example.text'
+    QUEUE = 'bancandes'
+    ROUTING_KEY = 'llamabank.requests'
 
     def __init__(self, logger, amqp_url='amqp://llamabank:123llama123@margffoy-tuay.com:5672'):
         """Setup the example publisher object, passing in the URL we will use
@@ -124,7 +126,7 @@ class ExamplePublisher(object):
         """This method will open a new channel with RabbitMQ by issuing the
         Channel.Open RPC command. When RabbitMQ confirms the channel is open
         by sending the Channel.OpenOK RPC reply, the on_channel_open method
-        will be invoked.
+        will be invoked. 
 
         """
         self.logger.info('Creating a new channel')
@@ -286,7 +288,7 @@ class ExamplePublisher(object):
         self._connection.add_timeout(self.PUBLISH_INTERVAL,
                                      self.publish_message)
 
-    def publish_message(self, msg):
+    def publish_message(self, message):
         """If the class is not stopping, publish a message to RabbitMQ,
         appending a list of deliveries with the message number that was sent.
         This list will be used to check for delivery confirmations in the
@@ -302,7 +304,7 @@ class ExamplePublisher(object):
         if self._stopping:
             return
 
-        message = {u'message': msg}
+        # message = {u'message': msg}
         properties = pika.BasicProperties(app_id='llamabank',
                                           content_type='application/json',
                                           headers=message)

@@ -228,4 +228,15 @@ class BancAndes(object):
     def obtener_puntos_at(self, search_term):
         return self.dao.obtener_puntos_at(search_term)
 
-        
+    def inicializar_estado_externo(self, msg):
+        return self.dao.inicializar_estado_externo(msg)
+
+    def verificar_transaccion_cuenta(self, numCuenta,monto,tipo):
+        return self.dao.verificar_transaccion_cuenta(numCuenta,monto,tipo)
+
+    def registrar_operacion_cuenta_externo(self, operacion):
+        self.dao.registrar_operacion_cuenta_externo(operacion)
+
+    def actualizar_estado_externo(self, id, estado):
+        self.dao.actualizar_estado_externo(id, estado)
+

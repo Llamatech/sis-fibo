@@ -58,7 +58,7 @@ def main():
     print "Server is now at: 127.0.0.1:8000"
     ioloop = tornado.ioloop.IOLoop.instance()
     pc = publisher.ExamplePublisher(LOGGER)
-    outq = client.ExampleConsumer(LOGGER)
+    outq = client.ExampleConsumer(LOGGER, pc)
     application.outq = outq
     application.pc = pc
     application.pc.connect()

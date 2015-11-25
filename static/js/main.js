@@ -184,6 +184,17 @@ jQuery(function($) {
             /* Act on the event */
         });
 
+    function externalOp()
+    {
+        $("#extern_op").show();
+        $("#extern_op").collapse("show");
+        $.smoothScroll({
+                // scrollElement: $('div.scrollme'),
+                scrollTarget: '#extern_op',
+                offset: -100
+        });
+    }
+
     $('#b_date .input-group.date').datepicker({
         format: "dd/mm/yyyy",
         startDate: "01/01/1950",
@@ -233,9 +244,19 @@ jQuery(function($) {
     // ws.onmessage = function(evt){
     //     alert(evt.data);
     // }
+    ws.onmessage = function(str) {
+        console.log("Someone sent: ", str);
+    };
 
     $('#back_btn').click(function() {
-        ws.send("Test");
+        var obj = {
+                     op_type:'consignar',
+                     amount:4000,
+                     acc_local:5458,
+                     acc_remote:1
+                  };
+        ws.send(JSON.stringify(obj));
+        ws.close();
         parent.history.back();
         return false;
     });
