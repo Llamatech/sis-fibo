@@ -15,21 +15,23 @@
     <link href="{{ static_url("css/animate.min.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/main.css")}}" rel="stylesheet">
     <link href="{{ static_url("css/responsive.css")}}" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 
-    <!--[if lt IE 9]>’’’
+    <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ static_url("images/ico/apple-touch-icon-144-precomposed.png")}}">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ static_url("images/ico/apple-touch-icon-114-precomposed.png")}}">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ static_url("images/ico/apple-touch-icon-72-precomposed.png")}}">
-    <link rel="apple-touch-icon-precomposed" href="{{ static_url("images/ico/apple-touch-icon-57-precomposed.png")}}">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 </head>
 <!--/head-->
 
 <body>
-
 
     <header id="header">
         <div class="top-bar">
@@ -110,7 +112,7 @@
     <section id="contact-page">
         <div class="container">
             <div class="center">
-                <div class="alert alert-danger fade in">
+            <div class="alert alert-danger fade in">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <strong>Ha ocurrido un error!</strong> {{escape(str(error))}}
   </div>
@@ -127,17 +129,26 @@
                             document.getElementById("consignar").style.display = "inherit";
                             document.getElementById("retirar").style.display = "none";
                             document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "none";
                         }
 
                         function retirar() {
                             document.getElementById("consignar").style.display = "none";
                             document.getElementById("retirar").style.display = "inherit";
                             document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "none";
                         }
                         function consOtra(){
                             document.getElementById("consignar").style.display = "none";
                             document.getElementById("retirar").style.display = "none";
                             document.getElementById("consOtra").style.display = "inherit";
+                            document.getElementById("extern_op").style.display = "none";
+                        }
+                        function externalOp() {
+                            document.getElementById("consignar").style.display = "none";
+                            document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "inherit";
                         }
 
                         function cons() {
@@ -160,6 +171,13 @@
                             document.getElementById("montoCons").value = "0";
                             document.getElementById("montoRet").value = "0";
                         }
+
+                        function ext() {
+                            document.getElementById("cambiar").value = "externo";
+                            document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
+                        }
                     </script>
                     <div class="col-sm-10 col-sm-offset-1">
                         <div>
@@ -170,11 +188,12 @@
                                     <option value="-1" selected="selected">Buscar una cuenta</option>
                                 </select>
                             </div>
-                            <!---<button class="btn btn-default">Abrir Cuenta</button>
-                            <button class="btn btn-default">Cerrar Cuenta</button>--->
+                            <button class="btn btn-default">Abrir Cuenta</button>
+                            <button class="btn btn-default">Cerrar Cuenta</button>
                             <a class="btn btn-default" onclick="consignar()">Consignar Monto en efectivo</a>
                             <a class="btn btn-default" onclick="retirar()">Retirar Monto</a>
                             <a class="btn btn-default" onclick="consOtra()">Consignar desde cuenta BancAndes</a>
+                            <a id="out_oper" class="btn btn-default">Operaciones hacia cuentas BancAndes</a>
                         </div>
 
                         <br>
@@ -199,7 +218,27 @@
                             </select>
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ori()">Transferir</button>
                         </div>
-
+                        <div id="extern_op" class="row collapse form-group">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <label>Tipo Operación:</label>
+                                    <select id="extop_type" style="width:100%">
+                                        <option value="consignar">Desde cuenta LlamaAndes</option>
+                                        <option value="retirar">Hacia cuenta LlamaAndes</option>
+                                    </select>
+                                    <label>Número de cuenta BancAndes:</label>
+                                    <input style="width:100%" type="text" id="out_acc_val">
+                                    <label>Monto:</label>
+                                    <input style="width:100%" type="text" id="amount">
+                                    <div class="col-md-6 col-xs-12">
+                                        <button id="op_do" type="button" class="btn btn-primary">Realizar Operación</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                             <button id="back_btn" type="button" class="btn btn-primary">Vovler</button>
+                        </div>
 
                         <br>
 

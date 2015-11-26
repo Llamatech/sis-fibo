@@ -39,12 +39,14 @@ class PagoHandler(tornado.web.RequestHandler):
     def post(self):
         if self.auth:
             cuenta = int(self.get_body_argument("cuenta"))
-            exito= self.inst.pagar_nomina(cuenta)
+            exito = self.inst.pagar_nomina(cuenta)
             print exito
-            if exito==True:
-                self.render('../../static/transaccionExitosa.html')
-            else:
-                self.render('../../static/pagoNominaError.html',cuentas=exito,accounts=self.accounts)
+            # if exito==True:
+            #     self.render('../../static/transaccionExitosa.html')
+            # else:
+            #     self.render('../../static/pagoNominaError.html',cuentas=exito,accounts=self.accounts)
+            self.set_header('Content-Type', 'text/javascript')
+            self.write(tornado.escape.json_encode(exito))
         else:
             self.set_status(403)
 

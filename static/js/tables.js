@@ -754,6 +754,50 @@ $(document).ready(function() {
         }]
     });
 
+
+    var dtsettings = {
+        "processing": true,
+        "serverSide": true,
+        "ajax": "doesntMatter/IsNotUsed",
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            var ws = new WebSocket("ws://localhost:8000/operacionesext");
+            ws.onmessage = function (d) {
+                fnCallback(d);
+            }
+ 
+            ws.onopen = function (e) {
+                ws.send(JSON.stringify({
+                    uMovStart : $("#fromMD").val(),
+                    uMovStop : $("#toMD").val(),
+                    saldoFrom : $("#sumFrom").val(),
+                    saldoTo : $("#sumTo").val(),
+                    pa1 = $('#pa1').val(),
+                    pa2 = $('#pa2').val(),
+                    data: aoData
+                })); 
+            }
+        },
+        "columns": [{
+            "data": "fecha"
+        }, {
+            "data": "tipo"
+        },  {
+            "data": "id_cliente"
+        }, {
+            "data": "valor"
+        }, {
+            "data": "nombre"
+        }, {
+            "data": "apellido"
+        }, {
+            "data": "cuenta"
+        }, {
+            "data": "punto_atencion"
+        }]
+    };
+
+    $('#op_table_ext').DataTable(dtsettings);
+
     $('#acc_search_btn').click(function() {
         var table = $('#acc_tableggeneral').DataTable();
         table.search("").draw();

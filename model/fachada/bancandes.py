@@ -200,6 +200,10 @@ class BancAndes(object):
         succ, code, msg = self.dao.actualizar_nomina(cuenta, cuenta_empl, salario, frecuencia)
         return succ, code, msg
 
+    def actualizar_nomina_ext(self, cuenta, cuenta_empl, salario, frecuencia):
+        succ, code, msg = self.dao.actualizar_nomina_ext(cuenta, cuenta_empl, salario, frecuencia)
+        return succ, code, msg
+
     def obtener_cuentasNC(self, search_term):
         return self.dao.obtener_cuentas_NC(search_term)
 
@@ -235,8 +239,23 @@ class BancAndes(object):
         return self.dao.verificar_transaccion_cuenta(numCuenta,monto,tipo)
 
     def registrar_operacion_cuenta_externo(self, operacion):
-        self.dao.registrar_operacion_cuenta_externo(operacion)
+        return self.dao.registrar_operacion_cuenta_externo(operacion)
 
     def actualizar_estado_externo(self, id, estado):
         self.dao.actualizar_estado_externo(id, estado)
+
+    def obtener_id_transaccion(self, idT):
+        self.dao.obtener_id_transaccion(idT)
+
+    def notificar(self, id_empleado, msg):
+        self.dao.notificar(id_empleado, msg)
+
+    def pagar_nomina_ext(self, cuenta, saldo_disp):
+        return self.dao.pagar_nomina_ext(cuenta, saldo_disp)
+
+    def actualizar_saldo_cuenta(self, numCuenta, saldo):
+        self.dao.actualizar_saldo_cuenta(numCuenta, saldo)
+
+    def obtener_saldo_cuenta(self, numCuenta):
+        return self.dao.obtener_saldo_cuenta(numCuenta)
 

@@ -303,7 +303,7 @@ class ExamplePublisher(object):
         """
         if self._stopping:
             return
-
+        print message
         # message = {u'message': msg}
         properties = pika.BasicProperties(app_id='llamabank',
                                           content_type='application/json',

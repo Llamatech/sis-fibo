@@ -133,11 +133,15 @@
                                 </address>
 
                                     <address>
-                                    <div class="form-group">
-                            <label>Cuenta BancAndes Empleado</label>
-                            <select id="cuenta_empl" name="cuenta_empl" class="itemSearchE" style="width:100%">
+                                    <div id="esconder" class="form-group">
+                            <label>Cuenta LlamAndes Empleado</label>
+                            <select id="cuenta_empl" name="cuenta_empl" class="itemSearchE cochina" style="width:100%">
                                     <option value="-1" selected="selected">Buscar una cuenta</option>
                                  </select>
+                        </div>
+                        <div id="mostrar" class="form-group" style="display:none;">
+                            <label>Cuenta BancAndes Empleado</label>
+                            <input id="cuenta_empl2" type="text" name="cuenta_empl" value="" placeholder="" style="width:100%" required>
                         </div>
                                 </address>
                                 </li>
@@ -164,11 +168,20 @@
                         </div>
                                 </address>
                                 </li>
+                                <li class="col-sm-12">
+                                    <address>
+                                    <div class="form-group">
+                            <label>Cuenta externa</label>
+                            <input id="ext-acc" type="checkbox" name="external" value="false">
+                        </div>
+                                </address>
+                                </li>
+
                         <div class="col-md-6 col-xs-12">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required">Registrar</button>
                             </div>
                              <div class="col-md-6 col-xs-12">
-                                        <button id="back_btn" type="button" class="btn btn-primary">Volver</button>
+                                        <button id="back_btn" type="button" class="btn btn-primary btn-lg">Volver</button>
                                     </div>
                             </ul>
                         </form>

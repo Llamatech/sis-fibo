@@ -53,7 +53,10 @@ def main():
         (r"/consignaciones", handlers.consignacion.ListHandler),
         (r"/nomina/migrar", handlers.nomina.MigrationHandler),
         (r"/prestamos", handlers.prestamos.MainHandler),
-        (r"/ws", handlers.web_socket.WebSocketHandlerTest)], 
+        (r"/ws", handlers.web_socket.WebSocketHandlerTest),
+        (r"/associate", handlers.web_socket.WebSocketHandlerAssociate),
+        (r"/nominaW", handlers.web_socket.WebSocketHandlerPay),
+        (r"/operacionesext", handlers.web_socket.WebSocketHandlerOperations)], 
         debug=True, serve_traceback=True, autoreload=True, **settings)
     print "Server is now at: 127.0.0.1:8000"
     ioloop = tornado.ioloop.IOLoop.instance()

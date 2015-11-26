@@ -126,23 +126,57 @@
                             debugger;
                             document.getElementById("consignar").style.display = "inherit";
                             document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "none";
                         }
 
                         function retirar() {
                             document.getElementById("consignar").style.display = "none";
                             document.getElementById("retirar").style.display = "inherit";
+                            document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "none";
+                        }
+                        function consOtra(){
+                            document.getElementById("consignar").style.display = "none";
+                            document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "inherit";
+                            document.getElementById("extern_op").style.display = "none";
+                        }
+                        function externalOp() {
+                            document.getElementById("consignar").style.display = "none";
+                            document.getElementById("retirar").style.display = "none";
+                            document.getElementById("consOtra").style.display = "none";
+                            document.getElementById("extern_op").style.display = "inherit";
                         }
 
                         function cons() {
                             debugger;
                             document.getElementById("cambiar").value = "consignar";
                             document.getElementById("montoRet").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
                         }
 
                         function ret() {
                             document.getElementById("cambiar").value = "retirar";
                             document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
                         }
+                        
+                        function ori() {
+                            document.getElementById("cambiar").value = "origen";
+                            document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoRet").value = "0";
+                        }
+
+                        function ext() {
+                            document.getElementById("cambiar").value = "externo";
+                            document.getElementById("montoCons").value = "0";
+                            document.getElementById("montoConsig").value = "0";
+                            document.getElementById("origen").value = "0";
+                        }
+
                     </script>
                     <div class="col-sm-10 col-sm-offset-1">
                         <div>
@@ -156,9 +190,11 @@
                                 </select>
                             </div>
                             <!---<button class="btn btn-default">Abrir Cuenta</button>
-                            <button class="btn btn-default">Cerrar Cuenta</button>--->
-                            <a class="btn btn-default" onclick="consignar()">Consignar Monto</a>
+                            <button class="btn btn-default">Cerrar Cuenta</button>-->
+                            <a class="btn btn-default" onclick="consignar()">Consignar Monto en efectivo</a>
                             <a class="btn btn-default" onclick="retirar()">Retirar Monto</a>
+                            <a class="btn btn-default" onclick="consOtra()">Consignar desde cuenta BancAndes</a>
+                            <a id="out_oper" class="btn btn-default">Operaciones hacia cuentas BancAndes</a>
 
                         </div>
 
@@ -174,8 +210,40 @@
                             <input type="text" name="montoRet" id="montoRet" class="form-control" required="required">
                             <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ret()">Retirar</button>
                         </div>
-
-
+                        <div id="consOtra" style="display:none" class="form-group">
+                            <label>Monto a consignar:</label>
+                            <input type="text" name="montoConsig" id="montoConsig" class="form-control" required="required">
+                            <label>Cuenta origen:</label>
+                            <select class="form-control" id="origen" name="origen">
+                                    <option></option>
+                                    {% for cuenta in cuentas%}
+                                    <option value="{{cuenta.numero}}">{{escape(str(cuenta.numero))}}</op
+                                    tion>
+                                    {% end %}
+                                </select>
+                            <button type="submit" name="submit" class="btn btn-primary btn-lg" required="required" onclick="ori()">Transferir</button>
+                        </div>
+                        <div id="extern_op" class="row collapse form-group">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <label>Tipo Operación:</label>
+                                    <select id="extop_type" style="width:100%">
+                                        <option value="consignar">Desde cuenta LlamaAndes</option>
+                                        <option value="retirar">Hacia cuenta LlamaAndes</option>
+                                    </select>
+                                    <label>Número de cuenta BancAndes:</label>
+                                    <input style="width:100%" type="text" id="out_acc_val">
+                                    <label>Monto:</label>
+                                    <input style="width:100%" type="text" id="amount">
+                                    <div class="col-md-6 col-xs-12">
+                                        <button id="op_do" type="button" class="btn btn-primary">Realizar Operación</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                             <button id="back_btn" type="button" class="btn btn-primary">Vovler</button>
+                        </div>
                         <br>
 
                     </div>
@@ -212,19 +280,23 @@
         </div>
     </footer>
     <!--/#footer-->
-
+<!--  
+    <script src="{{ static_url("js/maps.js")}}"></script>-->
     <script src="{{ static_url("js/jquery.js")}}"></script>
     <script src="{{ static_url("js/bootstrap.min.js")}}"></script>
     <script src="{{ static_url("js/jquery.prettyPhoto.js")}}"></script>
     <script src="{{ static_url("js/jquery.isotope.min.js")}}"></script>
     <script src="{{ static_url("js/main.js")}}"></script>
     <script src="{{ static_url("js/wow.min.js")}}"></script>
+    <script src="{{ static_url("js/selector.js")}}"></script>
     <!--  
     <script src="{{ static_url("js/selector.js")}}"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-smooth-scroll/1.5.6/jquery.smooth-scroll.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.es.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js" type="text/javascript" charset="utf-8" async defer></script>
+
 </body>
 
 </html>

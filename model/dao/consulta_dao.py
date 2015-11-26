@@ -26,10 +26,8 @@ class ConsultaDAO(object):
             self.conn_info[info[0]] = eval(info[1])
 
     def establecer_conexion(self):
-        dsn_tns = cx_Oracle.makedsn(self.conn_info['URL'],
-                                    self.conn_info['PORT'], self.conn_info['SERV'])
-        self.conn = cx_Oracle.connect(
-            self.conn_info['USER'], self.conn_info['PWD'], dsn_tns)
+        dsn_tns = cx_Oracle.makedsn(self.conn_info['URL'],self.conn_info['PORT'], self.conn_info['SERV'])
+        self.conn = cx_Oracle.connect(self.conn_info['USER'], self.conn_info['PWD'], dsn_tns, threaded=True)
 
     def cerrar_conexion(self):
         self.conn.close()
@@ -449,7 +447,7 @@ class ConsultaDAO(object):
             return "Debido a reglas del negocio, el tipo de cuenta no permite la operacion a realizar."
 
 
-        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+operacion.tipo_operacion+"'"+" AND p.id_tipopuntoatencion="+"'"+operacion.punto_atencion+"' "+" AND( p.monto>="+"'"+operacion.valor+"' OR p.monto IS NULL)"
+        stmt = "SELECT * FROM PERMITEOPERACIONPA p WHERE  p.id_tipooperacion="+"'"+str(operacion.tipo_operacion)+"'"+" AND p.id_tipopuntoatencion="+"'"+str(operacion.punto_atencion)+"' "+" AND( p.monto>="+"'"+str(operacion.valor)+"' OR p.monto IS NULL)"
         print(stmt+" 242 dao")
         cur.execute(stmt)
         data = cur.fetchall()
@@ -463,9 +461,9 @@ class ConsultaDAO(object):
         stmt = "SELECT saldo FROM CUENTA WHERE numero ="+"'"+operacion.cuenta+"'"
         print(stmt+" 255 dao")
         cur.execute(stmt)
-        if operacion.tipo_operacion == '3':
+        if int(operacion.tipo_operacion) == 3:
             saldo = float(cur.fetchall()[0][0])+float(operacion.valor)
-        elif operacion.tipo_operacion == '4':
+        elif int(operacion.tipo_operacion) == 4:
             saldo = float(cur.fetchall()[0][0])-float(operacion.valor)
 
         if saldo<0:
@@ -579,7 +577,7 @@ class ConsultaDAO(object):
         return data[0][0]
 
     def existe_cuenta(self, numeroCuenta):
-        stmt="SELECT * FROM CUENTA WHERE numero = "+ "'"+numeroCuenta+"'"
+        stmt="SELECT * FROM CUENTA WHERE numero = "+ "'"+str(numeroCuenta)+"'"
         self.establecer_conexion()
         cur = self.conn.cursor()
         print(stmt)
@@ -1230,6 +1228,23 @@ class ConsultaDAO(object):
         self.conn.close()
         return True, 200, "Success"
 
+    def actualizar_nomina_ext(self, cuenta, cuenta_empl, salario, frecuencia):
+        stmt = """INSERT INTO NOMINA_EXTERNA(CUENTA_EMPLEADO, CUENTA_EMPRESA, SALARIO, FRECUENCIA)
+                  VALUES (%d, %d, %s, %d)""" % (int(cuenta_empl), int(cuenta), salario, int(frecuencia))
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        try:
+            cur.execute(stmt)
+        except cx_Oracle.IntegrityError:
+            self.conn.rollback()
+            cur.close()
+            self.conn.close()
+            return False, 400, "La cuenta del empleado ya se encuentra asignada a una nómina" 
+        self.conn.commit()
+        cur.close()
+        self.conn.close()
+        return True, 200, "Success"
+
     """
         Debido a que el proceso de pagar la nómina de un empleador, depende del saldo actual disponible en la cuenta empresarial,
         éste debe permanecer constante y estático durante la transacción, y por lo tanto, otra operación que desee modificar el saldo
@@ -1263,6 +1278,51 @@ class ConsultaDAO(object):
             self.conn.close()
             return True
 
+    def pagar_nomina_ext(self, cuenta, saldo_disp):
+        saldo = saldo_disp
+        stmt ="SELECT n.CUENTA_EMPLEADO, n.SALARIO FROM NOMINA_EXTERNA n WHERE n.CUENTA_EMPRESA="+ str(cuenta) 
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+        cur.execute(stmt)
+        data = cur.fetchall()
+        noPagos = []
+        ok = True
+        for x in data:
+            if ok:
+                ret = self.pagar_empleado_ext(cuenta, x[0],x[1],cur,saldo)
+                ok = ret[0]
+                saldo = ret[1] 
+            if not ok:
+                noPagos.append(x[0])
+
+        if not ok:
+            for y in noPagos:
+                self.notificar_empleado(y,cur)
+            r = self.obtener_nombres_empleados(noPagos, cur)
+            cur.close()
+            self.conn.close()
+            return False, r, saldo
+        else:
+            r=[]
+            cur.close()
+            self.conn.close()
+            return True, r, saldo
+
+    def pagar_empleado_ext(self, cuenta_empresa,cuenta_empleado,salario,cur, saldo):
+        nsaldo = float(saldo)-float(salario)
+        if nsaldo < 0:
+            return False, saldo
+        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empleado)
+        cur.execute(stmt)
+        data = cur.fetchall()
+        saldo = float(data[0][0])+float(salario)
+        stmt = "UPDATE CUENTA SET SALDO ="+str(saldo)+" WHERE NUMERO="+str(cuenta_empleado)
+        cur.execute(stmt)
+        self.conn.commit() #savepoint
+        return True, saldo
+
+
 
     def pagar_empleado(self, cuenta_empresa,cuenta_empleado,salario,cur):
         stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empresa)
@@ -1274,7 +1334,7 @@ class ConsultaDAO(object):
         stmt = "UPDATE CUENTA SET SALDO ="+str(saldo)+" WHERE NUMERO="+str(cuenta_empresa)
         print stmt
         cur.execute(stmt)
-        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empresa)
+        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO =" + str(cuenta_empleado)
         cur.execute(stmt)
         data = cur.fetchall()
         saldo = float(data[0][0])+float(salario)
@@ -1291,6 +1351,14 @@ class ConsultaDAO(object):
         stmt = "INSERT INTO NOTIFICACIONES(USUARIO,MENSAJE,FECHA) VALUES("+str(id)+",'Su nomina no pudo ser pagada por fondos insuficientes en la cuenta corporativa. Fecha y hora: "+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"', TO_DATE('"+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"','YYYY-MM-DD hh24:mi:ss')"+")"
         print stmt
         cur.execute(stmt)
+        self.conn.commit() #Savepoint
+
+    def notificar(self, id_empleado, msg):
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        stmt = "INSERT INTO NOTIFICACIONES(USUARIO,MENSAJE,FECHA) VALUES("+str(id_empleado)+","+msg+"'. Fecha y hora: "+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"', TO_DATE('"+str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))+"','YYYY-MM-DD hh24:mi:ss')"+")"
+        print stmt
+        cur.execute(stmt.encode('utf8'))
         self.conn.commit() #Savepoint
 
     def obtener_nombres_empleados(self, cuentas, cur):
@@ -1431,8 +1499,8 @@ class ConsultaDAO(object):
 
 
     def inicializar_estado_externo(self, msg):
-        stmt = "INSERT INTO COLA_ESTADO(NUM_SEC, ESTADO) VALUES ('%s', '%s')"
-        stmt = stmt % (msg['id'], msg['estado'])
+        stmt = "INSERT INTO COLA_ESTADO(NUM_SEC, ESTADO, ID) VALUES ('%s', '%s', '%d')"
+        stmt = stmt % (msg['id'], msg['estado'], msg['idCliente'])
         self.establecer_conexion()
         cur = self.conn.cursor()
         cur.execute(stmt)
@@ -1474,7 +1542,7 @@ class ConsultaDAO(object):
         return True
 
     def actualizar_estado_externo(self, id, estado):
-        stmt = "UPDATE COLA_ESTADO SET ESTADO = '%s' WHERE ID = '%s'"
+        stmt = "UPDATE COLA_ESTADO SET ESTADO = '%s' WHERE NUM_SEC = '%s'"
         stmt = stmt % (estado, id)
         self.establecer_conexion()
         cur = self.conn.cursor()
@@ -1482,3 +1550,33 @@ class ConsultaDAO(object):
         self.conn.commit()
         cur.close()
         self.conn.close()
+
+    def obtener_id_transaccion(self, idT):
+        stmt = "SELECT ID FROM COLA_ESTADO WHERE NUM_SEC = '%s'"
+        stmt = stmt % (idT)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        ret =  cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+        return ret
+
+    def actualizar_saldo_cuenta(self, numCuenta, saldo):
+        stmt = "UPDATE CUENTA SET SALDO = %f WHERE NUMERO = %d"
+        stmt = stmt % (float(saldo), int(numCuenta))
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        self.conn.commit()
+
+    def obtener_saldo_cuenta(self, numCuenta):
+        stmt = "SELECT SALDO FROM CUENTA WHERE NUMERO = %s"
+        stmt = stmt % (numCuenta)
+        self.establecer_conexion()
+        cur = self.conn.cursor()
+        cur.execute(stmt)
+        ret =  cur.fetchall()[0][0]
+        cur.close()
+        self.conn.close()
+        return ret
